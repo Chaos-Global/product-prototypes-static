@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WoW Raid Guide Hub</title>
+  <style>
+    :root {
+      --bg: #0a0b10;
+      --bg-2: #131722;
+      --panel: rgba(255,255,255,0.06);
+      --panel-strong: rgba(255,255,255,0.1);
+      --border: rgba(255,255,255,0.12);
+      --text: #f4f1ea;
+      --muted: #b8b0a2;
+      --gold: #f0c75e;
+      --gold-2: #ffdf8d;
+      --blue: #7ab8ff;
+      --green: #7be3a6;
+      --danger: #ff8a8a;
+      --shadow: 0 20px 45px rgba(0,0,0,0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(240,199,94,0.14), transparent 30%),
+        radial-gradient(circle at 20% 10%, rgba(122,184,255,0.12), transparent 25%),
+        linear-gradient(180deg, var(--bg), var(--bg-2) 45%, #0c1018 100%);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(10,11,16,0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: #241600;
+      box-shadow: var(--shadow);
+      font-size: 1.2rem;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .hero {
+      padding: 72px 0 36px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--gold);
+      font-size: 0.88rem;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2.5rem, 5vw, 4.8rem);
+      line-height: 0.96;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.06rem;
+      line-height: 1.75;
+      max-width: 62ch;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-weight: 800;
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      transition: transform 0.18s ease, opacity 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: #2b1d00;
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -18% auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(240,199,94,0.25), transparent 70%);
+      pointer-events: none;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--gold);
+      background: rgba(240,199,94,0.12);
+      border: 1px solid rgba(240,199,94,0.18);
+      margin-bottom: 14px;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .list-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      background: rgba(122,184,255,0.14);
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    section {
+      padding: 24px 0;
+    }
+
+    .section-head {
+      margin-bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 60ch;
+      line-height: 1.6;
+    }
+
+    .grid-4, .grid-3, .grid-2 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .card {
+      padding: 22px;
+    }
+
+    .stat {
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .muted { color: var(--muted); line-height: 1.65; }
+
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .tank { background: rgba(122,184,255,0.14); color: var(--blue); }
+    .healer { background: rgba(123,227,166,0.14); color: var(--green); }
+    .dps { background: rgba(255,138,138,0.14); color: var(--danger); }
+
+    .checklist {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .step {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    .step-num {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: #2c1f00;
+    }
+
+    .boss-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .boss {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .boss h4 {
+      margin: 0 0 8px;
+      font-size: 1.02rem;
+    }
+
+    .callout {
+      padding: 18px 20px;
+      border-left: 4px solid var(--gold);
+      background: rgba(240,199,94,0.08);
+      border-radius: 0 18px 18px 0;
+      color: var(--text);
+    }
+
+    footer {
+      padding: 42px 0 70px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid-4,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { max-width: none; }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <div class="brand-icon">⚔</div>
+        WoW Raid Guide Hub
+      </div>
+      <nav class="nav-links">
+        <a href="#basics">Raid Basics</a>
+        <a href="#roles">Roles</a>
+        <a href="#steps">How To Raid</a>
+        <a href="#bosses">Boss Tips</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">🎮 Video Games • World of Warcraft • Raiding</div>
+        <h1>Learn how to raid in WoW.</h1>
+        <p>
+          Raids in World of Warcraft are large group activities where coordination matters more than raw damage.
+          This page focuses on the basics: what a raid is, how to prepare, what each role should do,
+          and how to survive boss mechanics without turning into floor decoration.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#steps">Start the guide</a>
+          <a class="btn btn-secondary" href="#roles">See raid roles</a>
+        </div>
+      </div>
+
+      <aside class="panel hero-card">
+        <div>
+          <div class="tag">Quick Raid Checklist</div>
+          <h3 style="margin:0 0 8px; font-size: 1.55rem;">Before you zone in</h3>
+          <p class="muted" style="margin-top:0;">
+            A smooth raid usually starts before the first pull. Preparation prevents panic.
+          </p>
+        </div>
+        <div class="list">
+          <div class="list-item"><div class="icon">1</div><div><strong>Know your spec</strong><div class="muted">Understand your core rotation, cooldowns, and defensives.</div></div></div>
+          <div class="list-item"><div class="icon">2</div><div><strong>Bring consumables</strong><div class="muted">Flasks, food, potions, runes, and repairs save time and wipes.</div></div></div>
+          <div class="list-item"><div class="icon">3</div><div><strong>Read the encounter</strong><div class="muted">Watch a guide or learn the major mechanics ahead of time.</div></div></div>
+          <div class="list-item"><div class="icon">4</div><div><strong>Use voice comms</strong><div class="muted">Even if you barely speak, listening to calls is huge.</div></div></div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="basics">
+      <div class="section-head">
+        <h2>Raid basics</h2>
+        <p>Raids are multi-boss instances designed for coordinated groups. They usually demand mechanic awareness, role discipline, and patience while learning.</p>
+      </div>
+      <div class="grid-4">
+        <div class="panel card">
+          <div class="stat">10–30</div>
+          <div class="muted">Typical group size depending on mode and expansion design.</div>
+        </div>
+        <div class="panel card">
+          <div class="stat">3 roles</div>
+          <div class="muted">Tanks control bosses, healers keep players alive, and DPS defeat targets quickly.</div>
+        </div>
+        <div class="panel card">
+          <div class="stat">Many wipes</div>
+          <div class="muted">Progression raiding often means learning by failing until mechanics become clean.</div>
+        </div>
+        <div class="panel card">
+          <div class="stat">Big rewards</div>
+          <div class="muted">Gear, achievements, mounts, and the satisfaction of finally getting the kill.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roles">
+      <div class="section-head">
+        <h2>Understand the raid roles</h2>
+        <p>If you know what every role is supposed to do, you make better decisions even when playing only one of them.</p>
+      </div>
+      <div class="grid-3">
+        <article class="panel card">
+          <div class="role-badge tank">🛡 Tank</div>
+          <h3 style="margin-top:0;">Control the fight</h3>
+          <p class="muted">Tanks position bosses, manage threat, swap when mechanics require it, and use defensives for heavy damage windows.</p>
+          <ul class="checklist">
+            <li>Face bosses away when needed.</li>
+            <li>Move enemies cleanly and predictably.</li>
+            <li>Use mitigation before damage spikes, not after.</li>
+            <li>Coordinate taunt swaps with the other tank.</li>
+          </ul>
+        </article>
+
+        <article class="panel card">
+          <div class="role-badge healer">✚ Healer</div>
+          <h3 style="margin-top:0;">Stabilize the group</h3>
+          <p class="muted">Healers prepare for incoming raid damage, dispel important effects, and keep cooldowns ready for dangerous phases.</p>
+          <ul class="checklist">
+            <li>Track major damage timers.</li>
+            <li>Save mana when the fight allows it.</li>
+            <li>Coordinate healing cooldowns.</li>
+            <li>Dispel only when it is safe and assigned.</li>
+          </ul>
+        </article>
+
+        <article class="panel card">
+          <div class="role-badge dps">⚔ DPS</div>
+          <h3 style="margin-top:0;">Handle mechanics and damage</h3>
+          <p class="muted">Good DPS players do strong damage without ignoring movement, interrupts, target swaps, or survival tools.</p>
+          <ul class="checklist">
+            <li>Do mechanics first, parse later.</li>
+            <li>Use personal defensives often.</li>
+            <li>Swap to priority targets quickly.</li>
+            <li>Interrupt, stun, or soak when assigned.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="steps">
+      <div class="section-head">
+        <h2>How to do raids in World of Warcraft</h2>
+        <p>This is the practical flow most players follow when learning a raid from scratch or joining a new group.</p>
+      </div>
+      <div class="grid-2">
+        <div class="step panel">
+          <div class="step-num">01</div>
+          <div>
+            <h3 style="margin:0 0 8px;">Choose your difficulty and group</h3>
+            <p class="muted" style="margin:0;">Start with Raid Finder or Normal if you are new. Heroic and Mythic require stronger execution, tighter preparation, and more coordination.</p>
+          </div>
+        </div>
+        <div class="step panel">
+          <div class="step-num">02</div>
+          <div>
+            <h3 style="margin:0 0 8px;">Learn the boss mechanics</h3>
+            <p class="muted" style="margin:0;">Do not try to memorize everything. Focus on your personal responsibilities: where to stand, what to interrupt, what to soak, and when to move.</p>
+          </div>
+        </div>
+        <div class="step panel">
+          <div class="step-num">03</div>
+          <div>
+            <h3 style="margin:0 0 8px;">Set up your UI</h3>
+            <p class="muted" style="margin:0;">Track boss timers, debuffs, and important cooldowns. A clean UI helps you react faster than a cluttered one.</p>
+          </div>
+        </div>
+        <div class="step panel">
+          <div class="step-num">04</div>
+          <div>
+            <h3 style="margin:0 0 8px;">Listen to assignments</h3>
+            <p class="muted" style="margin:0;">Raid leaders often assign interrupts, dispels, positioning groups, or defensive rotations. Missing an assignment can wipe the raid.</p>
+          </div>
+        </div>
+        <div class="step panel">
+          <div class="step-num">05</div>
+          <div>
+            <h3 style="margin:0 0 8px;">Survive first, optimize later</h3>
+            <p class="muted" style="margin:0;">Dead players do zero damage and zero healing. Learn the dance of the fight before worrying about perfect output.</p>
+          </div>
+        </div>
+        <div class="step panel">
+          <div class="step-num">06</div>
+          <div>
+            <h3 style="margin:0 0 8px;">Review mistakes after pulls</h3>
+            <p class="muted" style="margin:0;">Progress comes from identifying what killed the group: missed interrupts, bad positioning, late cooldowns, or failed mechanics.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="panel card callout">
+        <strong>Golden rule:</strong> In raids, mechanics are part of your rotation. Moving correctly, soaking correctly, and using defensives on time are not optional extras.
+      </div>
+    </section>
+
+    <section id="bosses">
+      <div class="section-head">
+        <h2>Common boss-mechanic mindset</h2>
+        <p>Even though every raid tier is different, many encounters use familiar patterns. Learning these patterns helps you adapt faster.</p>
+      </div>
+      <div class="grid-2">
+        <div class="panel card">
+          <h3 style="margin-top:0;">Typical mechanics you will see</h3>
+          <div class="boss-grid">
+            <div class="boss">
+              <h4>Spread</h4>
+              <div class="muted">Move away from other players so splash damage or debuff explosions do not chain across the raid.</div>
+            </div>
+            <div class="boss">
+              <h4>Stack</h4>
+              <div class="muted">Group up tightly to split damage, receive healing, or bait mechanics into predictable locations.</div>
+            </div>
+            <div class="boss">
+              <h4>Soak</h4>
+              <div class="muted">Stand in a marker when assigned so a mechanic does not explode across the whole raid.</div>
+            </div>
+            <div class="boss">
+              <h4>Interrupt or purge</h4>
+              <div class="muted">Some casts must never complete. Know which targets are priority utility targets.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel card">
+          <h3 style="margin-top:0;">New raider survival advice</h3>
+          <ul class="checklist" style="margin-top:0;">
+            <li>Watch your feet. Ground effects are raid classics for a reason.</li>
+            <li>Use defensives proactively when a timer or callout warns you.</li>
+            <li>Do not overlap the raid leader’s voice with panic chatter.</li>
+            <li>Ask questions between pulls, not during critical mechanics.</li>
+            <li>Accept wipes as part of learning rather than proof you are failing.</li>
+            <li>Keep improving one mechanic at a time.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Why players love raiding</h2>
+        <p>Raids turn video games into team problem-solving. They combine progression, communication, timing, and the thrill of a hard-earned clear.</p>
+      </div>
+      <div class="panel card">
+        <p class="muted" style="margin:0; font-size:1.05rem;">
+          Whether you are casual and exploring Raid Finder or pushing high-end progression with a guild,
+          World of Warcraft raiding is at its best when everyone understands the plan, respects mechanics,
+          and improves together. This page is a strong starting point for a gaming-themed site centered on WoW raids.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    For Azeroth, better positioning, and fewer avoidable wipes.
+  </footer>
+</body>
+</html>
+
