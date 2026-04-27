@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian — Third Wave Coffee, Rendered Honestly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F1E9DC;
+    --cream-deep: #E8DDC9;
+    --ivory: #FAF5EC;
+    --espresso: #1F1410;
+    --bean: #3A2218;
+    --crema: #C45A2C;
+    --crema-deep: #8F3B15;
+    --amber: #D98A3D;
+    --sage: #7A7E5C;
+    --ink: #2B1810;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.55;
+    overflow-x: hidden;
+    cursor: default;
+    background-image:
+      radial-gradient(at 15% 20%, rgba(196, 90, 44, 0.04) 0%, transparent 40%),
+      radial-gradient(at 85% 80%, rgba(58, 34, 24, 0.05) 0%, transparent 45%);
+    background-attachment: fixed;
+  }
+
+  /* Subtle grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.12 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.15 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .display {
+    font-family: 'Fraunces', Georgia, serif;
+    font-variation-settings: "SOFT" 50, "opsz" 144;
+    letter-spacing: -0.02em;
+    line-height: 0.92;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 24px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+    mix-blend-mode: multiply;
+  }
+
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 100;
+    font-weight: 600;
+    font-size: 24px;
+    font-style: italic;
+    letter-spacing: -0.02em;
+  }
+
+  .logo::after {
+    content: '●';
+    color: var(--crema);
+    font-size: 10px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+  }
+
+  .nav-links a {
+    color: var(--ink);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    position: relative;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--crema); }
+
+  .nav-links a::before {
+    content: '→';
+    opacity: 0;
+    margin-right: 4px;
+    transition: opacity 0.3s, margin-right 0.3s;
+  }
+
+  .nav-links a:hover::before {
+    opacity: 1;
+    margin-right: 8px;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    padding: 120px 40px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+    position: relative;
+  }
+
+  .hero-meta {
+    position: absolute;
+    top: 120px;
+    right: 40px;
+    text-align: right;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bean);
+    line-height: 1.8;
+  }
+
+  .hero-meta .dash { color: var(--crema); }
+
+  h1.hero-title {
+    font-size: clamp(70px, 12vw, 190px);
+    font-weight: 300;
+    font-variation-settings: "SOFT" 60, "opsz" 144, "wght" 340;
+  }
+
+  h1.hero-title em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "opsz" 144, "wght" 320;
+    color: var(--crema-deep);
+    position: relative;
+  }
+
+  h1.hero-title .amp {
+    font-variation-settings: "SOFT" 100;
+    font-style: italic;
+    color: var(--crema);
+    display: inline-block;
+    transform: translateY(8px) rotate(-6deg);
+    font-size: 0.85em;
+  }
+
+  .hero-side {
+    padding-bottom: 20px;
+    max-width: 440px;
+    justify-self: end;
+  }
+
+  .hero-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--crema-deep);
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--crema-deep);
+  }
+
+  .hero-side p {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--bean);
+    margin-bottom: 32px;
+  }
+
+  .hero-side p em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--espresso);
+  }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 28px;
+    background: var(--espresso);
+    color: var(--cream);
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: background 0.3s, transform 0.3s;
+  }
+
+  .cta:hover {
+    background: var(--crema-deep);
+    transform: translateY(-2px);
+  }
+
+  .cta .arrow {
+    transition: transform 0.3s;
+  }
+
+  .cta:hover .arrow {
+    transform: translateX(4px);
+  }
+
+  /* Animated coffee-ring visual */
+  .hero-visual {
+    position: absolute;
+    bottom: 60px;
+    left: 40px;
+    width: 140px;
+    height: 140px;
+    pointer-events: none;
+  }
+
+  .ring-text {
+    width: 100%;
+    height: 100%;
+    animation: spin 40s linear infinite;
+  }
+
+  .ring-text text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    fill: var(--bean);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .ring-text .dot {
+    fill: var(--crema);
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Fade in animations */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .fade-up:nth-child(1) { animation-delay: 0.1s; }
+  .fade-up:nth-child(2) { animation-delay: 0.3s; }
+  .fade-up:nth-child(3) { animation-delay: 0.5s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== MARQUEE ===== */
+  .marquee-section {
+    padding: 40px 0;
+    border-top: 1px solid rgba(58, 34, 24, 0.2);
+    border-bottom: 1px solid rgba(58, 34, 24, 0.2);
+    overflow: hidden;
+    background: var(--cream-deep);
+  }
+
+  .marquee {
+    display: flex;
+    gap: 60px;
+    animation: marquee 40s linear infinite;
+    white-space: nowrap;
+    width: max-content;
+  }
+
+  .marquee span {
+    font-family: 'Fraunces', serif;
+    font-variation-settings: "SOFT" 100;
+    font-style: italic;
+    font-size: 56px;
+    font-weight: 300;
+    color: var(--espresso);
+    display: inline-flex;
+    align-items: center;
+    gap: 60px;
+  }
+
+  .marquee span::after {
+    content: '✦';
+    color: var(--crema);
+    font-size: 28px;
+    font-style: normal;
+    transform: translateY(-4px);
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ===== SECTION BASE ===== */
+  section.content {
+    padding: 140px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--crema-deep);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--crema-deep);
+  }
+
+  .section-title {
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 320;
+    margin-bottom: 60px;
+    max-width: 1000px;
+  }
+
+  .section-title em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "wght" 320;
+    color: var(--crema-deep);
+  }
+
+  /* ===== BREW METHODS ===== */
+  .brew-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 80px;
+    margin-top: 40px;
+  }
+
+  .brew-list {
+    list-style: none;
+    border-top: 1px solid rgba(58, 34, 24, 0.15);
+  }
+
+  .brew-item {
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(58, 34, 24, 0.15);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    transition: padding-left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+  }
+
+  .brew-item::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    background: var(--crema);
+    border-radius: 50%;
+    opacity: 0;
+    transform: translateY(-50%) scale(0);
+    transition: opacity 0.4s, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .brew-item:hover { padding-left: 8px; }
+  .brew-item:hover .brew-name { color: var(--crema-deep); }
+
+  .brew-item.active {
+    padding-left: 16px;
+  }
+
+  .brew-item.active::before {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+
+  .brew-item.active .brew-name {
+    color: var(--crema-deep);
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "wght" 500;
+  }
+
+  .brew-name {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 400;
+    font-variation-settings: "SOFT" 50, "wght" 380;
+    transition: color 0.3s;
+  }
+
+  .brew-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--bean);
+    opacity: 0.5;
+  }
+
+  .brew-detail {
+    background: var(--ivory);
+    padding: 50px;
+    border-radius: 4px;
+    position: relative;
+    min-height: 480px;
+    box-shadow: 0 2px 20px rgba(31, 20, 16, 0.04);
+    border: 1px solid rgba(58, 34, 24, 0.08);
+  }
+
+  .brew-detail::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border: 1px solid var(--crema);
+    border-radius: 50%;
+    opacity: 0.4;
+  }
+
+  .brew-detail::after {
+    content: '';
+    position: absolute;
+    top: 35px;
+    right: 35px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--crema);
+    border-radius: 50%;
+    opacity: 0.3;
+  }
+
+  .brew-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--crema-deep);
+    margin-bottom: 16px;
+  }
+
+  .brew-title {
+    font-family: 'Fraunces', serif;
+    font-size: 64px;
+    font-weight: 320;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .brew-subtitle {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    font-size: 22px;
+    color: var(--crema-deep);
+    margin-bottom: 32px;
+  }
+
+  .brew-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin: 32px 0;
+    padding: 24px 0;
+    border-top: 1px solid rgba(58, 34, 24, 0.15);
+    border-bottom: 1px solid rgba(58, 34, 24, 0.15);
+  }
+
+  .brew-stat .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bean);
+    opacity: 0.7;
+    margin-bottom: 6px;
+  }
+
+  .brew-stat .stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 400;
+  }
+
+  .brew-desc {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--bean);
+    max-width: 520px;
+  }
+
+  .brew-desc em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--espresso);
+  }
+
+  /* ===== ROAST SLIDER ===== */
+  .roast-section {
+    background: var(--espresso);
+    color: var(--cream);
+    padding: 140px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .roast-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(at 10% 20%, rgba(196, 90, 44, 0.15) 0%, transparent 40%),
+      radial-gradient(at 90% 80%, rgba(217, 138, 61, 0.08) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  .roast-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .roast-section .section-label { color: var(--amber); }
+  .roast-section .section-label::before { background: var(--amber); }
+
+  .roast-section .section-title { color: var(--cream); }
+  .roast-section .section-title em { color: var(--amber); }
+
+  .roast-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    margin-top: 60px;
+  }
+
+  .bean-visual {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .bean-svg {
+    width: 100%;
+    height: 100%;
+    transition: filter 0.6s;
+  }
+
+  .bean-body {
+    transition: fill 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bean-highlight {
+    transition: opacity 0.6s;
+  }
+
+  .roast-info h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 72px;
+    font-weight: 320;
+    line-height: 1;
+    margin-bottom: 16px;
+    transition: color 0.4s;
+  }
+
+  .roast-info h3 em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "wght" 320;
+    color: var(--amber);
+  }
+
+  .roast-info p {
+    font-size: 19px;
+    color: rgba(241, 233, 220, 0.75);
+    line-height: 1.65;
+    margin-bottom: 32px;
+    min-height: 130px;
+  }
+
+  .roast-info p em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    color: var(--cream);
+  }
+
+  .roast-meta {
+    display: flex;
+    gap: 40px;
+    padding: 24px 0;
+    border-top: 1px solid rgba(241, 233, 220, 0.2);
+    border-bottom: 1px solid rgba(241, 233, 220, 0.2);
+    margin-bottom: 32px;
+  }
+
+  .roast-meta-item .mono {
+    color: var(--amber);
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+
+  .roast-meta-item .value {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+  }
+
+  .slider-container {
+    margin-top: 48px;
+  }
+
+  .slider-track {
+    position: relative;
+    height: 2px;
+    background: rgba(241, 233, 220, 0.2);
+    margin: 40px 0 16px;
+  }
+
+  .slider-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #D4A574, #C45A2C, #5D2D0F);
+    transition: width 0.1s;
+  }
+
+  .slider-thumb {
+    position: absolute;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    background: var(--cream);
+    border: 3px solid var(--amber);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 0 0 rgba(217, 138, 61, 0.3);
+  }
+
+  .slider-thumb:hover {
+    box-shadow: 0 0 0 10px rgba(217, 138, 61, 0.15);
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .slider-thumb:active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+
+  .slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(241, 233, 220, 0.5);
+  }
+
+  .slider-ticks span { cursor: pointer; transition: color 0.3s; }
+  .slider-ticks span:hover { color: var(--amber); }
+  .slider-ticks span.active-tick { color: var(--amber); }
+
+  /* ===== ORIGINS ===== */
+  .origins-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .origin-card {
+    background: var(--ivory);
+    padding: 40px 32px;
+    border: 1px solid rgba(58, 34, 24, 0.1);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s;
+    cursor: pointer;
+  }
+
+  .origin-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(31, 20, 16, 0.08);
+  }
+
+  .origin-card::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    border: 1px solid var(--crema);
+    border-radius: 50%;
+    opacity: 0.15;
+    transition: transform 0.6s;
+  }
+
+  .origin-card:hover::after {
+    transform: scale(1.2);
+  }
+
+  .origin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 32px;
+  }
+
+  .origin-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--crema-deep);
+    letter-spacing: 0.15em;
+  }
+
+  .origin-region {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--bean);
+    opacity: 0.5;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .origin-name {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 320;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .origin-sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    font-size: 18px;
+    color: var(--crema-deep);
+    margin-bottom: 32px;
+  }
+
+  .origin-notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .note-chip {
+    padding: 6px 14px;
+    background: var(--cream);
+    border: 1px solid rgba(58, 34, 24, 0.15);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bean);
+    border-radius: 100px;
+  }
+
+  .origin-body {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--bean);
+    position: relative;
+    z-index: 1;
+  }
+
+  .origin-altitude {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(58, 34, 24, 0.12);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bean);
+    opacity: 0.7;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== PHILOSOPHY PULL-QUOTE ===== */
+  .quote-section {
+    padding: 160px 40px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .quote-section::before {
+    content: '"';
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 400px;
+    color: var(--crema);
+    opacity: 0.12;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    line-height: 1;
+    z-index: 0;
+  }
+
+  .quote-section blockquote {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(36px, 5vw, 68px);
+    font-weight: 320;
+    font-variation-settings: "SOFT" 80, "wght" 320;
+    line-height: 1.15;
+    font-style: italic;
+    max-width: 1000px;
+    margin: 0 auto 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quote-section blockquote strong {
+    font-weight: 320;
+    color: var(--crema-deep);
+    font-style: italic;
+  }
+
+  .quote-attrib {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--bean);
+  }
+
+  .quote-attrib::before {
+    content: '— ';
+    color: var(--crema);
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--bean);
+    color: var(--cream);
+    padding: 100px 40px 40px;
+  }
+
+  .footer-grid {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 80px;
+  }
+
+  .footer-brand h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 88px;
+    font-weight: 320;
+    font-variation-settings: "SOFT" 100, "wght" 320;
+    line-height: 0.9;
+    margin-bottom: 20px;
+  }
+
+  .footer-brand h2 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .footer-brand p {
+    color: rgba(241, 233, 220, 0.6);
+    max-width: 380px;
+    font-size: 15px;
+  }
+
+  .footer-col h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .footer-col ul { list-style: none; }
+
+  .footer-col li {
+    margin-bottom: 10px;
+  }
+
+  .footer-col a {
+    color: var(--cream);
+    text-decoration: none;
+    font-family: 'Newsreader', serif;
+    font-size: 16px;
+    transition: color 0.3s, padding-left 0.3s;
+    display: inline-block;
+  }
+
+  .footer-col a:hover {
+    color: var(--amber);
+    padding-left: 4px;
+  }
+
+  .footer-bottom {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 32px;
+    border-top: 1px solid rgba(241, 233, 220, 0.15);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(241, 233, 220, 0.4);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 120px 24px 60px;
+    }
+    .hero-side { justify-self: start; }
+    .hero-meta { position: static; text-align: left; margin-top: 40px; }
+    .hero-visual { display: none; }
+    nav { padding: 20px 24px; }
+    .nav-links { gap: 20px; }
+    .nav-links a:not(:last-child) { display: none; }
+    section.content { padding: 100px 24px; }
+    .brew-container { grid-template-columns: 1fr; gap: 40px; }
+    .brew-detail { padding: 32px; }
+    .brew-title { font-size: 44px; }
+    .roast-display { grid-template-columns: 1fr; gap: 40px; }
+    .origins-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .footer-brand { grid-column: span 2; }
+    .marquee span { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Meridian</div>
+  <div class="nav-links">
+    <a href="#brew">Brew</a>
+    <a href="#roasts">Roasts</a>
+    <a href="#origins">Origins</a>
+    <a href="#shop">Shop</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-meta fade-up">
+    <div>Est. 2019<span class="dash"> — </span>Portland, OR</div>
+    <div>Vol. 07 / The Slow Cup</div>
+    <div>Sourced direct, roasted weekly</div>
+  </div>
+
+  <div class="fade-up">
+    <h1 class="display hero-title">
+      Coffee,<br>
+      slowed <em>down</em><br>
+      <span class="amp">&amp;</span> done<br>
+      <em>right.</em>
+    </h1>
+  </div>
+
+  <div class="hero-side fade-up">
+    <div class="hero-kicker">Field Notes No. 07</div>
+    <p>
+      We roast small batches in a cast-iron drum, pull shots by hand, and refuse to
+      shout about it. This is coffee as it ought to be — <em>unhurried, honest,
+      astonishingly good</em>. Pour yourself something worth the wait.
+    </p>
+    <button class="cta" onclick="document.getElementById('brew').scrollIntoView({behavior:'smooth'})">
+      Begin the Ritual <span class="arrow">↓</span>
+    </button>
+  </div>
+
+  <!-- Circular stamp -->
+  <div class="hero-visual">
+    <svg class="ring-text" viewBox="0 0 200 200">
+      <defs>
+        <path id="circle" d="M 100, 100 m -80, 0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0"/>
+      </defs>
+      <text>
+        <textPath href="#circle">SINGLE ORIGIN · SMALL BATCH · SINCE 2019 · HAND ROASTED · </textPath>
+      </text>
+      <circle cx="100" cy="100" r="4" class="dot"/>
+    </svg>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee">
+    <span>Ethiopia Yirgacheffe</span>
+    <span>Colombia Huila</span>
+    <span>Kenya Nyeri</span>
+    <span>Guatemala Huehuetenango</span>
+    <span>Costa Rica Tarrazú</span>
+    <span>Rwanda Nyamasheke</span>
+    <span>Ethiopia Yirgacheffe</span>
+    <span>Colombia Huila</span>
+    <span>Kenya Nyeri</span>
+    <span>Guatemala Huehuetenango</span>
+    <span>Costa Rica Tarrazú</span>
+    <span>Rwanda Nyamasheke</span>
+  </div>
+</div>
+
+<!-- BREW METHODS -->
+<section class="content" id="brew">
+  <div class="section-label">Chapter One — The Method</div>
+  <h2 class="section-title display">Six ways to <em>coax</em> something extraordinary out of a single bean.</h2>
+
+  <div class="brew-container">
+    <ul class="brew-list" id="brewList">
+      <li class="brew-item active" data-method="espresso">
+        <span class="brew-name">Espresso</span>
+        <span class="brew-num">01</span>
+      </li>
+      <li class="brew-item" data-method="v60">
+        <span class="brew-name">Hario V60</span>
+        <span class="brew-num">02</span>
+      </li>
+      <li class="brew-item" data-method="chemex">
+        <span class="brew-name">Chemex</span>
+        <span class="brew-num">03</span>
+      </li>
+      <li class="brew-item" data-method="aeropress">
+        <span class="brew-name">AeroPress</span>
+        <span class="brew-num">04</span>
+      </li>
+      <li class="brew-item" data-method="french">
+        <span class="brew-name">French Press</span>
+        <span class="brew-num">05</span>
+      </li>
+      <li class="brew-item" data-method="moka">
+        <span class="brew-name">Moka Pot</span>
+        <span class="brew-num">06</span>
+      </li>
+    </ul>
+
+    <div class="brew-detail" id="brewDetail">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ROAST SLIDER -->
+<section class="roast-section" id="roasts">
+  <div class="roast-container">
+    <div class="section-label">Chapter Two — The Fire</div>
+    <h2 class="section-title display">The roast decides <em>everything</em>.</h2>
+
+    <div class="roast-display">
+      <div class="bean-visual">
+        <svg class="bean-svg" viewBox="0 0 400 400">
+          <defs>
+            <radialGradient id="beanGrad" cx="40%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#D4A574" id="beanStop1"/>
+              <stop offset="100%" stop-color="#6B3410" id="beanStop2"/>
+            </radialGradient>
+            <filter id="beanShadow">
+              <feDropShadow dx="0" dy="12" stdDeviation="20" flood-opacity="0.4"/>
+            </filter>
+          </defs>
+          <!-- ground/shadow -->
+          <ellipse cx="200" cy="360" rx="120" ry="10" fill="rgba(0,0,0,0.25)"/>
+          <!-- bean body -->
+          <ellipse class="bean-body" cx="200" cy="200" rx="130" ry="170" fill="url(#beanGrad)" filter="url(#beanShadow)" transform="rotate(-8 200 200)"/>
+          <!-- center crease -->
+          <path d="M 200 50 Q 180 200 200 350" stroke="rgba(0,0,0,0.45)" stroke-width="3" fill="none" transform="rotate(-8 200 200)"/>
+          <path d="M 200 50 Q 220 200 200 350" stroke="rgba(0,0,0,0.25)" stroke-width="1.5" fill="none" transform="rotate(-8 200 200)"/>
+          <!-- highlight -->
+          <ellipse class="bean-highlight" cx="160" cy="140" rx="32" ry="55" fill="rgba(255,235,210,0.22)" transform="rotate(-20 160 140)"/>
+        </svg>
+      </div>
+
+      <div class="roast-info">
+        <h3 id="roastTitle">City <em>Roast</em></h3>
+        <p id="roastDesc">
+          The sweet spot for most origin-forward coffee. Roasted just past first crack —
+          where acidity, sweetness, and body hold hands. You'll taste <em>the farm</em>, not the fire.
+        </p>
+        <div class="roast-meta">
+          <div class="roast-meta-item">
+            <div class="mono">Development</div>
+            <div class="value" id="roastDev">11:30</div>
+          </div>
+          <div class="roast-meta-item">
+            <div class="mono">Drop Temp</div>
+            <div class="value" id="roastTemp">418°F</div>
+          </div>
+          <div class="roast-meta-item">
+            <div class="mono">Agtron</div>
+            <div class="value" id="roastAgtron">58</div>
+          </div>
+        </div>
+
+        <div class="slider-container">
+          <input type="range" id="roastSlider" min="0" max="4" value="2" step="1" style="display:none;">
+          <div class="slider-track" id="sliderTrack">
+            <div class="slider-fill" id="sliderFill" style="width: 50%;"></div>
+            <div class="slider-thumb" id="sliderThumb" style="left: 50%;"></div>
+          </div>
+          <div class="slider-ticks" id="sliderTicks">
+            <span data-idx="0">Cinnamon</span>
+            <span data-idx="1">Light</span>
+            <span data-idx="2" class="active-tick">City</span>
+            <span data-idx="3">Full City</span>
+            <span data-idx="4">French</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORIGINS -->
+<section class="content" id="origins">
+  <div class="section-label">Chapter Three — The Source</div>
+  <h2 class="section-title display">Three harvests. Three continents. One obsession with <em>terroir</em>.</h2>
+
+  <div class="origins-grid">
+    <div class="origin-card">
+      <div class="origin-header">
+        <span class="origin-num">No. 01</span>
+        <span class="origin-region">East Africa</span>
+      </div>
+      <div class="origin-name">Yirgacheffe</div>
+      <div class="origin-sub">Gedeb, Ethiopia</div>
+      <div class="origin-notes">
+        <span class="note-chip">Bergamot</span>
+        <span class="note-chip">Jasmine</span>
+        <span class="note-chip">Lemon zest</span>
+      </div>
+      <div class="origin-body">
+        Washed heirloom varietals from 2,050m, fermented slowly in concrete tanks.
+        A coffee that drinks like tea — bright, perfumed, alive.
+      </div>
+      <div class="origin-altitude">
+        <span>2,050m</span>
+        <span>Washed process</span>
+      </div>
+    </div>
+
+    <div class="origin-card">
+      <div class="origin-header">
+        <span class="origin-num">No. 02</span>
+        <span class="origin-region">South America</span>
+      </div>
+      <div class="origin-name">Huila</div>
+      <div class="origin-sub">Pitalito, Colombia</div>
+      <div class="origin-notes">
+        <span class="note-chip">Milk chocolate</span>
+        <span class="note-chip">Red apple</span>
+        <span class="note-chip">Brown sugar</span>
+      </div>
+      <div class="origin-body">
+        From the small farm of Don Eliseo, tended by hand across three generations.
+        Honey-processed Castillo with the body of a dessert.
+      </div>
+      <div class="origin-altitude">
+        <span>1,780m</span>
+        <span>Honey process</span>
+      </div>
+    </div>
+
+    <div class="origin-card">
+      <div class="origin-header">
+        <span class="origin-num">No. 03</span>
+        <span class="origin-region">Central America</span>
+      </div>
+      <div class="origin-name">Huehuetenango</div>
+      <div class="origin-sub">La Libertad, Guatemala</div>
+      <div class="origin-notes">
+        <span class="note-chip">Dark cocoa</span>
+        <span class="note-chip">Black cherry</span>
+        <span class="note-chip">Walnut</span>
+      </div>
+      <div class="origin-body">
+        Grown on the northern slopes where hot winds from Mexico meet mountain air.
+        A bold, syrupy coffee with a finish that lingers like a good record.
+      </div>
+      <div class="origin-altitude">
+        <span>1,920m</span>
+        <span>Fully washed</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY QUOTE -->
+<section class="quote-section">
+  <blockquote class="display">
+    The difference between a good cup and a <strong>great</strong> one is usually five minutes of attention nobody felt like giving.
+  </blockquote>
+  <div class="quote-attrib">Maren Holtz, Head Roaster</div>
+</section>
+
+<!-- FOOTER -->
+<footer id="shop">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h2 class="display">Start your<br>morning <em>slower.</em></h2>
+      <p>A subscription for the unhurried. Fresh roasts delivered the week they're roasted. Pause or cancel any time — we won't be weird about it.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">Subscriptions</a></li>
+        <li><a href="#">Single Bags</a></li>
+        <li><a href="#">Gift Sets</a></li>
+        <li><a href="#">Equipment</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="#">Brew Guides</a></li>
+        <li><a href="#">Journal</a></li>
+        <li><a href="#">Our Roasters</a></li>
+        <li><a href="#">Sourcing</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="#">SE Division Café</a></li>
+        <li><a href="#">Roastery Tours</a></li>
+        <li><a href="#">Wholesale</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2026 Meridian Coffee Co.</div>
+    <div>Portland · Brooklyn · Mexico City</div>
+  </div>
+</footer>
+
+<script>
+  // ========= BREW METHODS =========
+  const brewData = {
+    espresso: {
+      tag: 'Method 01 / Pressure',
+      title: 'Espresso',
+      subtitle: 'A nine-second argument, settled',
+      dose: '18g in, 36g out',
+      time: '27–32 sec',
+      grind: 'Very fine',
+      desc: 'The loudest conversation coffee has with itself. Nine bars of pressure, a tight stream the color of honey, a crema that holds a sugar crystal for two full seconds. <em>If it runs fast, grind finer. If it stalls, walk it back.</em> That\'s the whole secret.'
+    },
+    v60: {
+      tag: 'Method 02 / Pour-Over',
+      title: 'Hario V60',
+      subtitle: 'The clarity test',
+      dose: '22g coffee',
+      time: '3:00 total',
+      grind: 'Medium-fine',
+      desc: 'Sixty-degree spiral ribs, a single hole, nowhere for the coffee to hide. A bloom, four gentle pours, and you learn everything about a bean in three minutes. <em>This is the brewer that taught a generation what acidity really means.</em>'
+    },
+    chemex: {
+      tag: 'Method 03 / Pour-Over',
+      title: 'Chemex',
+      subtitle: 'Coffee as still life',
+      dose: '42g coffee',
+      time: '4:30 total',
+      grind: 'Medium-coarse',
+      desc: 'Bonded filters thick enough to strain out oils the palate would rather not meet. The result is uncommonly clean — tea-like body, quiet sweetness, a finish that stops exactly where it should. <em>Brew for two, sit by a window, don\'t check your phone.</em>'
+    },
+    aeropress: {
+      tag: 'Method 04 / Immersion',
+      title: 'AeroPress',
+      subtitle: 'Travel-sized alchemy',
+      dose: '17g coffee',
+      time: '1:30 total',
+      grind: 'Fine-medium',
+      desc: 'Rubber plunger, plastic chamber, rules you can break without consequence. Inverted, upright, bypassed, diluted — there\'s a recipe for every mood. <em>The best single-cup brewer ever invented by accident.</em>'
+    },
+    french: {
+      tag: 'Method 05 / Immersion',
+      title: 'French Press',
+      subtitle: 'Weight over clarity',
+      dose: '60g / liter',
+      time: '4:00 steep',
+      grind: 'Coarse',
+      desc: 'Full immersion, metal mesh, no filter paper to strip the body away. What you get is dense, textured, a little silty — coffee that has weight, that stays warm in the mouth. <em>A Sunday morning brewer, never a Monday one.</em>'
+    },
+    moka: {
+      tag: 'Method 06 / Pressure',
+      title: 'Moka Pot',
+      subtitle: 'The stovetop inheritance',
+      dose: 'Fill basket level',
+      time: '5 min on low',
+      grind: 'Medium-fine',
+      desc: 'Bialetti, 1933, an octagon of aluminum that sits on every Italian stove. Not quite espresso, not quite anything else — concentrated, syrupy, unmistakable. <em>The coffee that made your grandmother\'s kitchen smell like home.</em>'
+    }
+  };
+
+  function renderBrew(method) {
+    const d = brewData[method];
+    document.getElementById('brewDetail').innerHTML = `
+      <div class="brew-tag">${d.tag}</div>
+      <div class="brew-title display">${d.title}</div>
+      <div class="brew-subtitle">${d.subtitle}</div>
+      <div class="brew-stats">
+        <div class="brew-stat">
+          <div class="stat-label">Dose</div>
+          <div class="stat-value">${d.dose}</div>
+        </div>
+        <div class="brew-stat">
+          <div class="stat-label">Time</div>
+          <div class="stat-value">${d.time}</div>
+        </div>
+        <div class="brew-stat">
+          <div class="stat-label">Grind</div>
+          <div class="stat-value">${d.grind}</div>
+        </div>
+      </div>
+      <div class="brew-desc">${d.desc}</div>
+    `;
+  }
+
+  document.querySelectorAll('.brew-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.brew-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      renderBrew(item.dataset.method);
+    });
+  });
+  renderBrew('espresso');
+
+  // ========= ROAST SLIDER =========
+  const roasts = [
+    {
+      name: 'Cinnamon <em>Roast</em>',
+      desc: 'Pulled just as first crack finishes. Bright, almost herbal, with a sharp citric acidity most drinkers aren\'t quite ready for. <em>A Nordic preference.</em> Drink it black or not at all.',
+      dev: '09:10', temp: '401°F', agtron: '75',
+      color1: '#E8C89A', color2: '#A8743F'
+    },
+    {
+      name: 'Light <em>Roast</em>',
+      desc: 'Florals intact, origin character loud, body on the thin side. <em>What specialty coffee tastes like when no one is hiding anything.</em> Best served on paper, not cloth.',
+      dev: '10:30', temp: '410°F', agtron: '67',
+      color1: '#D9A574', color2: '#8B5A2B'
+    },
+    {
+      name: 'City <em>Roast</em>',
+      desc: 'The sweet spot for most origin-forward coffee. Roasted just past first crack — where acidity, sweetness, and body hold hands. <em>You\'ll taste the farm, not the fire.</em>',
+      dev: '11:30', temp: '418°F', agtron: '58',
+      color1: '#C48A5A', color2: '#6B3410'
+    },
+    {
+      name: 'Full City <em>Roast</em>',
+      desc: 'Into the edges of second crack. Caramel deepens, origin recedes a half-step, body thickens. <em>The classic American espresso base.</em> Plays well with milk, plays better without.',
+      dev: '13:00', temp: '435°F', agtron: '48',
+      color1: '#8F5A2B', color2: '#4A2108'
+    },
+    {
+      name: 'French <em>Roast</em>',
+      desc: 'Past second crack, oils on the surface, bittersweet and smoke-kissed. <em>The roast that built a hundred diners and one Left Bank stereotype.</em> Strong, unrepentant, loved for reasons that have little to do with the bean itself.',
+      dev: '15:20', temp: '456°F', agtron: '32',
+      color1: '#4A2108', color2: '#1A0A04'
+    }
+  ];
+
+  const slider = {
+    track: document.getElementById('sliderTrack'),
+    thumb: document.getElementById('sliderThumb'),
+    fill: document.getElementById('sliderFill'),
+    idx: 2,
+    dragging: false
+  };
+
+  function setRoast(idx) {
+    idx = Math.max(0, Math.min(4, Math.round(idx)));
+    slider.idx = idx;
+    const r = roasts[idx];
+    const pct = (idx / 4) * 100;
+    slider.thumb.style.left = pct + '%';
+    slider.fill.style.width = pct + '%';
+
+    document.getElementById('roastTitle').innerHTML = r.name;
+    document.getElementById('roastDesc').innerHTML = r.desc;
+    document.getElementById('roastDev').textContent = r.dev;
+    document.getElementById('roastTemp').textContent = r.temp;
+    document.getElementById('roastAgtron').textContent = r.agtron;
+
+    document.getElementById('beanStop1').setAttribute('stop-color', r.color1);
+    document.getElementById('beanStop2').setAttribute('stop-color', r.color2);
+
+    document.querySelectorAll('.slider-ticks span').forEach((s, i) => {
+      s.classList.toggle('active-tick', i === idx);
+    });
+  }
+
+  function updateFromEvent(e) {
+    const rect = slider.track.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const pct = Math.max(0, Math.min(1, x / rect.width));
+    setRoast(pct * 4);
+  }
+
+  slider.thumb.addEventListener('mousedown', (e) => { slider.dragging = true; e.preventDefault(); });
+  slider.thumb.addEventListener('touchstart', (e) => { slider.dragging = true; });
+  slider.track.addEventListener('click', updateFromEvent);
+
+  window.addEventListener('mousemove', (e) => { if (slider.dragging) updateFromEvent(e); });
+  window.addEventListener('touchmove', (e) => { if (slider.dragging) updateFromEvent(e); });
+  window.addEventListener('mouseup', () => { slider.dragging = false; });
+  window.addEventListener('touchend', () => { slider.dragging = false; });
+
+  document.querySelectorAll('.slider-ticks span').forEach(s => {
+    s.addEventListener('click', () => setRoast(parseInt(s.dataset.idx)));
+  });
+
+  // ========= Scroll reveal =========
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.origin-card, .section-title, .section-label').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1)';
+    io.observe(el);
+  });
+</script>
+
+</body>
+</html>
