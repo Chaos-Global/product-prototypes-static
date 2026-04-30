@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beagle World</title>
+  <style>
+    :root {
+      --cream: #fff7ef;
+      --caramel: #e6b17e;
+      --brown: #7a4b2b;
+      --dark: #2f221a;
+      --tan: #f3d7b6;
+      --white: #fffdf9;
+      --panel: rgba(255, 253, 249, 0.82);
+      --border: rgba(122, 75, 43, 0.16);
+      --shadow: 0 18px 45px rgba(77, 48, 27, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--dark);
+      background:
+        radial-gradient(circle at top left, rgba(230,177,126,0.32), transparent 28%),
+        radial-gradient(circle at top right, rgba(243,215,182,0.38), transparent 24%),
+        linear-gradient(180deg, #fffaf4, #fff3e7 55%, #ffefdf 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(255, 247, 239, 0.8);
+      border-bottom: 1px solid rgba(122, 75, 43, 0.08);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: 0.03em;
+      color: var(--brown);
+    }
+
+    .paw {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--caramel), var(--tan));
+      box-shadow: var(--shadow);
+      font-size: 1.2rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #7e6656;
+      font-weight: 600;
+    }
+
+    .nav-links a:hover { color: var(--brown); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 24px;
+      align-items: center;
+      padding: 64px 0 30px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(230,177,126,0.16);
+      border: 1px solid rgba(122,75,43,0.12);
+      color: var(--brown);
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 14px;
+      font-size: clamp(2.6rem, 5vw, 5rem);
+      line-height: 0.94;
+      max-width: 9ch;
+      color: #452c1d;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #6d5749;
+      line-height: 1.75;
+      font-size: 1.06rem;
+      max-width: 60ch;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 16px;
+      font-weight: 800;
+      transition: transform 0.18s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brown), #9a633c);
+      color: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.55);
+      color: var(--brown);
+      border: 1px solid var(--border);
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero-card {
+      padding: 24px;
+      min-height: 420px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: auto auto -70px -70px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(230,177,126,0.35), transparent 70%);
+    }
+
+    .dog-scene {
+      position: relative;
+      height: 260px;
+      margin-top: 26px;
+    }
+
+    .dog {
+      position: absolute;
+      left: 50%;
+      top: 28px;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 170px;
+    }
+
+    .body {
+      position: absolute;
+      width: 170px;
+      height: 100px;
+      left: 45px;
+      top: 45px;
+      background: linear-gradient(135deg, #c9864f, #f0c99c);
+      border-radius: 60px 70px 50px 50px;
+      border: 3px solid rgba(92, 57, 32, 0.15);
+    }
+
+    .head {
+      position: absolute;
+      width: 92px;
+      height: 82px;
+      left: 0;
+      top: 34px;
+      background: linear-gradient(135deg, #f7e7d5, #f1d0ad);
+      border-radius: 45px;
+      border: 3px solid rgba(92, 57, 32, 0.12);
+    }
+
+    .ear, .ear2 {
+      position: absolute;
+      width: 34px;
+      height: 62px;
+      background: linear-gradient(180deg, #7a4b2b, #9d6640);
+      border-radius: 22px 22px 30px 30px;
+      top: 30px;
+    }
+
+    .ear { left: 4px; transform: rotate(16deg); }
+    .ear2 { left: 46px; transform: rotate(-10deg); }
+
+    .nose {
+      position: absolute;
+      width: 20px;
+      height: 14px;
+      left: 13px;
+      top: 45px;
+      background: #2f221a;
+      border-radius: 999px;
+    }
+
+    .eye, .eye2 {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #2f221a;
+      border-radius: 50%;
+      top: 28px;
+    }
+
+    .eye { left: 30px; }
+    .eye2 { left: 54px; }
+
+    .spot {
+      position: absolute;
+      width: 42px;
+      height: 46px;
+      left: 20px;
+      top: 18px;
+      background: rgba(122, 75, 43, 0.95);
+      border-radius: 28px;
+    }
+
+    .leg, .leg2, .leg3, .leg4 {
+      position: absolute;
+      width: 18px;
+      height: 64px;
+      background: #fff6eb;
+      bottom: -10px;
+      border-radius: 16px;
+      border: 2px solid rgba(92, 57, 32, 0.08);
+    }
+
+    .leg { left: 68px; }
+    .leg2 { left: 102px; }
+    .leg3 { left: 162px; }
+    .leg4 { left: 190px; }
+
+    .tail {
+      position: absolute;
+      width: 58px;
+      height: 16px;
+      right: -12px;
+      top: 54px;
+      background: #c9864f;
+      border-radius: 999px;
+      transform: rotate(28deg);
+    }
+
+    .ground {
+      position: absolute;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      width: 84%;
+      height: 24px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(160,110,70,0.22), transparent 70%);
+      filter: blur(6px);
+    }
+
+    section { padding: 24px 0; }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      color: #4a2f20;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: #756153;
+      max-width: 58ch;
+      line-height: 1.65;
+    }
+
+    .grid-3, .grid-2, .grid-4 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .card { padding: 22px; }
+
+    .stat {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--brown);
+      margin-bottom: 8px;
+    }
+
+    .muted { color: #745f50; line-height: 1.7; }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(230,177,126,0.18);
+      color: var(--brown);
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .feature-list {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: #745f50;
+      line-height: 1.8;
+    }
+
+    .quote {
+      padding-left: 18px;
+      border-left: 4px solid var(--caramel);
+      background: rgba(255,255,255,0.42);
+      border-radius: 0 18px 18px 0;
+    }
+
+    footer {
+      padding: 44px 0 70px;
+      text-align: center;
+      color: #836b5a;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .grid-4,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { max-width: none; }
+      .section-head {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">
+        <div class="paw">🐾</div>
+        Beagle Bliss
+      </div>
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#traits">Traits</a>
+        <a href="#care">Care</a>
+        <a href="#gallery">Fun Facts</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">🐶 Warm • Playful • Beagle Theme</div>
+        <h1>A cheerful page inspired by beagles.</h1>
+        <p>
+          This HTML design uses a soft beagle-inspired palette, rounded cards, playful shapes,
+          and a cozy personality. It is perfect for a pet site, dog club page, adoption profile,
+          or simply something adorable to look at.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#traits">See beagle traits</a>
+          <a class="btn btn-secondary" href="#care">Care tips</a>
+        </div>
+      </div>
+
+      <aside class="panel hero-card">
+        <div>
+          <div class="badge">Featured Pup</div>
+          <h3 style="margin:0; font-size:1.55rem; color:#4a2f20;">Sunny the Beagle</h3>
+          <p class="muted" style="margin:10px 0 0;">
+            Floppy ears, curious nose, and endless enthusiasm for sniffing absolutely everything.
+          </p>
+        </div>
+        <div class="dog-scene">
+          <div class="dog">
+            <div class="body"></div>
+            <div class="head">
+              <div class="spot"></div>
+              <div class="ear"></div>
+              <div class="ear2"></div>
+              <div class="eye"></div>
+              <div class="eye2"></div>
+              <div class="nose"></div>
+            </div>
+            <div class="leg"></div>
+            <div class="leg2"></div>
+            <div class="leg3"></div>
+            <div class="leg4"></div>
+            <div class="tail"></div>
+          </div>
+          <div class="ground"></div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="about">
+      <div class="section-head">
+        <h2>Why beagles are so loved</h2>
+        <p>Beagles combine charm, curiosity, friendliness, and a strong sense of adventure into one very compact hound package.</p>
+      </div>
+      <div class="grid-4">
+        <div class="panel card">
+          <div class="stat">10/10</div>
+          <div class="muted">Sniffing enthusiasm for gardens, parks, and mysterious corners.</div>
+        </div>
+        <div class="panel card">
+          <div class="stat">2</div>
+          <div class="muted">Iconic floppy ears that make every beagle instantly recognizable.</div>
+        </div>
+        <div class="panel card">
+          <div class="stat">∞</div>
+          <div class="muted">Potential reasons to wag, bounce, and look adorable at random times.</div>
+        </div>
+        <div class="panel card">
+          <div class="stat">100%</div>
+          <div class="muted">Talent for turning normal walks into detective missions.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="traits">
+      <div class="section-head">
+        <h2>Classic beagle traits</h2>
+        <p>These dogs are affectionate and social, but they are also independent thinkers with serious scent-tracking instincts.</p>
+      </div>
+      <div class="grid-3">
+        <article class="panel card">
+          <div class="badge">Personality</div>
+          <h3 style="margin-top:0; color:#4a2f20;">Friendly and lively</h3>
+          <p class="muted">Beagles usually love company, playtime, and activity. They often do well in homes where they get attention and routine.</p>
+          <ul class="feature-list">
+            <li>Curious and expressive</li>
+            <li>Great playful energy</li>
+            <li>Social with people</li>
+          </ul>
+        </article>
+
+        <article class="panel card">
+          <div class="badge">Instincts</div>
+          <h3 style="margin-top:0; color:#4a2f20;">Powered by scent</h3>
+          <p class="muted">A beagle can become completely fascinated by smells. That incredible nose is part of the breed’s charm and challenge.</p>
+          <ul class="feature-list">
+            <li>Loves following trails</li>
+            <li>Needs secure outdoor spaces</li>
+            <li>Can get distracted by scents</li>
+          </ul>
+        </article>
+
+        <article class="panel card">
+          <div class="badge">Vibe</div>
+          <h3 style="margin-top:0; color:#4a2f20;">Cute with attitude</h3>
+          <p class="muted">They can be sweet and stubborn at the same time, which somehow makes them even more lovable.</p>
+          <ul class="feature-list">
+            <li>Endearing floppy ears</li>
+            <li>Big expressive eyes</li>
+            <li>Playful hound energy</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="care">
+      <div class="section-head">
+        <h2>Simple beagle care ideas</h2>
+        <p>A beagle-themed page feels best when it includes practical, warm guidance and a friendly presentation style.</p>
+      </div>
+      <div class="grid-2">
+        <div class="panel card">
+          <h3 style="margin-top:0; color:#4a2f20;">Daily needs</h3>
+          <ul class="feature-list" style="margin-top:0;">
+            <li>Walks with time to sniff</li>
+            <li>Play sessions and puzzle toys</li>
+            <li>Consistent routines</li>
+            <li>Patient training with rewards</li>
+          </ul>
+        </div>
+        <div class="panel card quote">
+          <p class="muted" style="margin:0;">
+            The secret to a happy beagle is a good mix of movement, mental stimulation,
+            affection, and safe places to explore with that legendary nose.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="section-head">
+        <h2>Fun beagle mood board</h2>
+        <p>This layout could easily be extended into a gallery, adoption page, pet blog, or dog product landing page.</p>
+      </div>
+      <div class="grid-3">
+        <div class="panel card">
+          <div class="badge">Morning</div>
+          <p class="muted">A beagle checking the yard like a tiny detective on official business.</p>
+        </div>
+        <div class="panel card">
+          <div class="badge">Afternoon</div>
+          <p class="muted">A floppy-eared sprint across the grass after spotting something extremely important.</p>
+        </div>
+        <div class="panel card">
+          <div class="badge">Evening</div>
+          <p class="muted">A cozy nap after a long day of investigating scents and charming everyone nearby.</p>
+        </div>
+      </div>
+    </section>
+      <!-- Image Gallery Added -->
+    <section>
+      <div class="section-head">
+        <h2>Beagle Gallery</h2>
+        <p>A few adorable beagle moments.</p>
+      </div>
+      <div class="grid-3">
+        <img src="https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=800" style="width:100%; border-radius:16px;">
+        <img src="https://images.unsplash.com/photo-1558788353-f76d92427f16?q=80&w=800" style="width:100%; border-radius:16px;">
+        <img src="https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?q=80&w=800" style="width:100%; border-radius:16px;">
+      </div>
+    </section>
+
+    <!-- CSV Table Section -->
+    <section>
+      <div class="section-head">
+        <h2>Beagle Data (CSV Demo)</h2>
+        <p>This table is generated from CSV data using JavaScript.</p>
+      </div>
+      <div id="csv-table"></div>
+    </section>
+  </main>
+
+  <script>
+    const csvData = `Name,Age,Favorite Activity
+Buddy,3,Sniffing
+Lucy,5,Running
+Max,2,Playing`;
+
+    const rows = csvData.split('\n').map(r => r.split(','));
+    let html = '<table style="width:100%; border-collapse:collapse; background:white; border-radius:12px; overflow:hidden;">';
+    rows.forEach((row, i) => {
+      html += '<tr>' + row.map(cell => i===0
+        ? `<th style="padding:12px; background:#e6b17e; color:#2f221a; text-align:left;">${cell}</th>`
+        : `<td style="padding:12px; border-top:1px solid #ddd;">${cell}</td>`
+      ).join('') + '</tr>';
+    });
+    html += '</table>';
+    document.getElementById('csv-table').innerHTML = html;
+  </script>
+
+  <footer>
+    Made with paw prints, warm colors, and strong beagle energy.
+  </footer>
+</body>
+</html>
+
+  <footer>
+    Made with paw prints, warm colors, and strong beagle energy.
+  </footer>
+</body>
+</html>
