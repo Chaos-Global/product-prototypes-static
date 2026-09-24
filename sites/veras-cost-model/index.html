@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI Generation Cost Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --ground:#F5F7F9; --surface:#FFFFFF; --surface-2:#EFF2F5; --line:#DCE2E9;
+  --ink:#161B22; --ink-2:#3D4753; --muted:#6B7787;
+  --anchor:#A85F0E; --anchor-soft:#F4E3CC; --anchor-rail:#C87F22;
+  --accent:#18626F; --accent-soft:#D9E9EC;
+  --good:#2A6B46; --warn:#9E4025;
+  --bar:#9FB3BE; --bar-anchor:#C87F22;
+  --shadow:0 1px 2px rgba(22,27,34,.06),0 4px 14px rgba(22,27,34,.05);
+  --r:7px;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  color-scheme:dark;
+  --ground:#0F1319; --surface:#171C24; --surface-2:#1F252F; --line:#2B333F;
+  --ink:#E4E9F0; --ink-2:#C0C9D5; --muted:#8B96A6;
+  --anchor:#E3A054; --anchor-soft:#3A2C18; --anchor-rail:#D18C33;
+  --accent:#5DAEBF; --accent-soft:#16323A;
+  --good:#6DBB92; --warn:#E08A6E;
+  --bar:#455262; --bar-anchor:#B87B2C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#0F1319; --surface:#171C24; --surface-2:#1F252F; --line:#2B333F;
+  --ink:#E4E9F0; --ink-2:#C0C9D5; --muted:#8B96A6;
+  --anchor:#E3A054; --anchor-soft:#3A2C18; --anchor-rail:#D18C33;
+  --accent:#5DAEBF; --accent-soft:#16323A;
+  --good:#6DBB92; --warn:#E08A6E;
+  --bar:#455262; --bar-anchor:#B87B2C;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.5; margin:0; padding-inline:16px; padding-block:0 56px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1000px;margin:0 auto}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+/* ---- masthead ---- */
+header{padding-block:32px 22px;border-bottom:2px solid var(--ink);margin-bottom:22px}
+h1{font-size:clamp(23px,4.4vw,31px);font-weight:600;letter-spacing:-.022em;margin:0 0 7px;text-wrap:balance;line-height:1.15}
+.sub{color:var(--muted);max-width:62ch;margin:0}
+.stamp{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.stamp b{color:var(--anchor);font-weight:600}
+
+/* ---- controls ---- */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.controls{padding:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(182px,1fr));gap:15px 18px;margin-bottom:22px}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ctl > label{font-size:10.5px;letter-spacing:.085em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.seg{display:flex;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:2px;gap:2px}
+.seg button{
+  flex:1;min-width:0;border:0;background:transparent;color:var(--ink-2);cursor:pointer;
+  font:inherit;font-size:12px;padding:5px 3px;border-radius:3px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;transition:background .12s,color .12s;
+}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.09)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.seg button[disabled]{opacity:.34;cursor:not-allowed}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+input[type=number],select{
+  font:inherit;font-family:"IBM Plex Mono",monospace;background:var(--surface-2);color:var(--ink);
+  border:1px solid var(--line);border-radius:5px;padding:5px 8px;width:100%
+}
+input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.rowval{font-size:12.5px;color:var(--ink-2)}
+.rowval b{font-family:"IBM Plex Mono",monospace;color:var(--ink)}
+
+/* ---- sections ---- */
+h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:30px 0 11px}
+.lede{margin:0 0 14px;color:var(--ink-2);max-width:70ch}
+
+/* ---- ladder ---- */
+.ladder{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.lrow{display:grid;grid-template-columns:132px 1fr 104px;align-items:center;gap:12px;background:var(--surface);padding:11px 14px;position:relative}
+.lrow.anchor{background:var(--anchor-soft)}
+.lrow.anchor::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--anchor-rail)}
+.lname{font-weight:500;font-size:13.5px;min-width:0}
+.lrow.anchor .lname{color:var(--anchor);font-weight:600}
+.lmodel{display:block;font-size:11px;color:var(--muted);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track{height:19px;background:var(--surface-2);border-radius:3px;overflow:hidden}
+.fill{height:100%;background:var(--bar);border-radius:3px;transition:width .22s ease}
+.lrow.anchor .fill{background:var(--bar-anchor)}
+.lcost{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:14px;font-weight:500;font-variant-numeric:tabular-nums}
+
+/* extrapolated values read as provisional, not as published figures */
+.lcost.est{color:var(--muted);font-weight:400}
+.estnote{display:block;font-family:"IBM Plex Sans",sans-serif;font-size:10px;
+  font-style:italic;letter-spacing:.02em;color:var(--muted);margin-top:1px;
+  text-transform:lowercase}
+td.num.est{color:var(--muted);font-style:italic}
+.na{color:var(--muted);font-size:11.5px;font-style:italic;font-family:"IBM Plex Sans",sans-serif;font-weight:400}
+
+/* ---- table ---- */
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13px}
+th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--surface-2);position:sticky;top:0}
+th:first-child,td:first-child{text-align:left}
+tbody tr:last-child td{border-bottom:0}
+tr.anchor td{background:var(--anchor-soft);font-weight:500}
+tr.anchor td:first-child{color:var(--anchor);font-weight:600;box-shadow:inset 3px 0 0 var(--anchor-rail)}
+td.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+td.dim{color:var(--muted);font-style:italic;font-size:12px}
+
+/* ---- seat panel ---- */
+.seat{padding:16px;margin-top:12px}
+.seatgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:14px}
+.stat{border-left:2px solid var(--line);padding-left:11px}
+.stat .k{font-size:10.5px;letter-spacing:.075em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px}
+.stat .v{font-family:"IBM Plex Mono",monospace;font-size:20px;font-weight:500;letter-spacing:-.015em;line-height:1.2}
+.stat.hot{border-left-color:var(--anchor-rail)} .stat.hot .v{color:var(--anchor)}
+.stat.ok{border-left-color:var(--good)} .stat.ok .v{color:var(--good)}
+.verdict{margin-top:15px;padding:11px 13px;border-radius:5px;background:var(--surface-2);font-size:13px;line-height:1.5;border-left:3px solid var(--accent)}
+.verdict.bad{border-left-color:var(--warn)}
+.verdict b{font-family:"IBM Plex Mono",monospace}
+
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.65}
+footer p{margin:0 0 7px;max-width:76ch}
+footer a{color:var(--accent)}
+.fnote{display:block;padding-left:17px;text-indent:-17px}
+@media (max-width:560px){
+  .lrow{grid-template-columns:104px 1fr 78px;gap:9px;padding:10px}
+  .lcost{font-size:12.5px}
+  .stat .v{font-size:17px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="stamp">AI generation pricing comparison · as of 22 Sep 2026</div>
+  <h1>AI Generation Cost Model</h1>
+  <p class="sub">Compare by tier, where each tier names one model and everyone is priced on it, or pick a specific model and see every platform that carries it. Rates are derived by dividing a published subscription price by its published allowance; no vendor publishes a dollar-per-unit figure.</p>
+</header>
+
+<div class="panel controls">
+  <div class="ctl">
+    <label id="l-mode">Output</label>
+    <div class="seg" role="group" aria-labelledby="l-mode" id="seg-mode">
+      <button id="mode-image" data-v="image" aria-pressed="true">Image</button>
+      <button id="mode-video" data-v="video" aria-pressed="false">Video</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <label id="l-by">Compare by</label>
+    <div class="seg" role="group" aria-labelledby="l-by" id="seg-by">
+      <button id="by-tier" data-v="tier" aria-pressed="true">Tier</button>
+      <button id="by-model" data-v="model" aria-pressed="false">Model</button>
+    </div>
+  </div>
+  <div class="ctl" id="ctl-tier">
+    <label id="l-tier">Model tier</label>
+    <div class="seg" role="group" aria-labelledby="l-tier" id="seg-tier">
+      <button id="tier-low" data-v="low" aria-pressed="false">Low</button>
+      <button id="tier-mid" data-v="mid" aria-pressed="true">Mid</button>
+      <button id="tier-high" data-v="high" aria-pressed="false">High</button>
+    </div>
+  </div>
+  <div class="ctl" id="ctl-model" hidden>
+    <label for="model">Model</label>
+    <select id="model"></select>
+  </div>
+  <div class="ctl">
+    <label id="l-basis">Credit-rate basis</label>
+    <div class="seg" role="group" aria-labelledby="l-basis" id="seg-basis">
+      <button id="basis-pure" data-v="pure_ai" aria-pressed="true">Pure AI</button>
+      <button id="basis-entry" data-v="entry" aria-pressed="false">Entry</button>
+      <button id="basis-topup" data-v="topup" aria-pressed="false">Top-up</button>
+    </div>
+  </div>
+  <div class="ctl">
+    <label id="l-res">Resolution</label>
+    <div class="seg" role="group" aria-labelledby="l-res" id="seg-res"></div>
+  </div>
+  <div class="ctl" id="ctl-quality" hidden>
+    <label for="quality">Quality</label>
+    <select id="quality"></select>
+  </div>
+  <div class="ctl" id="ctl-secs" hidden>
+    <label for="secs">Clip length</label>
+    <input type="range" id="secs" min="1" max="20" step="1" value="5">
+    <div class="rowval"><b id="secs-v">5</b> seconds</div>
+  </div>
+  <div class="ctl">
+    <label for="vol">Generations per month</label>
+    <input type="number" id="vol" min="1" max="10000" step="1" value="120">
+  </div>
+</div>
+
+<h2>Cost per generation</h2>
+<p class="lede" id="ladder-lede"></p>
+<div class="ladder" id="ladder"></div>
+<p class="lede" id="subnotes" style="margin-top:12px;font-size:12.5px"></p>
+
+<h2>Full breakdown</h2>
+<div class="scroll">
+  <table>
+    <thead><tr>
+      <th>Platform</th><th>Model priced</th><th>Same model?</th><th>Basis</th>
+      <th>$/unit</th><th id="th-units">Units</th><th>Per generation</th><th id="th-month">Per month</th>
+    </tr></thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<h2>What a Chaos seat covers before it costs anything</h2>
+<p class="lede">Chaos Credits ship inside every Enscape, V-Ray and Corona seat. Below the allowance, generation is free. Above it, the cheapest stack of monthly top-up packs applies, priced against buying a separate Adobe Firefly subscription for the same work at the same settings.</p>
+<div class="panel seat">
+  <div class="ctl" style="max-width:300px">
+    <label for="seat">Seat</label>
+    <select id="seat">
+      <option value="100">Enscape Solo — 100 credits/mo</option>
+      <option value="500">Enscape Premium — 500 credits/mo</option>
+      <option value="1500" selected>ArchDesign Collection — 1,500 credits/mo</option>
+      <option value="500">Veras Starter — 500 credits/mo</option>
+      <option value="2000">Veras Pro — 2,000 credits/mo</option>
+      <option value="6000">Veras Ultra — 6,000 credits/mo</option>
+    </select>
+  </div>
+  <div class="seatgrid">
+    <div class="stat"><div class="k">Included covers</div><div class="v" id="s-covers">—</div></div>
+    <div class="stat"><div class="k">Credits short</div><div class="v" id="s-short">—</div></div>
+    <div class="stat hot"><div class="k">Chaos top-up / mo</div><div class="v" id="s-chaos">—</div></div>
+    <div class="stat ok"><div class="k">Firefly instead</div><div class="v" id="s-ff">—</div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+</div>
+
+<footer>
+  <p><b>Tier view.</b> Images: low = Flux 2 Klein, mid = Nano Banana 2, high = Nano Banana Pro. Video: low = Veo 3.1 Fast, mid = Veo 3.1 Standard, high = Seedance 2.5. A row marked &ldquo;sub&rdquo; does not carry that model and is priced on the nearest equivalent, with the reason listed under the chart. <b>Model view</b> drops the substitutions and shows only the platforms that actually carry the model you pick.</p>
+  <p><b>Method.</b> Pure&nbsp;AI = cheapest subscription whose value is substantially the allowance itself, which excludes bundles like Enscape where the seat buys CAD-integrated rendering and credits ride along. Entry = cheapest paid tier. Top-up = marginal rate after the allowance is spent. PromeAI publishes no plan prices and falls back to its top-up rate at every basis. Platforms that sell no top-up fall back to their plan rate on the Top-up basis.</p>
+  <p class="fnote">&mdash; No vendor bills in tokens. Chaos, xFigura, Firefly and Runway bill in credits; PromeAI in coins; Krea in compute units; Midjourney in Fast GPU-minutes. All are normalized to $/unit here.</p>
+  <p class="fnote">&mdash; <b>Veras is resolution-graduated, not flat.</b> NB 2 Image runs 5 / 10 / 15 / 20 credits across 0.5k / 1k / 2k / 4k, and Grok Image runs 5 (Fast) / 10 (1k) / 15 (2k). What collapses is the <i>model</i> ladder at 2K, where Grok, NB 2 and NB Pro all cost 15. The flat ones are the competing budget models: Firefly&rsquo;s FLUX.2 klein is 5 credits at any resolution, xFigura&rsquo;s Flux 2 Klein is 1.</p>
+  <p class="fnote">&mdash; <b>A platform is listed only when it can actually produce the configuration selected.</b> It is hidden when it does not carry the model, does not offer the resolution, or the clip length falls outside the durations it offers. A resolution nothing offers is greyed out in the control above.</p>
+  <p class="fnote">&mdash; <b>Greyed costs marked &ldquo;extrapolated from per-second cost&rdquo;</b> fall inside a platform&rsquo;s duration range but on a length it does not list, so the figure is its per-second rate times the clip length rather than a price the product quotes. Hover the note to see which lengths it does offer.</p>
+  <p class="fnote">&mdash; Chaos is the only vendor in this set publishing a sub-1K image tier, and Seedream 5 is its only model with a 3K tier.</p>
+  <p class="fnote">&mdash; <b>Quality tier names are not aligned across platforms.</b> Firefly&rsquo;s Low/Medium/High and Veras&rsquo; Medium/High or Fast/High/Extra&nbsp;High/Max are each vendor&rsquo;s own labels, and nothing published maps one to another. The default prices every platform at the setting its figures were quoted at; picking a named quality scales only the platforms that declare it.</p>
+  <p class="fnote">&mdash; <b>xFigura figures reflect in-app estimates as of 21 Sep 2026.</b></p>
+  <p>Primary sources: <a href="https://support.chaos.com/hc/en-us/articles/46871789830929-How-many-credits-does-each-operation-cost">Chaos per-operation credit table</a> (16 Sep 2026) · <a href="https://helpx.adobe.com/creative-cloud/apps/generative-ai/generative-credits-faq.html">Adobe generative credits FAQ</a> (10 Sep 2026) · <a href="https://helpx.adobe.com/firefly/web/get-started/learn-the-basics/non-adobe-models-in-adobe-products.html">Adobe partner models</a> · <a href="https://academy.runwayml.com/models-pricing">Runway models &amp; pricing</a> · <a href="https://xfigura.ai/pricing">xFigura pricing</a> · <a href="https://docs.d5render.com/user-guide/ai/account-access-to-ai-features">D5 AI access docs</a></p>
+</footer>
+</div>
+
+<script id="model-data" type="application/json">{"asOf":"2026-09-22","rates":{"Veras":{"unit":"Chaos Credit","pure_ai":{"label":"Veras Pro, named, annual","price":29.0,"units":2000,"rate":0.0145},"entry":{"label":"Veras Starter, annual","price":16.9,"units":500,"rate":0.0338},"topup":{"label":"3,000 credit/mo pack, annual","price":50.8,"units":3000,"rate":0.01693333}},"xFigura":{"unit":"credit","pure_ai":{"label":"Professional, annual","price":48.0,"units":1200,"rate":0.04},"entry":{"label":"Starter, annual","price":16.0,"units":400,"rate":0.04},"topup":null},"Adobe Firefly":{"unit":"generative credit","pure_ai":{"label":"Firefly Premium","price":199.99,"units":50000,"rate":0.0039998},"entry":{"label":"Firefly Standard","price":9.99,"units":2000,"rate":0.004995},"topup":{"label":"7,000 credit/mo add-on","price":29.99,"units":7000,"rate":0.00428429}},"Runway":{"unit":"credit","pure_ai":{"label":"Max, annual","price":76.0,"units":9500,"rate":0.008},"entry":{"label":"Standard, annual","price":12.0,"units":625,"rate":0.0192},"topup":{"label":"published API rate $0.01/credit","price":10.0,"units":1000,"rate":0.01}},"PromeAI":{"unit":"coin","pure_ai":null,"entry":null,"topup":{"label":"Pro discounted top-up, $10 = 400 coins","price":10.0,"units":400,"rate":0.025}},"Midjourney":{"unit":"Fast GPU-minute","pure_ai":{"label":"Mega, annual","price":96.0,"units":3600,"rate":0.02666667},"entry":{"label":"Basic, annual","price":8.0,"units":200,"rate":0.04},"topup":{"label":"extra GPU time $4/hr","price":4.0,"units":60,"rate":0.06666667}},"Vizcom":{"unit":"credit","pure_ai":{"label":"Professional","price":49.0,"units":20000,"rate":0.00245},"entry":{"label":"Professional","price":49.0,"units":20000,"rate":0.00245},"topup":null},"Krea":{"unit":"compute unit","pure_ai":{"label":"Max, annual","price":63.0,"units":60000,"rate":0.00105},"entry":{"label":"Pro, annual","price":21.0,"units":20000,"rate":0.00105},"topup":null},"D5 Render":{"unit":"n/a - unmetered","pure_ai":null,"entry":null,"topup":null},"LookX":{"unit":"credit","pure_ai":{"label":"Annual","price":16.58,"units":580,"rate":0.02858621},"entry":{"label":"Annual","price":16.58,"units":580,"rate":0.02858621},"topup":null}},"vendors":["Veras","xFigura","Adobe Firefly","Runway","PromeAI","Midjourney","Vizcom","Krea","D5 Render","LookX"],"imageRes":["0.5K","1K","2K","3K","4K"],"videoRes":["480p","720p","1080p","4K"],"imageSpine":{"low":"Flux 2 Klein","mid":"Nano Banana 2","high":"Nano Banana Pro"},"videoSpine":{"low":"Veo 3.1 Fast","mid":"Veo 3.1 Standard","high":"Seedance 2.5"},"imageModels":{"Flux 2 Klein":{"tier":"low","vendors":{"xFigura":{"name":"Flux 2 Klein","res":{"0.5K":1,"1K":1,"2K":1,"3K":null,"4K":1},"note":"Flat 1 credit; no resolution control."},"Adobe Firefly":{"name":"FLUX.2 klein 4B","res":{"0.5K":5,"1K":5,"2K":5,"3K":null,"4K":null},"note":"Flat 5 credits at any resolution. Limited-time promotional rate."}}},"Nano Banana 2":{"tier":"mid","vendors":{"Veras":{"name":"NB 2 Image","res":{"0.5K":5,"1K":10,"2K":15,"3K":null,"4K":20}},"xFigura":{"name":"Nano Banana 2","res":{"0.5K":null,"1K":3,"2K":6,"3K":null,"4K":12}},"Adobe Firefly":{"name":"Gemini 3.1 (NB2)","res":{"0.5K":null,"1K":20,"2K":20,"3K":null,"4K":30},"note":"Limited-time promotional rate."},"PromeAI":{"name":"Nano Banana 2","res":{"0.5K":null,"1K":null,"2K":10,"3K":null,"4K":null}}}},"Nano Banana Pro":{"tier":"high","vendors":{"Veras":{"name":"NB Pro Image","res":{"0.5K":null,"1K":15,"2K":15,"3K":null,"4K":35}},"xFigura":{"name":"Nano Banana Pro","res":{"0.5K":null,"1K":5,"2K":10,"3K":null,"4K":20}},"Adobe Firefly":{"name":"Gemini 3 (NB Pro)","res":{"0.5K":null,"1K":40,"2K":40,"3K":null,"4K":40},"note":"Flat 40 credits at any resolution. Limited-time promotional rate."},"Runway":{"name":"Nano Banana Pro","res":{"0.5K":null,"1K":20,"2K":20,"3K":null,"4K":40}},"PromeAI":{"name":"Nano Banana Pro","res":{"0.5K":null,"1K":null,"2K":10,"3K":null,"4K":null}}}},"Nano Banana Pro 2":{"vendors":{"Runway":{"name":"Nano Banana Pro 2","res":{"0.5K":null,"1K":7,"2K":11,"3K":null,"4K":16}}}},"Gen-4 Image":{"vendors":{"Runway":{"name":"Gen-4 Image","res":{"0.5K":null,"1K":5,"2K":8,"3K":null,"4K":null},"note":"Runway labels these 720p and 1080p rather than 1K and 2K."}}},"GPT Image 2":{"vendors":{"Adobe Firefly":{"name":"GPT Image 2","res":{"0.5K":5,"1K":5,"2K":5,"3K":null,"4K":null},"quoted_at":"Low","quality":{"Low":1.0,"Medium":4.0,"High":16.0},"note":"Adobe tiers by quality, not resolution: Low 5, Medium 20, High 80 credits."},"PromeAI":{"name":"GPT Image 2","res":{"0.5K":null,"1K":8,"2K":16,"3K":null,"4K":null}},"Veras":{"name":"GPT Image 2","res":{"0.5K":null,"1K":5,"2K":15,"3K":null,"4K":null},"quality":{"Medium":1.0,"High":5.0},"quality_at":"Medium","note":"Quoted at Medium (0.5x in-app). High is 2.5x in-app, so 5x the quoted price.","quoted_at":"Medium"}}},"Seedream 4.5":{"vendors":{"PromeAI":{"name":"Seedream 4.5","res":{"0.5K":null,"1K":6,"2K":null,"3K":null,"4K":null}}}},"Firefly Image 4":{"vendors":{"Adobe Firefly":{"name":"Firefly Image 4","res":{"0.5K":0,"1K":0,"2K":0,"3K":null,"4K":0},"note":"No credit cost at all on any paid Firefly plan."}}},"Render / Refine":{"vendors":{"Vizcom":{"name":"Render / Refine","res":{"0.5K":null,"1K":10,"2K":10,"3K":null,"4K":10}}}},"Midjourney prompt":{"vendors":{"Midjourney":{"name":"Fast prompt","res":{"0.5K":null,"1K":1.0,"2K":1.0,"3K":null,"4K":null},"note":"Billed in Fast GPU-minutes; an SD prompt is 0.8 and an HD prompt 1.3."}}},"D5 unmetered":{"vendors":{"D5 Render":{"name":"unmetered on Pro","res":{"0.5K":0,"1K":0,"2K":0,"3K":null,"4K":0},"note":"No meter on the $30/mo Pro tier."}}},"Grok Imagine 2":{"vendors":{"Veras":{"name":"Grok Imagine 2","res":{"0.5K":null,"1K":10,"2K":15,"3K":null,"4K":null},"fast_mode":5,"note":"Also a Fast mode at 5 credits."}}},"Grok Imagine 1":{"vendors":{"Veras":{"name":"Grok Imagine 1","res":{"0.5K":null,"1K":10,"2K":15,"3K":null,"4K":null},"fast_mode":5,"note":"Same pricing as Grok Imagine 2. Fast mode 5 credits."}}},"GPT Image 2.5":{"vendors":{"Veras":{"name":"GPT Image 2.5","res":{"0.5K":null,"1K":5,"2K":15,"3K":null,"4K":null},"quality":{"High":0.5,"Extra High":1.0,"Max":2.5},"quality_at":"Extra High","note":"Quoted at Extra High.","quoted_at":"Extra High"}}},"Seedream 5 Pro":{"vendors":{"Veras":{"name":"Seedream 5 Pro","res":{"0.5K":null,"1K":5,"2K":10,"3K":null,"4K":null}},"Runway":{"name":"Seedream 5.0 Pro","res":{"0.5K":null,"1K":5,"2K":10,"3K":null,"4K":null}}}},"Seedream 5":{"vendors":{"Veras":{"name":"Seedream 5","res":{"0.5K":null,"1K":null,"2K":15,"3K":20,"4K":null},"note":"Prices above Seedream 5 Pro at 2K (15 vs 10) and is the only Veras model with a 3K tier. Confirmed as found, 22 Sep 2026."}}}},"videoModels":{"Veo 3.1 Fast":{"tier":"low","vendors":{"Veras":{"name":"Veo 3.1 Fast","res":{"480p":null,"720p":10,"1080p":15,"4K":35},"durations":{"720p":[4,6,8],"1080p":[8],"4K":[8]},"note":"At 1080p and 4K only an 8-second clip is selectable."},"Adobe Firefly":{"name":"Veo 3.1 Fast","res":{"480p":null,"720p":20,"1080p":20,"4K":null},"note":"Limited-time promotional rate."}}},"Veo 3.1 Standard":{"tier":"mid","vendors":{"Veras":{"name":"Veo 3.1","res":{"480p":null,"720p":40,"1080p":45,"4K":65},"durations":{"720p":[4,6,8],"1080p":[8],"4K":[8]},"note":"Veras labels it plain 'Veo 3.1'. At 1080p and 4K only an 8-second clip is selectable."},"Adobe Firefly":{"name":"Veo 3.1","res":{"480p":null,"720p":50,"1080p":50,"4K":null},"note":"Adobe's unqualified 'Veo 3.1' is the Standard variant. Limited-time promotional rate."}}},"Veo 3.1 (single SKU)":{"vendors":{"xFigura":{"name":"Veo 3.1","res":{"480p":null,"720p":3,"1080p":3,"4K":null},"bill":{"mode":"per_sec","min_seconds":6},"note":"18 credits for a 6-second clip = 3/sec, no 1080p premium. Five seconds is not selectable."},"Runway":{"name":"Veo 3.1 (no audio)","res":{"480p":null,"720p":20,"1080p":20,"4K":null},"note":"40/sec with audio. Runway does not split Fast and Standard."}}},"Veo 3.1 Lite":{"vendors":{"Veras":{"name":"Veo 3.1 Lite","res":{"480p":null,"720p":5,"1080p":10,"4K":null},"durations":{"720p":[4,6,8],"1080p":[8]},"note":"At 1080p only an 8-second clip is selectable."}}},"Seedance 2.5":{"tier":"high","vendors":{"Veras":{"name":"Seedance 2.5","res":{"480p":10,"720p":25,"1080p":null,"4K":null},"durations":{"480p":[5,10,15,20,30],"720p":[5,10,15,20,30]},"note":"125 credits for a 5-second 720p clip. No 1080p option."},"xFigura":{"name":"Seedance 2.5","res":{"480p":null,"720p":14,"1080p":31,"4K":null},"note":"xFigura's only resolution-tiered video model."},"Runway":{"name":"Seedance 2.5","res":{"480p":null,"720p":30,"1080p":null,"4K":null},"note":"Plus 34 (1080p) / 15 (720p) / 10 (480p) per second of INPUT video on video-to-video runs. No 1080p generation rate published."},"PromeAI":{"name":"Seedance 2.5","res":{"480p":null,"720p":60,"1080p":null,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,300],[10,600]]},"durations":{"720p":[5,10]}}}},"Seedance 2.0":{"vendors":{"Adobe Firefly":{"name":"Seedance 2.0","res":{"480p":null,"720p":90,"1080p":180,"4K":null},"note":"480p is 40/sec. Limited-time promotional rate."},"Runway":{"name":"Seedance 2.0","res":{"480p":null,"720p":36,"1080p":40,"4K":150}},"PromeAI":{"name":"Seedance 2.0","res":{"480p":null,"720p":40,"1080p":null,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,200],[10,400]]},"durations":{"720p":[5,10]}},"Veras":{"name":"Seedance 2.0","res":{"480p":5,"720p":8,"1080p":12,"4K":null},"durations":{"480p":[5,10],"720p":[5,10],"1080p":[5,10]}}}},"Seedance 2.0 Mini":{"vendors":{"PromeAI":{"name":"Seedance 2.0 Mini","res":{"480p":null,"720p":20,"1080p":null,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,100],[10,200]]},"durations":{"720p":[5,10]}}}},"Seedance 2 (per clip)":{"vendors":{"xFigura":{"name":"Seedance 2","res":{"480p":null,"720p":8,"1080p":8,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,8],[10,16],[15,16]]},"note":"8 credits to 5s, 16 to 10s, and still 16 at 15s, so a 10-second clip is strictly dominated.","durations":{"720p":[5,10,15],"1080p":[5,10,15]}}}},"Kling 3.0":{"vendors":{"Adobe Firefly":{"name":"Kling 3.0","res":{"480p":null,"720p":20,"1080p":25,"4K":null},"note":"Without audio; 25 and 35 with.","durations":{"720p":[5,10,15],"1080p":[5,10,15]}},"Runway":{"name":"Kling 3.0 Std","res":{"480p":null,"720p":9,"1080p":9,"4K":null},"note":"Pro tier is 12/sec; 13 and 17 with audio."}}},"Kling 2.5 Turbo":{"vendors":{"Adobe Firefly":{"name":"Kling 2.5 Turbo","res":{"480p":null,"720p":null,"1080p":15,"4K":null},"durations":{"1080p":[5,10]}}}},"Kling AI":{"vendors":{"xFigura":{"name":"Kling AI","res":{"480p":null,"720p":3,"1080p":3,"4K":null},"note":"5 or 10 seconds only, no resolution control.","durations":{"720p":[5,10],"1080p":[5,10]}}}},"Gemini Omni Video":{"vendors":{"Veras":{"name":"Gemini Omni Video","res":{"480p":null,"720p":10,"1080p":null,"4K":null}}}},"Grok Imagine 1.5":{"vendors":{"Veras":{"name":"Grok Imagine 1.5","res":{"480p":10,"720p":10,"1080p":null,"4K":null},"durations":{"480p":[4,6,8,10,15],"720p":[4,6,8,10,15]}}}},"Animate":{"vendors":{"Vizcom":{"name":"Animate","res":{"480p":null,"720p":11,"1080p":11,"4K":null}}}},"Midjourney video":{"vendors":{"Midjourney":{"name":"HD 720p video","res":{"480p":null,"720p":1.4,"1080p":null,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,7.0]]},"note":"7 Fast GPU-minutes per 5-second HD clip.","durations":{"720p":[5]}}}},"Runway Gen-4.5":{"vendors":{"Veras":{"name":"Runway Gen-4.5","res":{"480p":null,"720p":13,"1080p":13,"4K":null},"durations":{"720p":[5,8,10],"1080p":[5,8,10]}},"Runway":{"name":"Gen-4.5","res":{"480p":null,"720p":12,"1080p":12,"4K":null},"durations":{"720p":[5,8,10],"1080p":[5,8,10]}}}},"Runway Gen-4 Turbo":{"vendors":{"Veras":{"name":"Runway Gen-4 Turbo","res":{"480p":null,"720p":6,"1080p":null,"4K":null},"durations":{"720p":[5,10]}},"Runway":{"name":"Gen-4 Video Turbo","res":{"480p":null,"720p":5,"1080p":5,"4K":null},"durations":{"720p":[5,10]}}}}},"imageLadder":{"low":{"Veras":{"name":"Seedream 5 Pro","res":{"0.5K":null,"1K":5,"2K":10,"3K":null,"4K":null},"canonical":"Seedream 5 Pro","sub":true,"why":"Chaos carries no Flux klein model. Seedream 5 Pro is its cheapest, at 5 credits at 1K and 10 at 2K."},"xFigura":{"name":"Flux 2 Klein","res":{"0.5K":1,"1K":1,"2K":1,"3K":null,"4K":1},"note":"Flat 1 credit; no resolution control.","canonical":"Flux 2 Klein","sub":false},"Adobe Firefly":{"name":"FLUX.2 klein 4B","res":{"0.5K":5,"1K":5,"2K":5,"3K":null,"4K":null},"note":"Flat 5 credits at any resolution. Limited-time promotional rate.","canonical":"Flux 2 Klein","sub":false},"Runway":{"name":"Gen-4 Image","res":{"0.5K":null,"1K":5,"2K":8,"3K":null,"4K":null},"note":"Runway labels these 720p and 1080p rather than 1K and 2K.","canonical":"Gen-4 Image","sub":true,"why":"Runway carries no Flux klein model. Gen-4 Image is its cheapest."},"PromeAI":{"name":"Seedream 4.5","res":{"0.5K":null,"1K":6,"2K":null,"3K":null,"4K":null},"canonical":"Seedream 4.5","sub":true,"why":"No Flux klein model. Seedream 4.5 is the cheapest listed and is 1K only."},"Midjourney":{"name":"Fast prompt","res":{"0.5K":null,"1K":1.0,"2K":1.0,"3K":null,"4K":null},"note":"Billed in Fast GPU-minutes; an SD prompt is 0.8 and an HD prompt 1.3.","canonical":"Midjourney prompt","sub":true,"why":"Closed model set; no third-party models at all."},"Vizcom":{"name":"Render / Refine","res":{"0.5K":null,"1K":10,"2K":10,"3K":null,"4K":10},"canonical":"Render / Refine","sub":true,"why":"Closed model set."},"D5 Render":{"name":"unmetered on Pro","res":{"0.5K":0,"1K":0,"2K":0,"3K":null,"4K":0},"note":"No meter on the $30/mo Pro tier.","canonical":"D5 unmetered","sub":true,"why":"No meter on paid tiers."}},"mid":{"Veras":{"name":"NB 2 Image","res":{"0.5K":5,"1K":10,"2K":15,"3K":null,"4K":20},"canonical":"Nano Banana 2","sub":false},"xFigura":{"name":"Nano Banana 2","res":{"0.5K":null,"1K":3,"2K":6,"3K":null,"4K":12},"canonical":"Nano Banana 2","sub":false},"Adobe Firefly":{"name":"Gemini 3.1 (NB2)","res":{"0.5K":null,"1K":20,"2K":20,"3K":null,"4K":30},"note":"Limited-time promotional rate.","canonical":"Nano Banana 2","sub":false},"Runway":{"name":"Nano Banana Pro 2","res":{"0.5K":null,"1K":7,"2K":11,"3K":null,"4K":16},"canonical":"Nano Banana Pro 2","sub":true,"why":"Runway lists Nano Banana Pro 2, not Nano Banana 2. Nearest equivalent, not the same model."},"PromeAI":{"name":"Nano Banana 2","res":{"0.5K":null,"1K":null,"2K":10,"3K":null,"4K":null},"canonical":"Nano Banana 2","sub":false},"Midjourney":{"name":"Fast prompt","res":{"0.5K":null,"1K":1.0,"2K":1.0,"3K":null,"4K":null},"note":"Billed in Fast GPU-minutes; an SD prompt is 0.8 and an HD prompt 1.3.","canonical":"Midjourney prompt","sub":true,"why":"Closed model set."},"Vizcom":{"name":"Render / Refine","res":{"0.5K":null,"1K":10,"2K":10,"3K":null,"4K":10},"canonical":"Render / Refine","sub":true,"why":"Closed model set."},"D5 Render":{"name":"unmetered on Pro","res":{"0.5K":0,"1K":0,"2K":0,"3K":null,"4K":0},"note":"No meter on the $30/mo Pro tier.","canonical":"D5 unmetered","sub":true,"why":"No meter on paid tiers."}},"high":{"Veras":{"name":"NB Pro Image","res":{"0.5K":null,"1K":15,"2K":15,"3K":null,"4K":35},"canonical":"Nano Banana Pro","sub":false},"xFigura":{"name":"Nano Banana Pro","res":{"0.5K":null,"1K":5,"2K":10,"3K":null,"4K":20},"canonical":"Nano Banana Pro","sub":false},"Adobe Firefly":{"name":"Gemini 3 (NB Pro)","res":{"0.5K":null,"1K":40,"2K":40,"3K":null,"4K":40},"note":"Flat 40 credits at any resolution. Limited-time promotional rate.","canonical":"Nano Banana Pro","sub":false},"Runway":{"name":"Nano Banana Pro","res":{"0.5K":null,"1K":20,"2K":20,"3K":null,"4K":40},"canonical":"Nano Banana Pro","sub":false},"PromeAI":{"name":"Nano Banana Pro","res":{"0.5K":null,"1K":null,"2K":10,"3K":null,"4K":null},"canonical":"Nano Banana Pro","sub":false},"Midjourney":{"name":"Fast prompt","res":{"0.5K":null,"1K":1.0,"2K":1.0,"3K":null,"4K":null},"note":"Billed in Fast GPU-minutes; an SD prompt is 0.8 and an HD prompt 1.3.","canonical":"Midjourney prompt","sub":true,"why":"Closed model set."},"Vizcom":{"name":"Render / Refine","res":{"0.5K":null,"1K":10,"2K":10,"3K":null,"4K":10},"canonical":"Render / Refine","sub":true,"why":"Closed model set."},"D5 Render":{"name":"unmetered on Pro","res":{"0.5K":0,"1K":0,"2K":0,"3K":null,"4K":0},"note":"No meter on the $30/mo Pro tier.","canonical":"D5 unmetered","sub":true,"why":"No meter on paid tiers."}}},"videoLadder":{"low":{"Veras":{"name":"Veo 3.1 Fast","res":{"480p":null,"720p":10,"1080p":15,"4K":35},"durations":{"720p":[4,6,8],"1080p":[8],"4K":[8]},"note":"At 1080p and 4K only an 8-second clip is selectable.","canonical":"Veo 3.1 Fast","sub":false},"xFigura":{"name":"Veo 3.1","res":{"480p":null,"720p":3,"1080p":3,"4K":null},"bill":{"mode":"per_sec","min_seconds":6},"note":"18 credits for a 6-second clip = 3/sec, no 1080p premium. Five seconds is not selectable.","canonical":"Veo 3.1 (single SKU)","sub":true,"why":"xFigura lists one Veo 3.1 SKU with no Fast/Standard split."},"Adobe Firefly":{"name":"Veo 3.1 Fast","res":{"480p":null,"720p":20,"1080p":20,"4K":null},"note":"Limited-time promotional rate.","canonical":"Veo 3.1 Fast","sub":false},"Runway":{"name":"Veo 3.1 (no audio)","res":{"480p":null,"720p":20,"1080p":20,"4K":null},"note":"40/sec with audio. Runway does not split Fast and Standard.","canonical":"Veo 3.1 (single SKU)","sub":true,"why":"Runway lists one Veo 3.1 SKU with no Fast/Standard split."},"PromeAI":{"name":"Seedance 2.0 Mini","res":{"480p":null,"720p":20,"1080p":null,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,100],[10,200]]},"durations":{"720p":[5,10]},"canonical":"Seedance 2.0 Mini","sub":true,"why":"No Veo model of any version."},"Midjourney":{"name":"HD 720p video","res":{"480p":null,"720p":1.4,"1080p":null,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,7.0]]},"note":"7 Fast GPU-minutes per 5-second HD clip.","durations":{"720p":[5]},"canonical":"Midjourney video","sub":true,"why":"Closed model set; 720p ceiling."},"Vizcom":{"name":"Animate","res":{"480p":null,"720p":11,"1080p":11,"4K":null},"canonical":"Animate","sub":true,"why":"Closed model set."}},"mid":{"Veras":{"name":"Veo 3.1","res":{"480p":null,"720p":40,"1080p":45,"4K":65},"durations":{"720p":[4,6,8],"1080p":[8],"4K":[8]},"note":"Veras labels it plain 'Veo 3.1'. At 1080p and 4K only an 8-second clip is selectable.","canonical":"Veo 3.1 Standard","sub":false},"xFigura":{"name":"Veo 3.1","res":{"480p":null,"720p":3,"1080p":3,"4K":null},"bill":{"mode":"per_sec","min_seconds":6},"note":"18 credits for a 6-second clip = 3/sec, no 1080p premium. Five seconds is not selectable.","canonical":"Veo 3.1 (single SKU)","sub":true,"why":"Same single Veo 3.1 SKU as the low tier."},"Adobe Firefly":{"name":"Veo 3.1","res":{"480p":null,"720p":50,"1080p":50,"4K":null},"note":"Adobe's unqualified 'Veo 3.1' is the Standard variant. Limited-time promotional rate.","canonical":"Veo 3.1 Standard","sub":false},"Runway":{"name":"Veo 3.1 (no audio)","res":{"480p":null,"720p":20,"1080p":20,"4K":null},"note":"40/sec with audio. Runway does not split Fast and Standard.","canonical":"Veo 3.1 (single SKU)","sub":true,"why":"Same single Veo 3.1 SKU as the low tier."},"PromeAI":{"name":"Seedance 2.0","res":{"480p":null,"720p":40,"1080p":null,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,200],[10,400]]},"durations":{"720p":[5,10]},"canonical":"Seedance 2.0","sub":true,"why":"No Veo model of any version."},"Vizcom":{"name":"Animate","res":{"480p":null,"720p":11,"1080p":11,"4K":null},"canonical":"Animate","sub":true,"why":"Closed model set."}},"high":{"Veras":{"name":"Seedance 2.5","res":{"480p":10,"720p":25,"1080p":null,"4K":null},"durations":{"480p":[5,10,15,20,30],"720p":[5,10,15,20,30]},"note":"125 credits for a 5-second 720p clip. No 1080p option.","canonical":"Seedance 2.5","sub":false},"xFigura":{"name":"Seedance 2.5","res":{"480p":null,"720p":14,"1080p":31,"4K":null},"note":"xFigura's only resolution-tiered video model.","canonical":"Seedance 2.5","sub":false},"Adobe Firefly":{"name":"Seedance 2.0","res":{"480p":null,"720p":90,"1080p":180,"4K":null},"note":"480p is 40/sec. Limited-time promotional rate.","canonical":"Seedance 2.0","sub":true,"why":"Adobe lists Seedance 2.0, 2.0 Fast and 2.0 Mini but not 2.5."},"Runway":{"name":"Seedance 2.5","res":{"480p":null,"720p":30,"1080p":null,"4K":null},"note":"Plus 34 (1080p) / 15 (720p) / 10 (480p) per second of INPUT video on video-to-video runs. No 1080p generation rate published.","canonical":"Seedance 2.5","sub":false},"PromeAI":{"name":"Seedance 2.5","res":{"480p":null,"720p":60,"1080p":null,"4K":null},"bill":{"mode":"per_clip_steps","steps":[[5,300],[10,600]]},"durations":{"720p":[5,10]},"canonical":"Seedance 2.5","sub":false},"Vizcom":{"name":"Animate","res":{"480p":null,"720p":11,"1080p":11,"4K":null},"canonical":"Animate","sub":true,"why":"Closed model set."}}},"noPerOp":{"Krea":"publishes no per-operation costs","LookX":"publishes no per-operation costs","D5 Render":"no AI video generation"},"allowances":{"Enscape Solo":100,"Enscape Premium":500,"ArchDesign Collection":1500,"Veras Starter":500,"Veras Pro":2000,"Veras Ultra":6000},"packs":[[250,8.3],[1000,25.3],[3000,50.8]],"fireflyPlans":[[2000,9.99,"Standard"],[4000,19.99,"Pro"],[10000,49.99,"Pro Plus"],[50000,199.99,"Premium"]]}</script>
+<script>
+(function(){
+"use strict";
+var M = JSON.parse(document.getElementById('model-data').textContent);
+var ANCHOR = 'Veras';
+var BASIS_LABEL = { pure_ai:'pure AI', entry:'entry', topup:'top-up' };
+var S = { mode:'image', by:'tier', tier:'mid', model:null, basis:'pure_ai',
+          res:'2K', secs:5, vol:120, seat:1500, quality:null };
+
+var $ = function(id){ return document.getElementById(id); };
+function money(n){
+  if(n === null || n === undefined) return null;
+  if(n === 0) return '$0.00';
+  if(n >= 100) return '$' + n.toFixed(0);
+  if(n >= 10)  return '$' + n.toFixed(2);
+  return '$' + n.toFixed(n < 1 ? 3 : 2);
+}
+function registry(){ return S.mode === 'image' ? M.imageModels : M.videoModels; }
+function resList(){ return S.mode === 'image' ? M.imageRes : M.videoRes; }
+function spine(){ return (S.mode === 'image' ? M.imageSpine : M.videoSpine)[S.tier]; }
+
+/* models sorted by how many platforms carry them, then name */
+function modelList(){
+  var reg = registry();
+  return Object.keys(reg).map(function(k){
+    return { key:k, n:Object.keys(reg[k].vendors).length };
+  }).sort(function(a,b){ return b.n - a.n || a.key.localeCompare(b.key); });
+}
+
+/* the per-vendor entry under the current selection */
+function entryFor(v){
+  if(S.by === 'tier'){
+    return (S.mode === 'image' ? M.imageLadder : M.videoLadder)[S.tier][v] || null;
+  }
+  var reg = registry()[S.model];
+  if(!reg) return null;
+  var e = reg.vendors[v];
+  if(!e) return null;
+  var o = {}; for(var k in e) o[k] = e[k];
+  o.canonical = S.model; o.sub = false;
+  return o;
+}
+
+function rateFor(v){
+  var r = M.rates[v]; if(!r) return null;
+  /* PromeAI publishes no plan prices; vendors with no top-up fall back to their plan rate */
+  return r[S.basis] || r.topup || r.pure_ai || r.entry || null;
+}
+function basisLabel(v){
+  var r = M.rates[v];
+  if(r[S.basis]) return BASIS_LABEL[S.basis];
+  if(r.topup) return 'top-up only';
+  return 'plan rate (no top-up)';
+}
+
+/* credits for one generation, honouring per-clip billing and duration minimums */
+function qualityMult(e){
+  /* 1.0 = the setting the figures were quoted at */
+  if(!S.quality || !e || !e.quality) return 1;
+  var m = e.quality[S.quality];
+  return (m === undefined) ? null : m;
+}
+function unitsFor(e){
+  if(!e) return { units:null, hide:true, reason:'does not carry this model' };
+  var per = e.res[S.res];
+  if(per === null || per === undefined)
+    return { units:null, hide:true, reason:'not offered at ' + S.res };
+  var q = qualityMult(e);
+  if(q === null) return { units:null, hide:true, reason:'no ' + S.quality + ' setting' };
+  if(S.mode !== 'video') return { units: per * q, bill:'per image', qmult:q };
+
+  var b = e.bill || { mode:'per_sec' };
+  var durs = e.durations && e.durations[S.res];
+  var mn = b.min_seconds || 0;
+
+  /* outside the envelope the platform cannot make this clip at all -> hidden */
+  if(durs && durs.length){
+    var lo = Math.min.apply(null, durs), hi = Math.max.apply(null, durs);
+    if(S.secs < lo) return { units:null, hide:true, reason:'shortest clip is ' + lo + 's' };
+    if(S.secs > hi) return { units:null, hide:true, reason:'longest clip is ' + hi + 's' };
+    if(durs.indexOf(S.secs) === -1){
+      /* inside the range but off a listed length: extrapolate linearly */
+      var u = (b.mode === 'per_clip_steps') ? per * S.secs : per * S.secs;
+      return { units: u * q, bill:'per second', qmult:q, extrapolated:true,
+               offered: durs.slice(), perSec: per };
+    }
+    if(b.mode === 'per_clip_steps'){
+      for(var i=0;i<b.steps.length;i++){
+        if(S.secs === b.steps[i][0]) return { units:b.steps[i][1]*q, bill:'per clip', qmult:q };
+      }
+    }
+    return { units: per * S.secs * q, bill:'per second', qmult:q };
+  }
+  if(mn && S.secs < mn) return { units:null, hide:true, reason:'shortest clip is ' + mn + 's' };
+  if(b.mode !== 'per_clip_steps'){
+    return { units: per * Math.max(S.secs, mn) * q, bill:'per second', qmult:q,
+             noDurations:true };
+  }
+  if(b.mode === 'per_clip_steps'){
+    for(var k=0;k<b.steps.length;k++){
+      if(S.secs <= b.steps[k][0]) return { units:b.steps[k][1]*q, bill:'per clip', qmult:q };
+    }
+    return { units:null, hide:true, reason:'no clip length this long' };
+  }
+  return { units: per * Math.max(S.secs, mn) * q, bill:'per second', qmult:q };
+}
+
+function compute(){
+  return M.vendors.map(function(v){
+    if(S.mode === 'video' && v === 'D5 Render'){
+      return { v:v, e:null, model:null, sub:false, units:null, rate:null, cost:null,
+               reason:'no AI video generation' };
+    }
+    var e = entryFor(v);
+    var u = unitsFor(e);
+    var r = rateFor(v);
+    var row = { v:v, e:e, model:e ? e.name : null, quotedAt:e ? e.quoted_at : null,
+                sub:e ? !!e.sub : false,
+                why:e ? e.why : null, note:e ? e.note : null,
+                forthcoming:e ? !!e.forthcoming : false,
+                unconfirmed:e ? e.unconfirmed : null,
+                hasQuality:!!(e && e.quality),
+                units:u.units, bill:u.bill, reason:u.reason,
+                hide:!!u.hide, extrapolated:!!u.extrapolated,
+                noDurations:!!u.noDurations,
+                offered:u.offered || null, perSec:u.perSec || null,
+                rate:r ? r.rate : null, cost:null, basisUsed:null };
+    if(r){
+      row.basisUsed = basisLabel(v);
+    }
+    if(u.units !== null && r) row.cost = u.units * r.rate;
+    if(u.units === 0) row.cost = 0;
+    if(!e) row.reason = (M.noPerOp && M.noPerOp[v]) ? M.noPerOp[v] : 'does not carry this model';
+    else if(!r && u.units !== null && u.units !== 0) row.reason = 'no published rate';
+    return row;
+  }).filter(function(row){
+    /* a platform is listed only when it can actually produce this configuration */
+    if(row.hide) return false;
+    if(!row.e) return false;
+    if(row.units === null && row.cost === null && row.reason) return false;
+    return true;
+  }).sort(function(a,b){
+    if(a.cost === null && b.cost === null) return a.v.localeCompare(b.v);
+    if(a.cost === null) return 1;
+    if(b.cost === null) return -1;
+    return a.cost - b.cost;
+  });
+}
+
+function renderLadder(rows){
+  var max = 0;
+  rows.forEach(function(r){ if(r.cost !== null && r.cost > max) max = r.cost; });
+  var host = $('ladder'); host.textContent = '';
+  if(!rows.length){
+    var empty = document.createElement('div');
+    empty.className = 'lrow'; empty.style.gridTemplateColumns = '1fr';
+    empty.innerHTML = '<span class="na">No platform can produce this configuration. '
+                    + 'Try another resolution or clip length.</span>';
+    host.appendChild(empty);
+  }
+  rows.forEach(function(r){
+    var div = document.createElement('div');
+    div.className = 'lrow' + (r.v === ANCHOR ? ' anchor' : '');
+    var name = document.createElement('div');
+    name.className = 'lname'; name.textContent = r.v;
+    var m = document.createElement('span'); m.className = 'lmodel';
+    m.textContent = (r.model || 'not offered')
+      + (r.quotedAt ? '  · ' + (S.quality || r.quotedAt) : '')
+      + (S.quality && !r.hasQuality && r.e ? '  · no quality tiers' : '')
+      + (r.sub ? '  · sub' : '') + (r.forthcoming ? '  · forthcoming' : '')
+      + (r.unconfirmed ? '  · unconfirmed' : '');
+    if(r.why || r.note) m.title = r.why || r.note;
+    name.appendChild(m);
+    var track = document.createElement('div'); track.className = 'track';
+    var fill = document.createElement('div'); fill.className = 'fill';
+    fill.style.width = (r.cost !== null && max > 0 ? Math.max(1.4, (r.cost/max)*100) : 0) + '%';
+    track.appendChild(fill);
+    var cost = document.createElement('div');
+    cost.className = 'lcost' + (r.extrapolated ? ' est' : '');
+    if(r.cost === null){
+      cost.innerHTML = '<span class="na">' + (r.reason || 'n/a') + '</span>';
+    } else {
+      cost.textContent = money(r.cost);
+      if(r.extrapolated){
+        var note = document.createElement('span');
+        note.className = 'estnote';
+        note.textContent = 'extrapolated from per-second cost';
+        note.title = 'This platform offers ' + r.offered.map(function(d){return d+'s';}).join(', ')
+                   + '. Cost at ' + S.secs + 's is extrapolated from ' + r.perSec + ' credits/sec.';
+        cost.appendChild(note);
+      } else if(r.noDurations){
+        var n2 = document.createElement('span');
+        n2.className = 'estnote';
+        n2.textContent = 'no stated limit';
+        n2.title = 'This platform bills per second and publishes no minimum or maximum clip length, '
+                 + 'so it stays priced at lengths where others drop out.';
+        cost.appendChild(n2);
+      }
+    }
+    div.appendChild(name); div.appendChild(track); div.appendChild(cost);
+    host.appendChild(div);
+  });
+
+  var unitTxt = S.mode === 'image'
+    ? 'One ' + S.res + ' image'
+    : 'One ' + S.secs + '-second ' + S.res + ' clip';
+  var what = S.by === 'tier'
+    ? 'on ' + spine() + ', the ' + S.tier + '-tier model. Rows marked “sub” do not carry it and are priced on the nearest equivalent.'
+    : 'on ' + S.model + '. Only platforms that can produce this configuration are listed.';
+  $('ladder-lede').textContent = unitTxt + ' ' + what
+    + ' Bars are relative to the dearest priced option.';
+
+  var notes = [];
+  rows.forEach(function(r){
+    if(r.sub && r.why) notes.push(r.v + ': ' + r.why);
+    else if(r.note) notes.push(r.v + ': ' + r.note);
+  });
+  $('subnotes').textContent = notes.join('   ·   ');
+}
+
+function renderTable(rows){
+  var tb = $('tbody'); tb.textContent = '';
+  $('th-units').textContent = S.mode === 'video' ? 'Units (' + S.secs + 's)' : 'Units';
+  $('th-month').textContent = 'Per month ×' + S.vol;
+  rows.forEach(function(r){
+    var tr = document.createElement('tr');
+    if(r.v === ANCHOR) tr.className = 'anchor';
+    function cell(t, cls){
+      var td = document.createElement('td');
+      if(cls) td.className = cls;
+      td.textContent = t; return td;
+    }
+    tr.appendChild(cell(r.v));
+    tr.appendChild(cell((r.model || 'not offered')
+      + (r.quotedAt ? '  (' + (S.quality || r.quotedAt) + ')' : '')));
+    tr.appendChild(cell(r.sub ? 'substituted' : (r.forthcoming ? 'yes, forthcoming' : (r.e ? 'yes' : '—')),
+                        r.sub ? 'dim' : ''));
+    tr.appendChild(cell(r.basisUsed || '—', 'dim'));
+    tr.appendChild(cell(r.rate !== null ? '$' + r.rate.toFixed(5) : '—', 'num'));
+    tr.appendChild(cell(r.units !== null ? String(Math.round(r.units*100)/100) : '—', 'num'));
+    tr.appendChild(r.cost !== null
+      ? cell(money(r.cost) + (r.extrapolated ? ' est.' : ''), 'num' + (r.extrapolated ? ' est' : ''))
+      : cell(r.reason || 'n/a', 'dim'));
+    tr.appendChild(cell(r.cost !== null ? money(r.cost * S.vol) : '—', 'num'));
+    tb.appendChild(tr);
+  });
+}
+
+function cheapestPack(need){
+  if(need <= 0) return { cost:0 };
+  var best = null;
+  var p250 = M.packs[0], p1k = M.packs[1], p3k = M.packs[2];
+  for(var a=0;a<=4;a++) for(var b=0;b<=4;b++) for(var c=0;c<=12;c++){
+    var got = a*p3k[0] + b*p1k[0] + c*p250[0];
+    if(got < need) continue;
+    var cost = a*p3k[1] + b*p1k[1] + c*p250[1];
+    if(!best || cost < best.cost) best = { cost:cost };
+  }
+  return best || { cost:0 };
+}
+
+function renderSeat(){
+  var ve = entryFor(ANCHOR), vu = unitsFor(ve);
+  var per = vu.units;
+  var ids = ['s-covers','s-short','s-chaos','s-ff'];
+  if(per === null || !per){
+    ids.forEach(function(i){ $(i).textContent = '—'; });
+    $('verdict').className = 'verdict';
+    $('verdict').textContent = 'Veras does not price this combination, so there is nothing to draw against the allowance.';
+    return;
+  }
+  var allow = S.seat;
+  var need = Math.max(0, S.vol * per - allow);
+  var pack = cheapestPack(need);
+  $('s-covers').textContent = Math.floor(allow / per) + ' free';
+  $('s-short').textContent = need ? need.toLocaleString() : '0';
+  $('s-chaos').textContent = '$' + pack.cost.toFixed(2);
+
+  var fe = entryFor('Adobe Firefly'), fu = unitsFor(fe);
+  var ffCost = null, ffPlan = '';
+  if(fu.units){
+    var need2 = fu.units * S.vol;
+    var plans = M.fireflyPlans, top = plans[plans.length - 1];
+    for(var i=0;i<plans.length;i++){
+      if(need2 <= plans[i][0]){ ffCost = plans[i][1]; ffPlan = plans[i][2]; break; }
+    }
+    if(ffCost === null){
+      var n = Math.ceil(need2/top[0]); ffCost = top[1]*n; ffPlan = top[2] + ' ×' + n;
+    }
+  }
+  $('s-ff').textContent = ffCost === null ? 'n/a' : '$' + ffCost.toFixed(2);
+
+  var word = S.mode === 'image' ? (S.res + ' images') : (S.secs + 's ' + S.res + ' clips');
+  var vd = $('verdict');
+  if(need === 0){
+    vd.className = 'verdict';
+    vd.innerHTML = 'The seat absorbs all <b>' + S.vol + '</b> ' + word + ' at no extra cost. Headroom for <b>'
+      + (Math.floor(allow/per) - S.vol) + '</b> more before top-up starts.';
+  } else if(ffCost !== null && pack.cost > ffCost){
+    vd.className = 'verdict bad';
+    vd.innerHTML = 'At <b>' + S.vol + '</b> ' + word + ' a month, topping up Chaos costs <b>$'
+      + pack.cost.toFixed(2) + '</b> against <b>$' + ffCost.toFixed(2) + '</b> for Adobe Firefly '
+      + ffPlan + '.';
+  } else {
+    vd.className = 'verdict';
+    vd.innerHTML = 'At <b>' + S.vol + '</b> ' + word + ' a month, Chaos top-up at <b>$'
+      + pack.cost.toFixed(2) + '</b> still beats '
+      + (ffCost === null ? 'the alternatives' : 'Adobe Firefly ' + ffPlan + ' at $' + ffCost.toFixed(2)) + '.';
+  }
+}
+
+function resAvailable(res){
+  /* is any platform able to produce this resolution under the current selection? */
+  var keep = S.res; S.res = res;
+  var any = M.vendors.some(function(v){
+    var e = entryFor(v); if(!e) return false;
+    var u = unitsFor(e);
+    return u.units !== null && u.units !== undefined;
+  });
+  S.res = keep; return any;
+}
+function renderResSeg(){
+  var host = $('seg-res'); host.textContent = '';
+  var avail = {};
+  resList().forEach(function(r){ avail[r] = resAvailable(r); });
+  /* if the current resolution went dark, move to the first live one */
+  if(!avail[S.res]){
+    var first = resList().filter(function(r){ return avail[r]; })[0];
+    if(first) S.res = first;
+  }
+  resList().forEach(function(r){
+    var b = document.createElement('button');
+    b.id = 'res-' + r.replace('.','_');
+    b.dataset.v = r; b.textContent = r;
+    b.setAttribute('aria-pressed', String(S.res === r));
+    if(!avail[r]){
+      b.disabled = true;
+      b.title = 'No platform offers this resolution for the current selection';
+    }
+    b.addEventListener('click', function(){
+      if(b.disabled) return;
+      S.res = r; renderResSeg(); render();
+    });
+    host.appendChild(b);
+  });
+}
+
+function qualityNames(){
+  var names = [], seen = {};
+  M.vendors.forEach(function(v){
+    var e = entryFor(v);
+    if(e && e.quality) Object.keys(e.quality).forEach(function(k){
+      if(!seen[k]){ seen[k] = 1; names.push(k); }
+    });
+  });
+  return names;
+}
+function renderQualitySelect(){
+  var names = qualityNames();
+  var host = $('ctl-quality');
+  host.hidden = names.length === 0;
+  if(!names.length){ S.quality = null; return; }
+  var sel = $('quality'); sel.textContent = '';
+  var o0 = document.createElement('option');
+  o0.value = ''; o0.textContent = 'As quoted by each platform';
+  sel.appendChild(o0);
+  names.forEach(function(n){
+    var o = document.createElement('option');
+    o.value = n; o.textContent = n;
+    if(n === S.quality) o.selected = true;
+    sel.appendChild(o);
+  });
+  if(!S.quality) o0.selected = true;
+}
+function renderModelSelect(){
+  var sel = $('model'); sel.textContent = '';
+  var list = modelList();
+  if(!S.model || !registry()[S.model]) S.model = list[0].key;
+  list.forEach(function(m){
+    var o = document.createElement('option');
+    o.value = m.key;
+    o.textContent = m.key + '  (' + m.n + (m.n === 1 ? ' platform' : ' platforms') + ')';
+    if(m.key === S.model) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+function syncSeg(id, val){
+  Array.prototype.forEach.call($(id).querySelectorAll('button'), function(b){
+    b.setAttribute('aria-pressed', String(b.dataset.v === val));
+  });
+}
+
+function render(){
+  renderResSeg();
+  syncSeg('seg-mode', S.mode); syncSeg('seg-by', S.by);
+  syncSeg('seg-tier', S.tier); syncSeg('seg-basis', S.basis);
+  $('ctl-tier').hidden  = (S.by !== 'tier');
+  $('ctl-model').hidden = (S.by !== 'model');
+  $('ctl-secs').hidden  = (S.mode !== 'video');
+  renderQualitySelect();
+  var rows = compute();
+  renderLadder(rows); renderTable(rows); renderSeat();
+}
+
+$('seg-mode').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  S.mode = b.dataset.v;
+  S.res = (S.mode === 'image') ? '2K' : '1080p';
+  S.model = null;
+  renderResSeg(); renderModelSelect(); render();
+});
+$('seg-by').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  S.by = b.dataset.v;
+  if(S.by === 'model') renderModelSelect();
+  render();
+});
+$('seg-tier').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return; S.tier = b.dataset.v; render();
+});
+$('seg-basis').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return; S.basis = b.dataset.v; render();
+});
+$('model').addEventListener('change', function(e){ S.model = e.target.value; S.quality = null; render(); });
+$('quality').addEventListener('change', function(e){ S.quality = e.target.value || null; render(); });
+$('secs').addEventListener('input', function(e){
+  S.secs = parseInt(e.target.value,10); $('secs-v').textContent = S.secs; render();
+});
+$('vol').addEventListener('input', function(e){
+  var n = parseInt(e.target.value,10);
+  S.vol = (isNaN(n) || n < 1) ? 1 : Math.min(n, 10000); render();
+});
+$('seat').addEventListener('change', function(e){
+  S.seat = parseInt(e.target.value,10); renderSeat();
+});
+
+renderResSeg(); renderModelSelect(); render();
+})();
+
+</script>
+
+</body></html>
