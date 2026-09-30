@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Veras AI Personas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,400&family=Roboto+Mono:wght@400;500;600&display=swap">
+<style>
+html,body{margin:0}img{max-width:100%}
+
+/* Layout: a drawing set. Each persona is a "sheet" with a title block; a sticky sheet index runs across the top; data annotations use a drafting mono. */
+:root{
+  --paper:#E9ECEA; --sheet:#FAFBFA; --sunk:#F1F3F2; --ink:#13171A; --ink-2:#48515A; --ink-3:#737D86; --rule:#D3D9D7; --rule-2:#BCC4C2;
+  --p1:#2a78d6; --p2:#eb6834; --p3:#1baf7a; --p4:#eda100; --p5:#e87ba4;
+  --seq:#1c5cab; --on-seq:#FFFFFF; --solo:#7A8791; --pain:#d03b3b;
+  --f-display:"Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Roboto",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#0D1012; --sheet:#161A1D; --sunk:#1D2226; --ink:#E7EBEB; --ink-2:#A8B1B6; --ink-3:#7E888E; --rule:#2A3136; --rule-2:#39424A;
+  --p1:#3987e5; --p2:#d95926; --p3:#199e70; --p4:#c98500; --p5:#d55181;
+  --seq:#3987e5; --on-seq:#FFFFFF; --solo:#8F9CA6; --pain:#e05252; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#0D1012; --sheet:#161A1D; --sunk:#1D2226; --ink:#E7EBEB; --ink-2:#A8B1B6; --ink-3:#7E888E; --rule:#2A3136; --rule-2:#39424A;
+  --p1:#3987e5; --p2:#d95926; --p3:#199e70; --p4:#c98500; --p5:#d55181;
+  --seq:#3987e5; --on-seq:#FFFFFF; --solo:#8F9CA6; --pain:#e05252; color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:calc(64px + env(safe-area-inset-top,0px))}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;margin:0;
+  background-image:linear-gradient(var(--rule) 1px,transparent 1px),linear-gradient(90deg,var(--rule) 1px,transparent 1px);
+  background-size:48px 48px;background-position:-1px -1px}
+button{font:inherit;color:inherit;cursor:pointer}
+input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;line-height:1.08;text-wrap:balance;}
+p{margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.muted{color:var(--ink-2)}
+.stack{display:flex;flex-direction:column;gap:12px;min-width:0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* top index */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--sheet);border-bottom:1px solid var(--rule-2)}
+.topbar .wrap{display:flex;align-items:center;gap:18px;min-height:56px;padding-block:6px}
+.brand{font-family:var(--f-display);font-weight:900;font-size:1rem;letter-spacing:.01em;white-space:nowrap}
+.brand small{font-family:var(--f-mono);font-weight:500;font-size:.7rem;color:var(--ink-3);margin-left:8px;letter-spacing:.06em}
+.idx{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.idx::-webkit-scrollbar{display:none}
+.idx a{font-family:var(--f-mono);font-size:.76rem;color:var(--ink-2);text-decoration:none;padding:6px 10px;border-radius:4px;white-space:nowrap}
+.idx a:hover{background:var(--sunk);color:var(--ink)}
+.idx a b{color:var(--ink-3);font-weight:500;margin-right:5px}
+
+/* sheet */
+.sheet{background:var(--sheet);border:1px solid var(--rule-2);border-radius:var(--r);position:relative}
+section.block{padding-block:28px}
+.shead{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;margin-bottom:18px}
+.shead h2{font-size:clamp(1.6rem,1.1rem + 2vw,2.4rem);font-weight:700}
+.shead p{max-width:62ch;margin-top:8px;color:var(--ink-2)}
+.sheetno{font-family:var(--f-mono);font-size:.75rem;color:var(--ink-3);text-align:right;border-left:1px solid var(--rule-2);padding-left:12px;line-height:1.4}
+.sheetno b{display:block;font-size:1.25rem;color:var(--ink);font-weight:500}
+
+/* hero */
+.hero{padding-block:40px 20px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;align-items:end}
+.hero h1{font-size:clamp(2.6rem,1.4rem + 5.4vw,5.6rem);font-weight:900;letter-spacing:-.02em;line-height:.95}
+.hero h1 span{display:block;font-weight:400;letter-spacing:0;color:var(--ink-2);font-size:.42em;margin-top:14px;line-height:1.15}
+.hero .lede{font-size:1.08rem;max-width:56ch;color:var(--ink-2)}
+.tblock{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--ink);border-radius:4px;background:var(--sheet);overflow:hidden}
+.tblock div{padding:10px 12px;border-right:1px solid var(--rule-2);border-bottom:1px solid var(--rule-2);min-width:0}
+.tblock div:nth-child(2n){border-right:0}
+.tblock div:nth-last-child(-n+2){border-bottom:0}
+.tblock b{display:block;font-family:var(--f-display);font-size:1.9rem;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.tblock span{font-size:.8rem;color:var(--ink-2);line-height:1.3;display:block;margin-top:3px}
+.tblock .cap{grid-column:1/-1;background:var(--ink);color:var(--sheet);font-family:var(--f-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border:0}
+
+.pgrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:26px}
+.pcard{--pc:var(--p1);text-align:left;background:var(--sheet);border:1px solid var(--rule-2);border-radius:var(--r);padding:14px 14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0;transition:transform .15s ease,border-color .15s}
+.pcard:hover{transform:translateY(-2px);border-color:var(--pc)}
+.pcard[aria-pressed="true"]{border-color:var(--pc);box-shadow:inset 0 3px 0 var(--pc)}
+.pcard .tag{display:flex;justify-content:space-between;align-items:center}
+.pcard .sw{width:22px;height:22px;border-radius:50%;background:var(--pc);flex:none}
+.pcard h3{font-size:1.12rem;font-weight:700}
+.pcard q{font-size:.88rem;color:var(--ink-2);quotes:"“" "”";line-height:1.4}
+.pcard .roles{font-family:var(--f-mono);font-size:.7rem;color:var(--ink-3);margin-top:auto}
+
+/* persona detail */
+.ptabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:14px}
+.ptab{--pc:var(--p1);display:flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--rule-2);background:var(--sheet);border-radius:999px;white-space:nowrap;font-weight:500;font-size:.9rem}
+.ptab i{width:10px;height:10px;border-radius:50%;background:var(--pc)}
+.ptab[aria-selected="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.pd{--pc:var(--p1);--pt:color-mix(in oklab,var(--pc) 11%,var(--sheet))}
+.pd-top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);border-bottom:1px solid var(--rule-2)}
+.pd-id{padding:26px 26px 24px;display:flex;flex-direction:column;gap:16px;background:var(--pt);border-right:1px solid var(--rule-2);border-radius:var(--r) 0 0 0;min-width:0}
+.pd-id .code{display:flex;gap:10px;align-items:center}
+.pd-id .code .sw{width:14px;height:14px;border-radius:50%;background:var(--pc)}
+.pd-id h2{font-size:clamp(2rem,1.3rem + 2.6vw,3.2rem);font-weight:900;}
+.bigq{font-family:var(--f-display);font-weight:400;font-size:clamp(1.25rem,1rem + 1vw,1.6rem);line-height:1.25;border-left:4px solid var(--pc);padding-left:14px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:.92rem}
+.kv dt{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);padding-top:3px}
+.kv dd{margin:0}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.flow span{font-family:var(--f-body);font-size:.84rem;padding:4px 9px;border:1px solid var(--ink);border-radius:3px;background:var(--sheet)}
+.flow em{font-style:normal;color:var(--ink-3);font-size:.8rem}
+.stats{display:grid;grid-template-columns:1fr 1fr;align-content:start}
+.stat{padding:18px 20px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:6px;min-width:0}
+.stat:nth-child(2n){border-right:0}
+.stat b{font-family:var(--f-display);font-weight:700;font-size:2.2rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat .bar{height:6px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.stat .bar i{display:block;height:100%;background:var(--pc);border-radius:0 3px 3px 0}
+.stat p{font-size:.86rem;line-height:1.4}
+.stat .src{font-family:var(--f-mono);font-size:.68rem;color:var(--ink-3)}
+
+.pd-sec{padding:24px 26px;border-bottom:1px solid var(--rule-2)}
+.pd-sec:last-child{border-bottom:0}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.sec-h h3{font-size:1.25rem;font-weight:700}
+
+.controls{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px}
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.seg button{border:1px solid var(--rule-2);background:var(--sheet);padding:5px 10px;border-radius:4px;font-size:.8rem}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.chartq{font-weight:500;margin-bottom:4px}
+.bars{display:flex;flex-direction:column;gap:2px}
+.brow{display:grid;grid-template-columns:minmax(120px,210px) minmax(0,1fr) 58px;gap:12px;align-items:center;padding:5px 6px;border-radius:4px}
+.brow:hover,.brow:focus-visible{background:var(--sunk)}
+.brow .lab{font-size:.88rem;line-height:1.25}
+.brow .val{font-family:var(--f-mono);font-size:.85rem;text-align:right;font-weight:500}
+.track{position:relative;height:20px}
+.track .b{position:absolute;left:0;top:3px;height:14px;background:var(--pc);border-radius:0 4px 4px 0}
+.track .t{position:absolute;top:-1px;width:2px;height:22px;background:var(--ink);border-radius:1px}
+.track .g{position:absolute;top:-2px;bottom:-2px;width:1px;background:var(--rule)}
+.axis{display:grid;grid-template-columns:minmax(120px,210px) minmax(0,1fr) 58px;gap:12px;padding:0 6px}
+.axis .ticks{position:relative;height:18px;font-family:var(--f-mono);font-size:.68rem;color:var(--ink-3)}
+.axis .ticks span{position:absolute;transform:translateX(-50%)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:var(--ink-2);margin-top:10px}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend .kb{width:14px;height:10px;background:var(--pc);border-radius:0 3px 3px 0}
+.legend .kt{width:2px;height:14px;background:var(--ink)}
+.cnote{font-size:.8rem;color:var(--ink-3);margin-top:8px}
+
+.quad{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.quad h4{font-size:.95rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.quad h4::before{content:"";width:8px;height:8px;background:var(--pc);border-radius:1px}
+.quad ul{margin:0;padding-left:18px;font-size:.9rem;display:flex;flex-direction:column;gap:4px}
+.asks{display:flex;flex-direction:column;gap:6px}
+.asks div{font-family:var(--f-body);font-size:.88rem;background:var(--pt);border:1px dashed var(--pc);padding:7px 10px;border-radius:4px}
+
+.quotes{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.qc{border:1px solid var(--rule-2);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--sheet);min-width:0}
+.qc blockquote{margin:0;font-size:1rem;line-height:1.45}
+.qc blockquote::before{content:"“";font-family:var(--f-display);font-size:2.2rem;line-height:.4;display:block;color:var(--pc);height:14px}
+.qc .who{display:flex;gap:10px;align-items:center;margin-top:auto}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:.72rem;font-weight:500;background:var(--pt);border:1.5px solid var(--pc);flex:none}
+.qc .who div{font-size:.8rem;line-height:1.3;min-width:0}
+.qc .who b{display:block;font-size:.85rem}
+.qc .theme{font-family:var(--f-mono);font-size:.68rem;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
+.src-note{font-size:.82rem;color:var(--ink-3);border-left:2px solid var(--rule-2);padding-left:10px;margin-bottom:14px}
+
+.impl{display:flex;flex-direction:column;gap:0}
+.impl div{display:grid;grid-template-columns:92px 1fr;gap:14px;padding:10px 0;border-top:1px solid var(--rule)}
+.impl div:first-child{border-top:0}
+.prio{font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;padding:3px 7px;border-radius:3px;border:1px solid var(--ink-2);justify-self:start;align-self:start}
+.prio.critical{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.prio.high{border-color:var(--ink);font-weight:500}
+.impl p b{font-weight:700}
+.arch{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--f-body);font-size:.8rem;padding:3px 8px;border:1px solid var(--rule-2);border-radius:999px;background:var(--sheet);white-space:nowrap}
+
+/* compare */
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:500;border-bottom:1px solid var(--ink)}
+tbody th{font-weight:500;white-space:nowrap}
+.ph{display:flex;align-items:center;gap:6px;white-space:nowrap;font-family:var(--f-body);text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--ink);font-weight:700}
+.ph i{width:10px;height:10px;border-radius:50%}
+.heat td{vertical-align:middle;text-align:center;font-family:var(--f-mono);font-size:.84rem;font-weight:500;padding:0;border:2px solid var(--sheet)}
+.heat td button{all:unset;display:block;width:100%;padding:11px 6px;cursor:default;box-sizing:border-box}
+.heat td button:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.heat tbody th{font-family:var(--f-body);font-size:.85rem;white-space:normal;min-width:180px}
+.heat tbody th small{display:block;font-family:var(--f-mono);font-size:.68rem;color:var(--ink-3);font-weight:400}
+.scale{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:.7rem;color:var(--ink-3);margin-top:10px}
+.scale i{width:160px;height:8px;border-radius:2px;background:linear-gradient(90deg,color-mix(in oklab,var(--seq) 6%,var(--sheet)),var(--seq))}
+
+.dims{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.dim h4{font-size:1rem;margin-bottom:4px}
+.dim p{font-size:.84rem;color:var(--ink-2);min-height:3.2em}
+.dline{position:relative;height:74px;margin-top:10px}
+.dline::before{content:"";position:absolute;left:0;right:0;top:36px;height:2px;background:var(--ink)}
+.dline .end{position:absolute;top:46px;font-family:var(--f-mono);font-size:.68rem;color:var(--ink-3)}
+.dline .dot{position:absolute;top:28px;width:18px;height:18px;border-radius:50%;background:var(--pc);border:2px solid var(--sheet);transform:translateX(-50%)}
+.dline .dl{position:absolute;top:4px;transform:translateX(-50%);font-size:.74rem;font-weight:500;white-space:nowrap}
+.dline .dl.b{top:52px}
+
+/* story */
+.chain{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;border:1px solid var(--rule-2);border-radius:var(--r);overflow:hidden;background:var(--sheet)}
+.link{padding:16px 14px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:8px;position:relative;min-width:0}
+.link:last-child{border-right:0}
+.link b{font-family:var(--f-display);font-size:2rem;font-weight:700;line-height:1}
+.link h4{font-size:.8rem;font-family:var(--f-mono);font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);}
+.link p{font-size:.84rem}
+.link .n{font-family:var(--f-mono);font-size:.68rem;color:var(--ink-3)}
+.link.hi{background:var(--ink);color:var(--sheet)}
+.link.hi h4,.link.hi .n{color:color-mix(in oklab,var(--sheet) 70%,var(--ink))}
+.north{margin-top:16px;padding:22px 24px;border:1px solid var(--ink);border-radius:var(--r);background:var(--sheet);display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
+.north p{font-family:var(--f-display);font-size:clamp(1.15rem,1rem + .8vw,1.55rem);font-weight:500;line-height:1.3}
+
+/* voices */
+.qfilters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}
+.search{flex:1 1 220px;min-width:0;max-width:340px;padding:8px 12px;border:1px solid var(--rule-2);border-radius:4px;background:var(--sheet)}
+.cross{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.xc{border:1px solid var(--rule-2);border-radius:var(--r);padding:16px;background:var(--sheet);display:flex;flex-direction:column;gap:10px;min-width:0}
+.xc h4{font-size:1rem}
+.xc p{font-size:.86rem;color:var(--ink-2)}
+.xc .maps{display:flex;gap:6px;flex-wrap:wrap}
+.xc .maps span{display:flex;align-items:center;gap:5px;font-size:.78rem;font-weight:500;padding:3px 9px;border-radius:999px;border:1px solid var(--rule-2)}
+.xc .maps i{width:8px;height:8px;border-radius:50%}
+
+.method{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.method ul{margin:0;padding-left:18px;font-size:.88rem;display:flex;flex-direction:column;gap:6px;color:var(--ink-2)}
+.method h4{font-size:1rem;margin-bottom:8px}
+footer{padding-block:24px 48px;font-family:var(--f-mono);font-size:.72rem;color:var(--ink-3)}
+
+/* tabs + views */
+.tabs{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{border:0;background:transparent;padding:9px 14px;border-radius:4px;font-weight:500;font-size:.92rem;color:var(--ink-2);white-space:nowrap;position:relative}
+.tabs button:hover{background:var(--sunk);color:var(--ink)}
+.tabs button[aria-selected="true"]{color:var(--ink);background:var(--sunk)}
+.tabs button[aria-selected="true"]::after{content:"";position:absolute;left:12px;right:12px;bottom:-7px;height:3px;background:var(--ink);border-radius:2px}
+.view{padding-block:26px 40px;display:flex;flex-direction:column;gap:16px}
+.intro{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.intro h1{font-size:clamp(1.8rem,1.3rem + 1.8vw,2.6rem);font-weight:900;letter-spacing:-.01em}
+.linkbtn{border:0;background:none;padding:4px 0;color:var(--ink-2);font-size:.88rem;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:hover{color:var(--ink)}
+.pgrid{margin-top:0}
+.pcard{cursor:pointer}
+.cbox{padding:22px}
+.cbox .sec-h h3{font-size:1.2rem}
+.picker{padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.pick-row{display:flex;flex-wrap:wrap;gap:8px}
+.tog{--pc:var(--p1);display:flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border:1.5px solid var(--rule-2);background:var(--sheet);border-radius:999px;font-weight:500;font-size:.92rem}
+.tog .box{width:18px;height:18px;border-radius:50%;border:2px solid var(--pc);display:grid;place-items:center;flex:none}
+.tog[aria-pressed="true"]{border-color:var(--pc);background:color-mix(in oklab,var(--pc) 12%,var(--sheet))}
+.tog[aria-pressed="true"] .box{background:var(--pc)}
+.tog[aria-pressed="true"] .box::after{content:"";width:5px;height:9px;border:solid var(--sheet);border-width:0 2px 2px 0;transform:translate(0,-1px) rotate(45deg)}
+.gb-cat{padding:10px 0 12px;border-top:1px solid var(--rule)}
+.gb-cat:first-child{border-top:0;padding-top:0}
+.gb-cat h4{font-size:.95rem;font-weight:500;margin-bottom:6px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.gb-cat h4 span{font-family:var(--f-mono);font-size:.74rem;color:var(--ink-3);font-weight:400}
+.gb-cat .brow{grid-template-columns:minmax(110px,170px) minmax(0,1fr) 58px;padding:2px 6px}
+.gb-cat .lab{display:flex;align-items:center;gap:6px;font-size:.84rem;color:var(--ink-2)}
+.gb-cat .lab i{width:8px;height:8px;border-radius:50%;background:var(--pc);flex:none}
+.gb-cat .track{height:16px}.gb-cat .track .b{top:2px;height:12px}.gb-cat .track .t{height:18px}
+/* context: compact */
+.basestrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border:1px solid var(--rule-2);border-radius:var(--r);background:var(--sheet)}
+.basestrip div{padding:12px 16px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:2px;min-width:0}
+.basestrip div:last-child{border-right:0}
+.basestrip b{font-size:1.35rem;font-weight:700;font-variant-numeric:tabular-nums}
+.basestrip span{font-size:.84rem;color:var(--ink-2)}
+details.cx>summary{list-style:none;cursor:pointer;padding:14px 20px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+details.cx>summary::-webkit-details-marker{display:none}
+details.cx>summary::before{content:"+";font-family:var(--f-mono);font-weight:600;width:14px;color:var(--ink-3)}
+details.cx[open]>summary::before{content:"–"}
+details.cx>summary h3{font-size:1.05rem;font-weight:700}
+details.cx>summary span{font-size:.86rem}
+.cx-b{padding:4px 20px 20px}
+.ctx .chain .link{padding:12px}
+.ctx .chain .link b{font-size:1.5rem}
+.ctx .north{display:block;margin-top:12px;padding:12px 16px;border:1px solid var(--rule-2);border-radius:var(--r);font-size:1rem;font-weight:500;line-height:1.45;font-family:var(--f-body)}
+.ctx .north .eyebrow{margin-right:8px}
+.ctx .quotes{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.ctx .qc blockquote{font-size:.92rem}
+@media (max-width:760px){.basestrip{grid-template-columns:1fr 1fr}.basestrip div:nth-child(2){border-right:0}.basestrip div:nth-child(-n+2){border-bottom:1px solid var(--rule)}.brand{font-size:.9rem}.tabs button{padding:8px 10px;font-size:.86rem}}
+@media (max-width:600px){.gb-cat .brow{grid-template-columns:minmax(0,96px) minmax(0,1fr) 50px}.cbox{padding:16px}}
+.obs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.ob{border:1px solid var(--rule-2);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--sheet);min-width:0}
+.ob .who{display:flex;gap:10px;align-items:center}.ob .who div{font-size:.82rem;line-height:1.3;min-width:0}.ob .who b{display:block;font-size:.9rem}
+.ob dl{margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 18px}.ob dl div{min-width:0}.ob dt{font-weight:700;font-size:.88rem}.ob dd{margin:0;font-size:.88rem;color:var(--ink-2)}
+.onote{font-size:.84rem;background:var(--pt);border-left:3px solid var(--pc);padding:8px 10px;border-radius:0 4px 4px 0}
+.onote .eyebrow{display:block;margin-bottom:2px}
+.fb{display:flex;flex-direction:column;gap:6px}
+.fb-r{display:grid;grid-template-columns:minmax(140px,230px) minmax(0,1fr);gap:12px;align-items:center;padding:4px 0;border-top:1px solid var(--rule)}
+.fb-r:first-child{border-top:0}.fb-r:last-child{border-top:0}
+.fb-r>.lab{font-size:.88rem;line-height:1.25}
+.fb-b .brow{grid-template-columns:44px minmax(0,1fr) 58px;padding:1px 6px}
+.fb-b .k{font-family:var(--f-mono);font-size:.7rem;color:var(--ink-3)}
+.fb-b .track{height:14px}.fb-b .track .b{top:2px;height:10px}
+.fb-b .b.fs{background:var(--solo)}.fb-b .b.ft{background:var(--seq)}
+@media (max-width:600px){.fb-r{grid-template-columns:1fr;gap:2px}}
+.glance{display:flex;flex-direction:column;padding:22px 24px;gap:0;min-width:0}
+.glance>div{padding:14px 0;border-bottom:1px solid var(--rule);display:flex;flex-direction:column;gap:4px}
+.glance>div:first-child{padding-top:0}
+.glance>div b{font-size:1.15rem;font-weight:700;line-height:1.25}
+.glance>div p{font-size:.92rem;color:var(--ink-2)}
+.glance .kv{margin-top:14px;font-size:.88rem}
+.npo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:0}
+.npo .col{padding:22px 24px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:16px;min-width:0}
+.npo .col:last-child{border-right:0}
+.npo h3{font-size:1.3rem;font-weight:700;display:flex;align-items:center;gap:10px}
+.npo .ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--pc);color:var(--sheet);font-size:.9rem;font-weight:700;flex:none}
+.npo .it{display:flex;flex-direction:column;gap:5px}
+.npo .it b{font-size:1rem;font-weight:700;line-height:1.3}
+.npo .it p{font-size:.92rem;color:var(--ink-2)}
+.npo .it .prio{margin-bottom:2px}
+.ev{list-style:none;margin:2px 0 0;padding:0 0 0 10px;border-left:2px solid color-mix(in oklab,var(--pc) 45%,var(--rule));display:flex;flex-direction:column;gap:2px}
+.ev li{font-size:.78rem;color:var(--ink-3);line-height:1.4}
+.npo .asks{margin-top:4px}
+details.evid{padding:0}
+details.evid>summary{list-style:none;cursor:pointer;padding:18px 24px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+details.evid>summary::-webkit-details-marker{display:none}
+details.evid>summary::before{content:"+";font-family:var(--f-mono);font-weight:600;color:var(--ink-3);width:14px}
+details.evid[open]>summary::before{content:"–"}
+details.evid>summary h3{font-size:1.1rem;font-weight:700}
+details.evid>summary span{font-size:.88rem}
+.evid-b{padding:0 24px 24px;display:flex;flex-direction:column;gap:22px}
+.evid-b .stats{grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--rule);border-radius:var(--r)}
+.evid-b .stat{padding:14px 16px}.evid-b .stat b{font-size:1.6rem}
+.evid-b .stat:nth-child(2n){border-right:1px solid var(--rule)}.evid-b .stat:nth-child(3n){border-right:0}
+.evid-b .stat:nth-last-child(-n+3){border-bottom:0}
+.evid-b .sub h4{font-size:1rem;margin-bottom:10px}
+tr.core td,tr.core th{background:color-mix(in oklab,var(--ink) 3%,var(--sheet))}
+ul.tl{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:3px}
+@media (max-width:980px){.npo{grid-template-columns:1fr}.npo .col{border-right:0;border-bottom:1px solid var(--rule)}.evid-b .stats{grid-template-columns:1fr 1fr}.evid-b .stat:nth-child(3n){border-right:1px solid var(--rule)}.evid-b .stat:nth-child(2n){border-right:0}}
+@media (max-width:600px){.npo .col,.glance{padding:18px 16px}.evid-b{padding:0 16px 18px}.evid-b .stats{grid-template-columns:1fr}.evid-b .stat{border-right:0!important}}
+
+.evhead{margin-top:14px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}.evhead h2{font-size:1.3rem;font-weight:700}.pmeta{display:flex;justify-content:space-between;gap:10px 20px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.pmeta .legend{margin:0}
+.legend .lp,.legend .lo,.ps .pi,.ps .oi{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-style:normal;font-size:.72rem;font-weight:700;flex:none}
+.legend .lp,.ps .pi{background:var(--pain);color:#fff}
+.legend .lo,.ps .oi{background:var(--pc);color:var(--sheet)}
+.view>*{min-width:0}.pd,.pd-sec{min-width:0;max-width:100%}
+.pscroll{position:relative;overflow-x:auto;padding-bottom:8px;margin:0 -4px}
+.proc{list-style:none;margin:0;padding:0 4px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(210px,1fr);gap:0}
+.ps{display:grid;grid-template-rows:auto 34px 1fr;min-width:0}
+.ps-ph{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2);font-weight:600;padding:0 10px 6px;border-bottom:2px solid var(--ink);white-space:nowrap}
+.ps-ph.cont{border-bottom-color:var(--ink)}
+.ps[data-ph="2"] .ps-ph,.ps[data-ph="4"] .ps-ph{border-bottom-color:var(--ink-3)}
+.ps-node{position:relative;display:flex;align-items:center;padding-left:10px}
+.ps-node::before{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:var(--rule-2)}
+.ps:last-child .ps-node::before{right:50%}
+.ps-n{position:relative;width:26px;height:26px;border-radius:50%;background:var(--sheet);border:2px solid var(--pc);display:grid;place-items:center;font-family:var(--f-mono);font-size:.74rem;font-weight:600}
+.ps.haspain .ps-n{background:var(--pc);color:var(--sheet)}
+.ps-card{margin:0 6px;border:1px solid var(--rule-2);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--sheet)}
+.ps-card b{font-size:.95rem;line-height:1.3}
+.ps-card p{font-size:.84rem;color:var(--ink-2);line-height:1.45}
+.ps-tools{display:flex;flex-wrap:wrap;gap:4px}
+.ps-tools span{font-size:.72rem;padding:2px 7px;border-radius:3px;background:var(--sunk);color:var(--ink-2)}
+.ps-pain,.ps-opp{display:flex;gap:8px;align-items:flex-start;font-size:.8rem;line-height:1.4;padding:7px 8px;border-radius:4px}
+.ps-pain{background:color-mix(in oklab,var(--pain) 10%,var(--sheet));color:var(--ink)}
+.ps-opp{background:var(--pt);font-weight:500;border:1px dashed var(--pc)}
+.ps-pain .lbl,.ps-opp .lbl{display:block;font-family:var(--f-mono);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;font-weight:600;margin-bottom:1px}
+.ps-pain .lbl{color:var(--pain)}
+.ps-who{margin-top:auto;font-family:var(--f-mono);font-size:.68rem;color:var(--ink-3)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:760px){
+  .proc{grid-auto-flow:row;grid-auto-columns:auto;grid-template-columns:1fr;gap:0}
+  .ps{grid-template-rows:none;grid-template-columns:34px minmax(0,1fr);grid-template-areas:"ph ph" "node card"}
+  .ps-ph{grid-area:ph;border-bottom:0;padding:12px 0 6px}.ps-ph.cont{display:none}
+  .ps-node{grid-area:node;align-items:flex-start;padding:10px 0 0;justify-content:center}
+  .ps-node::before{left:50%;right:auto;top:0;bottom:0;width:2px;height:auto;transform:translateX(-1px)}
+  .ps:last-child .ps-node::before{bottom:auto;height:24px}
+  .ps-card{grid-area:card;margin:4px 0 8px}
+}
+
+@media (max-width:760px){.scrollhint{display:none}}.qc-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.qc-nav{display:flex;align-items:center;gap:8px}
+.navb{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--ink);background:var(--sheet);font-size:1.1rem;display:grid;place-items:center}
+.navb:hover{background:var(--ink);color:var(--sheet)}
+.qtrack{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:4px 2px 10px;scrollbar-width:thin;overscroll-behavior-x:contain}
+.qs{flex:0 0 min(460px,86%);scroll-snap-align:start;margin:0;border-radius:var(--r);padding:22px 22px 18px;background:var(--pt);border:1px solid color-mix(in oklab,var(--pc) 35%,var(--rule-2));display:flex;flex-direction:column;gap:14px;min-height:260px}
+.qs-top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.qs-theme{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.qs-src{font-size:.72rem;padding:2px 8px;border-radius:999px;border:1px solid var(--ink-3);color:var(--ink-2);white-space:nowrap}
+.qs-src.csat{border-style:dashed}
+.qs blockquote{margin:0;font-size:1.12rem;line-height:1.5;flex:1}
+.qs blockquote::before{content:"“";display:block;font-size:3rem;line-height:.6;height:22px;color:var(--pc);font-weight:900}
+.qs figcaption{display:flex;gap:10px;align-items:center;font-size:.82rem;line-height:1.3}
+.qs figcaption b{display:block;font-size:.9rem}
+.qdots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.qdots button{width:9px;height:9px;border-radius:50%;border:0;padding:0;background:var(--rule-2)}
+.qdots button[aria-current="true"]{background:var(--pc);width:22px;border-radius:5px}
+.qthemes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}
+.qthemes .eyebrow{margin-right:4px}
+.qthemes .chip{cursor:pointer}.qthemes .chip:hover{border-color:var(--pc)}
+@media (max-width:600px){.qs{flex-basis:88%;padding:18px}.qs blockquote{font-size:1rem}}
+/* compact persona bar: fixed, appears when the card grid scrolls away (no layout shift) */
+.pbar{position:fixed;left:0;right:0;top:calc(var(--tb,57px) + env(safe-area-inset-top,0px));z-index:18;background:color-mix(in oklab,var(--paper) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--rule-2);box-shadow:0 6px 14px -12px rgba(0,0,0,.35);transform:translateY(-110%);opacity:0;visibility:hidden;transition:transform .2s ease,opacity .2s ease,visibility 0s linear .2s}
+.pbar.on{transform:none;opacity:1;visibility:visible;transition:transform .2s ease,opacity .2s ease}
+.pbar .wrap{padding-block:8px}
+.pbar-in{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.pbar-in::-webkit-scrollbar{display:none}
+.pbar-in button{--pc:var(--p1);flex:1 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;border:1px solid var(--rule-2);background:var(--sheet);border-radius:var(--r);font-weight:700;font-size:.9rem;white-space:nowrap}
+.pbar-in button i{width:12px;height:12px;border-radius:50%;background:var(--pc);flex:none}
+.pbar-in button:hover{border-color:var(--pc)}
+.pbar-in button[aria-pressed="true"]{border-color:var(--pc);box-shadow:inset 0 -3px 0 var(--pc);background:color-mix(in oklab,var(--pc) 10%,var(--sheet))}
+.topbar{z-index:20}
+.churn-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--rule-2);border-radius:var(--r);margin-bottom:14px}
+.churn-kpi div{padding:14px 16px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:4px}
+.churn-kpi div:last-child{border-right:0}
+.churn-kpi b{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums}
+.churn-kpi span{font-size:.84rem;color:var(--ink-2);line-height:1.4}
+.churn-tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:16px}
+.churn-tools .eyebrow{margin-right:4px}
+.churn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px 28px}
+.lb h4{font-size:.95rem;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px}
+.lb h4 span{font-family:var(--f-mono);font-size:.72rem;color:var(--ink-3);font-weight:400}
+.lb .brow{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 54px;padding:2px 4px}
+.lb .lab{font-size:.82rem}.lb .track{height:14px}.lb .track .b{top:2px;height:10px;background:var(--seq)}
+@media (max-width:600px){.churn-grid{grid-template-columns:1fr}.churn-kpi div{border-right:0;border-bottom:1px solid var(--rule)}}
+
+.cmpbox{margin-bottom:18px}.lbh{font-size:.95rem;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px}.lbh span{font-family:var(--f-mono);font-size:.72rem;color:var(--ink-3);font-weight:400}
+.cm-s{display:block;font-family:var(--f-mono);font-size:.66rem;color:var(--ink-3);margin-top:2px}
+.aie{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--rule-2);border-radius:var(--r);overflow:hidden}
+.aie-c{padding:12px 14px;border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:10px;min-width:0}
+.aie-c:last-child{border-right:0}
+.aie-ph{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;font-weight:600;color:var(--ink-2);padding-bottom:6px;border-bottom:2px solid var(--pc)}
+.aie-i{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border-radius:4px;background:var(--pt)}
+.aie-i b{font-size:.88rem}.aie-i span{font-size:.8rem;color:var(--ink-2);line-height:1.35}.aie-i em{font-style:normal;font-family:var(--f-mono);font-size:.66rem;color:var(--ink-3)}
+.ai-b{align-self:flex-start;font-family:var(--f-mono);font-size:.62rem;font-weight:700;letter-spacing:.06em;padding:2px 6px;border-radius:3px;background:var(--ink);color:var(--sheet)}
+.ps.isai .ps-card{border-color:color-mix(in oklab,var(--ink) 55%,var(--rule-2))}
+.legend .la{display:inline-grid;place-items:center;padding:0 5px;height:16px;border-radius:3px;background:var(--ink);color:var(--sheet);font-style:normal;font-size:.6rem;font-weight:700;font-family:var(--f-mono)}
+table.aim td{min-width:170px}.aim-i{display:flex;flex-direction:column;margin-bottom:8px}.aim-i b{font-size:.86rem}.aim-i span{font-size:.78rem;color:var(--ink-2)}
+.cab-top{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px;margin-bottom:16px}
+.cab-kpi{border:1px solid var(--rule-2);border-radius:var(--r);padding:14px 16px;display:flex;gap:14px;align-items:center}
+.cab-kpi b{font-size:1.5rem;font-weight:700;white-space:nowrap}.cab-kpi span{font-size:.86rem;color:var(--ink-2)}
+.cab-links{border:1px solid var(--rule-2);border-radius:var(--r);padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.cab-links a{color:var(--ink);font-size:.88rem;font-weight:500;text-underline-offset:3px}
+.sent{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.se{border:1px solid var(--rule-2);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:4px}
+.se-t{align-self:flex-start;font-family:var(--f-mono);font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;padding:2px 7px;border-radius:999px;border:1px solid var(--ink-3)}
+.se.hi .se-t{background:var(--ink);color:var(--sheet);border-color:var(--ink)}.se.pos .se-t{border-color:var(--ink)}.se.mix .se-t{border-style:dashed}
+.se b{font-size:.92rem}.se p{font-size:.82rem;color:var(--ink-2)}
+.hmw{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.hmw div{border-left:3px solid var(--seq);padding:6px 12px}.hmw b{font-size:.92rem}.hmw p{font-size:.84rem;color:var(--ink-2);margin-top:3px}
+.cab-ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:.88rem;color:var(--ink-2)}
+@media (max-width:760px){.aie{grid-template-columns:1fr 1fr}.aie-c:nth-child(2){border-right:0}.aie-c:nth-child(-n+2){border-bottom:1px solid var(--rule)}.cab-top{grid-template-columns:1fr}}
+@media (max-width:460px){.aie{grid-template-columns:1fr}.aie-c{border-right:0;border-bottom:1px solid var(--rule)}}
+/* concise NPO + reference popover */
+.npo .col{gap:4px}
+.npo h3{margin-bottom:8px}
+.npo .it{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:start;padding:10px 0;border-top:1px solid var(--rule)}
+.npo .it:has(.pr){grid-template-columns:42px minmax(0,1fr) auto}
+.npo .it-t b{font-size:.96rem;font-weight:700;line-height:1.3;display:block}
+.npo .it-t p{font-size:.86rem;color:var(--ink-2);line-height:1.4;margin-top:2px}
+.pr{font-family:var(--f-mono);font-size:.62rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 0;text-align:center;border-radius:3px;border:1px solid var(--ink-3);color:var(--ink-2);margin-top:1px}
+.pr.critical{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.pr.high{border-color:var(--ink);color:var(--ink)}
+
+
+
+.npo .asks{margin-top:10px;padding-top:12px;border-top:1px solid var(--rule)}
+#evpop{position:fixed;z-index:60;max-width:340px;background:var(--sheet);color:var(--ink);border:1px solid var(--rule-2);border-radius:var(--r);box-shadow:0 12px 30px -12px rgba(0,0,0,.35);padding:12px 14px}
+#evpop .eyebrow{display:block;margin-bottom:6px}
+#evpop ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:6px;font-size:.84rem;line-height:1.4;color:var(--ink-2)}
+.npo .it.evb{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;padding:11px 10px;margin:0 -10px;width:calc(100% + 20px);border-top:1px solid var(--rule);border-radius:4px}
+.npo .it.evb:has(.pr){grid-template-columns:66px minmax(0,1fr) auto}
+.npo .it.evb:hover,.npo .it.evb[aria-expanded="true"]{background:color-mix(in oklab,var(--pc) 9%,var(--sheet))}
+.npo .it.evb:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.npo .it.evb b{font-size:.98rem;font-weight:700;line-height:1.3}
+.evc{display:inline-flex;align-items:center;gap:4px;font-family:var(--f-mono);font-size:.7rem;color:var(--ink-3)}
+.evc i{width:17px;height:17px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--rule-2);font-family:Georgia,serif;font-weight:700;font-size:.72rem;color:var(--ink-2)}
+.npo .it.evb:hover .evc i,.npo .it.evb[aria-expanded="true"] .evc i{background:var(--pc);border-color:var(--pc);color:var(--sheet)}
+.pr{font-size:.6rem;padding:3px 4px}
+#evpop .ep-t{display:block;font-size:.95rem;margin-bottom:4px}
+#evpop .ep-d{font-size:.88rem;color:var(--ink);line-height:1.45;margin-bottom:10px}
+.npo .col>h3+.it{border-top:0}
+
+.npo-hint{margin:0;padding:14px 24px 0;font-size:.8rem;color:var(--ink-3)}.npo .npi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start;padding:12px 0;border-top:1px solid var(--rule)}
+.npo .npi:has(.pr){grid-template-columns:66px minmax(0,1fr) auto}
+.npo .npi .pr{margin-top:2px}
+.npo .col>h3+.npi{border-top:0}
+.npo .npi .it-t b{font-size:.98rem;font-weight:700;line-height:1.3;display:block}
+.npo .npi .it-t p{font-size:.88rem;color:var(--ink-2);line-height:1.45;margin-top:3px}
+.npo .npi .evb{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-family:var(--f-mono);font-size:.7rem;color:var(--ink-3);padding:3px 6px;border-radius:999px;margin-top:-1px}
+.npo .npi .evb i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--rule-2);font-family:Georgia,serif;font-weight:700;font-size:.74rem;color:var(--ink-2);font-style:italic}
+.npo .npi .evb:hover i,.npo .npi .evb[aria-expanded="true"] i{background:var(--pc);border-color:var(--pc);color:var(--sheet)}
+.npo .npi .evb:hover,.npo .npi .evb[aria-expanded="true"]{color:var(--ink);background:color-mix(in oklab,var(--pc) 10%,var(--sheet))}
+.npo .npi .evb:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.hint-i{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;border:1px solid var(--rule-2);font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:.66rem;vertical-align:-2px}
+
+#tip{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:var(--sheet);padding:8px 10px;border-radius:4px;font-size:.8rem;max-width:240px;line-height:1.35}
+#tip b{font-family:var(--f-mono);font-size:1rem;display:block}
+#tip .k{display:inline-block;width:12px;height:2px;vertical-align:middle;margin-right:6px}
+
+@media (max-width:980px){
+  .hero-grid,.pd-top{grid-template-columns:1fr}
+  .pd-id{border-right:0;border-bottom:1px solid var(--rule-2);border-radius:var(--r) var(--r) 0 0}
+  .pgrid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+  .quad{grid-template-columns:1fr 1fr}
+  .chain{grid-template-columns:1fr 1fr}
+  .link{border-bottom:1px solid var(--rule)}
+  .dims,.method{grid-template-columns:1fr}
+}
+@media (max-width:600px){
+  .wrap{padding-inline:16px}
+  .brand small{display:none}
+  .stats,.quad{grid-template-columns:1fr}
+  .stat{border-right:0}
+  .pd-id,.pd-sec{padding:20px 16px}
+  .brow,.axis{grid-template-columns:minmax(0,108px) minmax(0,1fr) 50px;gap:8px}
+  .brow .lab{font-size:.8rem}
+  .chain{grid-template-columns:1fr}
+  .shead{grid-template-columns:1fr}
+  .sheetno{display:none}
+  .north{grid-template-columns:1fr}
+  .impl div{grid-template-columns:1fr;gap:6px}
+}
+</style>
+
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">Veras AI Personas</div>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button role="tab" id="tab-personas" data-tab="personas" aria-selected="true">Personas</button>
+      <button role="tab" id="tab-compare" data-tab="compare" aria-selected="false">Compare</button>
+      <button role="tab" id="tab-context" data-tab="context" aria-selected="false">Research context</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============ PERSONAS ============ -->
+  <div class="view wrap" id="v-personas" role="tabpanel" aria-labelledby="tab-personas">
+    <div class="intro">
+      <div class="stack" style="gap:6px">
+        <h1>Five AI Personas</h1>
+        <p class="muted">What architects, designers and visualization artists need AI to do for them. Pick a persona.</p>
+      </div>
+      <button class="linkbtn" data-tab="context">Based on 8 polls, 22 interviews, CSAT, the Churn Survey and CAB Insights →</button>
+    </div>
+    <div class="pgrid" id="pgrid" role="tablist" aria-label="Personas"></div>
+    <nav class="pbar" id="pbar" aria-label="Switch persona" aria-hidden="true"><div class="wrap"><div class="pbar-in" id="pbarIn"></div></div></nav>
+    <article class="sheet pd" id="pd" role="tabpanel"></article>
+  </div>
+
+  <!-- ============ COMPARE ============ -->
+  <div class="view wrap" id="v-compare" role="tabpanel" aria-labelledby="tab-compare" hidden>
+    <div class="intro">
+      <div class="stack" style="gap:6px">
+        <h1>Compare personas</h1>
+        <p class="muted">Choose two or more personas. Everything below updates to your selection.</p>
+      </div>
+    </div>
+    <div class="sheet picker">
+      <span class="eyebrow">Personas to compare</span>
+      <div class="pick-row" id="cmpPick"></div>
+      <span class="cnote" id="cmpNote"></span>
+    </div>
+
+    <div class="sheet cbox">
+      <div class="sec-h"><h3>Needs, pain points and opportunities</h3><span class="eyebrow">Top three of each</span></div>
+      <div class="scroll"><table id="cmpTable"></table></div>
+    </div>
+    <div class="sheet cbox">
+      <div class="sec-h"><h3>Where AI enters the workflow</h3><span class="eyebrow">Tools by stage, from interviews, churn and asset research</span></div>
+      <div class="scroll"><table id="aiMatrix" class="aim"></table></div>
+    </div>
+
+    <div class="evhead"><h2>Supporting evidence</h2><p class="muted">The poll data behind the differences above.</p></div>
+    <div class="sheet cbox">
+      <div class="sec-h"><h3>Head to head on a poll</h3><span class="eyebrow">% within each persona's primary role</span></div>
+      <div class="seg" id="cq" style="margin-bottom:12px"></div>
+      <div id="cchart"></div>
+    </div>
+
+    <div class="sheet cbox">
+      <div class="sec-h"><h3>Signature numbers</h3><span class="eyebrow">Hover a cell for the source · underlined = highest in row</span></div>
+      <div class="scroll"><table class="heat" id="heat"></table></div>
+      <div class="scale"><span>0%</span><i></i><span id="scaleMax">60%</span></div>
+    </div>
+
+    <div class="sheet cbox">
+      <div class="sec-h"><h3>Where they sit</h3><span class="eyebrow">Interpretive placement from the poll synthesis</span></div>
+      <div class="dims" id="dims"></div>
+    </div>
+  </div>
+
+  <!-- ============ CONTEXT ============ -->
+  <div class="view wrap ctx" id="v-context" role="tabpanel" aria-labelledby="tab-context" hidden>
+    <div class="intro">
+      <div class="stack" style="gap:6px">
+        <h1>Research context</h1>
+        <p class="muted">Where the personas come from: eight community polls, the Veras interviews, and how the two line up.</p>
+      </div>
+    </div>
+    <div class="basestrip">
+      <div><b>8</b><span>community polls</span></div>
+      <div><b id="totalResp">2,277</b><span>poll responses</span></div>
+      <div><b>22</b><span>interviews: 19 Veras + 3 asset workflows</span></div>
+      <div><b>15,000+</b><span>CSAT responses, 2 iterations, all products</span></div>
+      <div><b>Churn Survey</b><span>cancellation reasons, all products</span></div>
+      <div><b>CAB Insights</b><span>14 advisory members, feature ratings + AI workshop</span></div>
+      <div><b>57.1%</b><span>use AI weekly or more</span></div>
+    </div>
+
+    <details class="sheet cx" open>
+      <summary><h3>Research story</h3><span class="muted">From client expectation to AI opportunity</span></summary>
+      <div class="cx-b">
+        <div class="chain" id="chain"></div>
+        <p class="north"><span class="eyebrow">North star</span> AI that helps professionals move from intention to a high-quality visual outcome with less friction, inside the workflows and skills they already value.</p>
+      </div>
+    </details>
+
+    <details class="sheet cx">
+      <summary><h3>Poll data</h3><span class="muted">Every poll, every role</span></summary>
+      <div class="cx-b">
+        <div class="seg" id="qsel" style="margin-bottom:12px"></div>
+        <p class="chartq" id="qtitle"></p>
+        <p class="cnote" id="qnote" style="margin:0 0 12px"></p>
+        <div class="scroll"><table class="heat" id="dheat"></table></div>
+        <div class="scale"><span>0%</span><i></i><span id="dmax"></span></div>
+      </div>
+    </details>
+
+    <details class="sheet cx">
+      <summary><h3>Quote bank</h3><span class="muted" id="qcountS">Interview quotes and product feedback, by persona</span></summary>
+      <div class="cx-b">
+        <div class="qfilters">
+          <div class="seg" id="qpf"></div>
+          <div class="seg" id="qsf"></div>
+          <label for="qsearch" style="position:absolute;left:-9999px">Search quotes</label>
+          <input id="qsearch" class="search" type="search" placeholder="Search quotes, e.g. credits, geometry">
+          <span class="mono muted" style="font-size:.8rem" id="qcount"></span>
+        </div>
+        <div class="quotes" id="qbank"></div>
+      </div>
+    </details>
+
+    <details class="sheet cx">
+      <summary><h3>CAB Insights</h3><span class="muted">Customer Advisory Board · AI feature ratings (n=14) and AI Ideation Workshop</span></summary>
+      <div class="cx-b">
+        <div class="cab-top">
+          <div class="cab-kpi"><b>½ · ½</b><span>Half the members place themselves between “experimental” and “decision” on the AI change curve; the other half between “decision” and “engagement” (early adopters)</span></div>
+          <div class="cab-links"><span class="eyebrow">Workshop materials</span>
+            <a href="https://drive.google.com/file/d/1Of53hr8Xn2dFuElKzLV17ldvCy_JXZxL/view?usp=sharing" target="_blank" rel="noopener">Video recording ↗</a>
+            <a href="https://miro.com/app/board/uXjVJvDu4Y4=/?share_link_id=904000758390" target="_blank" rel="noopener">Miro board ↗</a>
+            <a href="https://drive.google.com/file/d/1KuoGQ5TlO4kEbZmoWrGsg6a7pnuKv0Ej/view?usp=sharing" target="_blank" rel="noopener">Asset auto-population concept ↗</a></div>
+        </div>
+        <h4 class="lbh" style="margin-top:6px">AI feature ratings<span>sorted by opportunity score</span></h4>
+        <div id="cabAll"></div>
+        <h4 class="lbh" style="margin-top:22px">How members reacted to proposed AI features<span>sentiment mapping and voting</span></h4>
+        <div class="sent" id="cabSent"></div>
+        <h4 class="lbh" style="margin-top:22px">“How might AI make your job easier?”<span>brainstorm clusters</span></h4>
+        <div class="hmw" id="cabHmw"></div>
+        <h4 class="lbh" style="margin-top:22px">On a central Chaos AI Assistant<span>feedback on the concept</span></h4>
+        <ul class="cab-ul" id="cabAsst"></ul>
+        <p class="cnote">Workshop points are paraphrased from session notes. Participants are shown by initials and firm; R.B., P.M. and D.R. are Chaos team members.</p>
+      </div>
+    </details>
+
+    <details class="sheet cx">
+      <summary><h3>Churn Survey</h3><span class="muted">AI insights from cancellations · 1 Jun – 31 Aug 2026 · all Chaos products</span></summary>
+      <div class="cx-b">
+        <p class="cnote" style="margin:0 0 12px">The survey covers every product. The AI findings below come from small subsets, and each figure names its own base: Veras cancellations (1,772), the AI follow-up question (320), and comments that mention AI (291) or credits (518).</p>
+        <div class="churn-kpi">
+          <div><b>49.8%</b><span>of Veras cancellers who saw no value couldn't achieve the results they wanted (n=211; 25.0% across products)</span></div>
+          <div><b>35.1%</b><span>of Veras customers who switched moved to an AI tool, the top alternative (26 of 74)</span></div>
+          <div><b>56.4%</b><span>of Veras cancellers never started or used it only once or twice (n=1,772; 37.9% across products)</span></div>
+          <div><b>60.3%</b><span>of those saying AI reduced their need report it replaced some or most of their work (n=320)</span></div>
+        </div>
+        <div class="cmpbox"><h4 class="lbh">Veras cancellers compared with all products<span>Veras n=1,772</span></h4><div id="churnCmp"></div></div>
+        <div class="churn-tools"></div>
+        <div class="churn-grid" id="churnGrid"></div>
+        <p class="cnote">Comment themes are keyword-coded from the raw export and are approximate. Many other Veras comments are about trial auto-conversion, duplicate subscriptions and refunds; those are billing issues and not counted here.</p>
+      </div>
+    </details>
+
+    <details class="sheet cx">
+      <summary><h3>Feature interest</h3><span class="muted">CSAT survey · Solo n=453, Tiers n=458 · data as of 19.12</span></summary>
+      <div class="cx-b"><div id="featAll"></div>
+        <p class="cnote">Solo users have one clear winner (assets with artificial lights). Tiers users are more mixed: AI Lighting Mood Match, terrain tools, enhanced site context, section tools and interior parallax lead; collaboration, 360 cloud presentations and document design workflow trail.</p></div>
+    </details>
+
+    <details class="sheet cx">
+      <summary><h3>Asset workflows &amp; AI</h3><span class="muted">Customer research, 21–30 April 2025 · 3 interviews</span></summary>
+      <div class="cx-b"><div class="obs" id="obsAll"></div></div>
+    </details>
+
+    <details class="sheet cx">
+      <summary><h3>Interview archetypes</h3><span class="muted">How the interview archetypes map to the personas</span></summary>
+      <div class="cx-b"><div class="cross" id="cross"></div></div>
+    </details>
+
+    <details class="sheet cx">
+      <summary><h3>Method and caveats</h3><span class="muted">Sources, sample sizes, limits</span></summary>
+      <div class="cx-b method">
+        <div><h4>Sources</h4><ul>
+          <li>CG Polls Analysis: eight single-question community polls, 163 to 514 responses each, segmented by self-reported role.</li>
+          <li>Preliminary insights, Veras research (July 2026): 19 interviews plus 2 email feedbacks.</li>
+          <li>Customer research on asset workflows &amp; AI (21–30 April 2025): 3 interviews, shown by initials.</li>
+          <li>CAB Insights: Customer Advisory Board ratings of 12 AI features (importance and excitement, 1–5, n=14) and the AI Ideation Workshop in Miro. Workshop points are paraphrased.</li>
+          <li>Churn Survey raw export (1 Jun – 31 Aug 2026, all Chaos products), including 1,772 Veras cancellations. AI-specific answers are small subsets: 320 on how AI changed their workflow, 291 comments mentioning AI, 518 mentioning credits. Comment themes are keyword-coded.</li>
+          <li>CSAT survey: 15,000+ responses across 2 iterations and all products, including verbatims (anonymous, shown with product tier) and feature-interest results (Solo n=453, Tiers n=458).</li>
+          <li>Veras Research Explorer: the workflow process map, participant profiles and quote bank from 18 analysed interviews.</li>
+        </ul></div>
+        <div><h4>Caveats</h4><ul>
+          <li>Polls were answered by different people, so 2,277 is total responses, not unique respondents.</li>
+          <li>Small role samples are directional: Studio Owners (n=2 to 17), Students (n=10 to 41), Freelancers (n=10 to 54).</li>
+          <li>A few role rows in the source tables sum slightly above 100%. Values are shown as reported.</li>
+          <li>For tutorials, the source lists only each role's top topics; missing cells show as “n/r”.</li>
+        </ul></div>
+        <div><h4>About the personas</h4><ul>
+          <li>Names and syntheses are interpretive labels over the poll data. The source also calls the Design Author the “Design Director”.</li>
+          <li>No students were interviewed. Emerging Creator quotes come from interviewees new to rendering or to AI.</li>
+          <li>In Compare, two-role personas use their first role: Visual Creator = Visualization Artist, Workflow Pragmatist = Freelancer.</li>
+        </ul></div>
+      </div>
+    </details>
+  </div>
+</main>
+<footer class="wrap">Chaos · Veras user research · Compiled September 2026 from the CG polls, the preliminary Veras insights and the Veras Research Explorer.</footer>
+<div id="tip" hidden></div>
+<div id="evpop" role="dialog" aria-label="References" hidden></div>
+
+<script>
+/* ================= DATA ================= */
+const ROLES = ["Visualization Artist","Architect","Interior Designer","3D Generalist","Freelancer","Student","Studio Owner"];
+const ROLE_P = {"Visualization Artist":["vc"],"Architect":["da"],"Interior Designer":["fe"],"3D Generalist":["vc","wp"],"Freelancer":["wp"],"Student":["ec"],"Studio Owner":[]};
+
+// All values: % within role, as reported in "CG Polls Analysis". n per role in brackets.
+const POLLS = {
+ q1:{short:"AI limits",title:"What currently limits AI-generated visualization?",n:163,
+  cats:["Lack of control","Inconsistent quality","Originality","Workflow integration","Unrealistic details","Copyright concerns"],
+  all:[25.2,24.5,16.6,16.0,14.1,3.7],
+  roles:{"Visualization Artist":[49,[22.4,30.6,18.4,16.3,8.2,4.1]],"Architect":[34,[38.2,26.5,11.8,14.7,5.9,2.9]],"Interior Designer":[30,[20,20,16.7,10,30,3.3]],
+   "3D Generalist":[23,[8.7,17.4,21.7,21.7,26.1,4.3]],"Freelancer":[11,[27.3,18.2,18.2,18.2,9.1,9.1]],"Student":[10,[40,20,20,10,10,0]],"Studio Owner":[2,[0,100,0,0,0,0]]}},
+ q2:{short:"Wanted AI capability",title:"Which AI capability would be most valuable in your daily workflow?",n:176,
+  cats:["Concepts & alternatives","Materials, lighting & visual quality","Animation & storytelling","Automating modeling & scene-building","Client presentations","Faster revisions"],
+  all:[30.1,29.5,15.3,10.2,9.7,5.1],
+  roles:{"Visualization Artist":[46,[32.6,34.8,17.4,8.7,6.5,6.5]],"Architect":[45,[37.8,17.8,17.8,11.1,11.1,4.4]],"Interior Designer":[32,[31.3,25,12.5,25,6.3,3.1]],
+   "3D Generalist":[15,[6.7,80,13.3,0,0,0]],"Freelancer":[10,[40,10,30,0,10,10]],"Student":[15,[46.7,26.7,13.3,6.7,6.7,6.7]],"Studio Owner":[4,[75,25,0,0,0,0]]}},
+ q3:{short:"Future workflow",title:"Which workflow trend interests you most for the future?",n:440,
+  cats:["Real-time rendering","AI-assisted creation","Procedural workflows","Collaboration","Interactive presentations","Automation"],
+  all:[35.7,34.5,13.2,7.3,5.2,4.1],
+  roles:{"Visualization Artist":[97,[33,35.1,17.5,9.3,5.2,0]],"Architect":[137,[29.9,41.6,11.7,5.1,3.6,8]],"Interior Designer":[74,[47.3,35.1,4.1,6.8,1.4,5.4]],
+   "3D Generalist":[30,[40,13.3,23.3,13.3,6.7,3.3]],"Freelancer":[24,[45.8,25,16.7,0,8.3,4.2]],"Student":[41,[34.1,34.1,14.6,4.9,12.2,0]],"Studio Owner":[7,[28.6,57.1,14.3,0,0,0]]}},
+ q4:{short:"AI usage today",title:"How often do you use AI tools in your workflow?",n:331,
+  cats:["Every day","A few times a week","Occasionally","Tried it, rarely use","Don't use AI","Interested, not started"],
+  all:[35.3,21.8,18.1,9.4,9.1,6.3],
+  roles:{"Visualization Artist":[70,[37.1,21.4,22.9,11.4,2.9,4.3]],"Architect":[102,[29.4,30.4,17.6,6.9,7.8,7.8]],"Interior Designer":[57,[43.9,21.1,17.5,3.5,8.8,5.3]],
+   "3D Generalist":[24,[29.2,16.7,20.8,25,4.2,4.2]],"Freelancer":[23,[26.1,13,8.7,13,30.4,8.7]],"Student":[26,[34.6,11.5,15.4,11.5,15.4,11.5]],"Studio Owner":[8,[62.5,12.5,25,0,0,0]]}},
+ q5:{short:"Tutorials wanted",title:"Which tutorial topics do you want next?",n:185,partial:true,
+  cats:["Lighting & Rendering","Interior Design & Styling","AI Workflows","Modeling & Asset Creation","Real-time Rendering","BIM to Viz","Cinematography & Composition","Landscape & Urban Viz"],
+  all:[21.1,17.8,14.1,13,7,6.5,6.5,4.9],
+  roles:{"Visualization Artist":[54,[25.9,11.1,14.8,null,null,null,11.1,11.1]],"Architect":[36,[16.7,13.9,16.7,19.4,11.1,8.3,null,null]],"Interior Designer":[32,[25,46.9,6.2,6.2,null,null,null,null]],
+   "3D Generalist":[17,[29.4,null,11.8,null,null,11.8,null,11.8]],"Freelancer":[16,[18.8,25,6.2,25,null,6.2,null,null]],"Student":[20,[null,10,15,30,null,15,null,null]],"Studio Owner":[4,[null,25,50,null,null,null,null,25]]}},
+ q6:{short:"Hardware prices",title:"Have rising hardware prices affected your software purchasing decisions?",n:242,
+  cats:["Yes, significantly","Yes, somewhat","No","Not sure"],
+  all:[47.9,23.6,18.6,9.9],
+  roles:{"Visualization Artist":[91,[48.4,26.4,17.6,7.7]],"Architect":[49,[44.9,16.3,30.6,8.2]],"Interior Designer":[29,[41.4,41.4,3.4,13.8]],
+   "3D Generalist":[33,[48.5,12.1,24.2,15.2]],"Freelancer":[20,[55,20,15,10]],"Student":[14,[64.3,14.3,7.1,14.3]]}},
+ q7:{short:"Client values",title:"What do your clients value most today?",n:226,
+  cats:["Visual quality","Realism","Speed","Cost efficiency","Flexibility","Communication"],
+  all:[34.1,25.2,11.9,10.2,9.7,8.8],
+  roles:{"Visualization Artist":[65,[38.5,27.7,10.8,7.7,6.2,9.2]],"Architect":[48,[31.3,18.8,18.8,8.3,10.4,12.5]],"Interior Designer":[30,[30,30,23.3,6.7,6.7,3.3]],
+   "3D Generalist":[32,[34.4,31.3,6.2,9.4,12.5,6.2]],"Freelancer":[16,[37.5,18.8,12.5,6.2,12.5,12.5]],"Student":[20,[50,40,0,0,5,5]],"Studio Owner":[7,[0,0,0,57.1,42.9,0]]}},
+ q8:{short:"Project pressure",title:"What creates the most pressure in your projects?",n:514,
+  cats:["Tight deadlines","Learning new tools","Client revisions","Competition","Budget limitations","Hardware limitations"],
+  all:[26.3,23.7,15,14,13.6,7.4],
+  roles:{"Visualization Artist":[123,[30.9,9.8,18.7,17.1,15.4,8.1]],"Architect":[103,[29.1,21.4,19.4,10.7,11.7,7.8]],"Interior Designer":[126,[20.6,34.1,11.1,13.5,13.5,7.1]],
+   "3D Generalist":[39,[35.9,12.8,17.9,12.8,12.8,7.7]],"Freelancer":[54,[20.4,25.9,14.8,16.7,16.7,5.6]],"Student":[38,[15.8,57.9,2.6,7.9,7.9,7.9]],"Studio Owner":[17,[41.2,5.9,17.6,23.5,11.8,0]]}}
+};
+
+const PERSONAS = [
+ {id:"vc",code:"P-01",c:"--p1",name:"The Visual Creator",quote:"I know what good looks like. Help me get there faster.",
+  roles:["Visualization Artist","3D Generalist"],need:"Quality",barrier:"Consistency",relationship:"Active user and explorer",value:"Visual quality + realism",behavior:"Create & refine",ideal:"Creative partner",
+  flow:["Select","Direct","Generate","Compare","Refine"],
+  summary:"Highly skilled image-makers who already know the craft. They use AI to explore directions and push realism, but only if they stay the author of the result.",
+  stats:[
+   {v:30.6,t:"of Visualization Artists say inconsistent quality is the biggest limit of AI visualization",s:"AI limits · n=49"},
+   {v:66.2,t:"of Visualization Artists say clients value visual quality or realism most",s:"Client values · n=65"},
+   {v:80,t:"of 3D Generalists want AI to improve materials, lighting and visual quality",s:"Wanted capability · n=15"},
+   {v:35.9,t:"of 3D Generalists name tight deadlines as their top pressure, the highest of any major role",s:"Project pressure · n=39"},
+   {v:37.1,t:"of Visualization Artists use AI every day; only 2.9% don't use it at all",s:"AI usage · n=70"},
+   {v:74.7,t:"of Visualization Artists say hardware prices affect their software purchases",s:"Hardware prices · n=91"}],
+  cares:["High visual quality and realism","Materials and lighting","Exploring several creative directions","Keeping creative authorship","Fast iteration"],
+  pressures:["Tight deadlines","Client revisions","Competition","Budget constraints"],
+  frustr:["Results aren't consistent enough","AI doesn't always follow intent","Generated details can look unrealistic","AI feels disconnected from the existing pipeline"],
+  asks:["Help me explore and refine this visual while I keep control of the result.","Give me 12 variations I can composite from, not 4 random ones."],
+  arch:["Creative Director / Film Illustrator","Rendering & viz specialists"],
+  impl:[
+   ["critical","Output consistency","Same prompt, same parameters, different result. The ‘magical first’ render is often the best, and every iteration after adds artefacts or an ‘AI-y’ look."],
+   ["high","Design Lock reliability","Needed badly, but either locks the whole camera or fails when the view changes. Internal estimate: works as intended about 75% of the time."],
+   ["medium","Edit and upscale quality","Consecutive edits and upscaling are perceived to degrade the image, so the last mile moves to Photoshop. Upscaling itself is table stakes; users already rely on Topaz and Magnific."],
+   ["high","Credits for final touches","Pricing feedback: charging credits for polish while output is still inconsistent pushes finished work to be shown outside Chaos."],
+   ["high","AI lighting control","Lighting is the top CSAT feature signal: assets with artificial lights (58.9% of Solo) and AI Lighting Mood Match (49.1% of Tiers)."],
+   ["high","Fight the homogenised look","Clients are becoming desensitised to standard AI outputs. Creators need ways to keep work distinct."]]},
+ {id:"da",code:"P-02",c:"--p2",name:"The Design Author",quote:"I need AI to understand my design intent.",
+  roles:["Architect"],need:"Control",barrier:"Control",relationship:"Increasingly active user",value:"Control + flexibility + speed",behavior:"Direct & iterate",ideal:"Design assistant",
+  flow:["Select","Constrain","Vary","Compare","Approve"],
+  summary:"Architects who own the design. AI is welcome as long as the output stays connected to the model: geometry, materials and the real site context.",
+  stats:[
+   {v:38.2,t:"of Architects say lack of control is the biggest limit, the highest of the major roles",s:"AI limits · n=34"},
+   {v:41.6,t:"of Architects pick AI-assisted creation as the trend they care about, ahead of real-time (29.9%)",s:"Future workflow · n=137"},
+   {v:37.8,t:"of Architects want AI to generate design concepts and alternatives",s:"Wanted capability · n=45"},
+   {v:59.8,t:"of Architects use AI at least a few times a week, split evenly between daily and weekly",s:"AI usage · n=102"},
+   {v:69.9,t:"of Architects name deadlines, learning new tools or client revisions as their top pressure",s:"Project pressure · n=103"},
+   {v:18.8,t:"of Architects say clients value speed most, as many as say realism",s:"Client values · n=48"}],
+  cares:["Keeping design intent","Exploring alternatives","Faster iteration","Communicating design ideas","Respecting existing geometry and context"],
+  pressures:["Tight deadlines (29.1%)","Learning new tools (21.4%)","Client revisions (19.4%)"],
+  frustr:["Loss of control over the design","AI adds, removes or changes geometry","Site context invented or changed between views","Negative prompts not respected"],
+  asks:["Change this part without changing everything else.","Show me three alternatives while keeping the geometry.","Try a warmer material but preserve the design."],
+  arch:["Large-Firm Design Leader","Solo / Small-Firm Architect","Enscape-embedded Architect"],
+  impl:[
+   ["critical","Prompt compliance and geometry preservation","Users ask the AI not to touch elements and it does anyway. This makes Veras feel like a concept tool, not a production tool."],
+   ["critical","Stable site context","Roads, neighbouring buildings and landscape change between views, which hurts late-stage client work as much as a wrong building. Enhanced site context is also a top CSAT feature request (45.9% of Tiers)."],
+   ["high","Credit visibility and team onboarding","Leads can't see per-render cost or bill it to clients, junior staff can drain a monthly pool, and CSAT feedback says teams burn credits just learning the UI."],
+   ["medium","Seasonal variations and virtual staging","Architects already use tools like mnml.ai for these early-design tasks. A candidate AI Enhancer capability."],
+   ["medium","Partial edits","Without selection-based edits, any change forces a full re-render; one project took ~20 iterations."]]},
+ {id:"fe",code:"P-03",c:"--p3",name:"The Fast Explorer",quote:"I need to see possibilities quickly.",
+  roles:["Interior Designer"],need:"Speed + quality",barrier:"Realism",relationship:"Relatively high adoption",value:"Quality + realism + speed",behavior:"Explore & compare",ideal:"Exploration partner",
+  flow:["Explore","Compare","Refine"],
+  summary:"Interior designers who use AI every day to show clients what a room could be. Convincing materials, products and details matter more than a pretty picture.",
+  stats:[
+   {v:43.9,t:"of Interior Designers use AI every day, the highest daily use of the major roles",s:"AI usage · n=57"},
+   {v:30.0,t:"say unrealistic details are the biggest limit, more than any other role",s:"AI limits · n=30"},
+   {v:34.1,t:"say learning new tools is their biggest pressure, ahead of deadlines",s:"Project pressure · n=126"},
+   {v:46.9,t:"want Interior Design & Styling tutorials; only 6.2% pick generic AI workflows",s:"Tutorials · n=32"},
+   {v:47.3,t:"pick real-time rendering as the trend they care about most, the highest of any major role",s:"Future workflow · n=74"},
+   {v:82.8,t:"say hardware prices affect software purchases; only 3.4% report no impact",s:"Hardware prices · n=29"}],
+  cares:["Seeing design alternatives","Realistic materials and specific products","Lighting and interior detail","Fast visual exploration","Client presentation"],
+  pressures:["Learning new tools","Tight deadlines","Competition","Budget limitations"],
+  frustr:["Unrealistic or invented details","AI adds fixtures they said not to add","Long, complex prompts needed for exact finishes","No in-app masking, so detours to Canva and Photoshop"],
+  asks:["Show me this room with different materials, lighting or furniture, quickly.","Use this exact tile and this faucet, and change nothing else."],
+  arch:["Material-Focused Interior Designer"],
+  impl:[
+   ["high","Reference image and material fidelity","Specific branded products and finishes need to survive the render. A natural link to Cosmos assets as reference input."],
+   ["critical","Negative prompts that hold","‘Do not add sinks’ must mean no sinks. Any geometry change is unacceptable at this stage."],
+   ["high","Make power feel familiar","Learning tools is the top pressure: contextual help, progressive disclosure and fewer new concepts."],
+   ["high","Branded furniture from references","The top asset request. AI 3D generation from a reference photo, delivered through Cosmos, plus search by reference image."],
+   ["medium","In-app masking and edits","Partial edits would remove the Canva and Photoshop round trips."]]},
+ {id:"wp",code:"P-04",c:"--p4",name:"The Workflow Pragmatist",quote:"Don't give me another tool. Make my workflow easier.",
+  roles:["Freelancer","3D Generalist"],need:"Efficiency",barrier:"Integration",relationship:"Mixed or experimental",value:"Efficiency + flexibility",behavior:"Integrate & accelerate",ideal:"Workflow assistant",
+  flow:["Stay in host app","Generate in place","Keep going"],
+  summary:"Freelancers and generalists juggling many clients and tools. AI is worth it only when it removes steps; every export, login and re-import eats the value.",
+  stats:[
+   {v:30.4,t:"of Freelancers don't use AI at all, the largest non-adopter group in the polls",s:"AI usage · n=23"},
+   {v:25.0,t:"of 3D Generalists have tried AI but rarely use it, a workflow-fit gap",s:"AI usage · n=24"},
+   {v:21.7,t:"of 3D Generalists cite workflow integration as the main limit",s:"AI limits · n=23"},
+   {v:75.0,t:"of Freelancers say hardware prices affect software purchases; 55% significantly",s:"Hardware prices · n=20"},
+   {v:45.8,t:"of Freelancers pick real-time rendering as the key future trend",s:"Future workflow · n=24"},
+   {v:23.3,t:"of 3D Generalists pick procedural workflows, the highest of any role",s:"Future workflow · n=30"}],
+  cares:["Flexibility across clients","Speed","Practical production","Working across tools","Avoiding tool switching"],
+  pressures:["Learning new tools (25.9% of freelancers)","Tight deadlines","Competition","Budget"],
+  frustr:["Export → switch tool → generate → download → re-import → fix","Plugins that crash, loop on logins or get aspect ratios wrong","Prompting needs a second AI","Credits lost to failed or inconsistent renders"],
+  asks:["Give me the capability where I already work.","Write the prompt for me from what's in my scene."],
+  arch:["Solo / Small-Firm Architect","Plugin & Enscape users"],
+  impl:[
+   ["high","Licensing and update stability","Update feedback reports daily licence failures for paying teams, including Cosmos and Veras inside SketchUp, plus Enscape and Cosmos Browser issues after updates."],
+   ["medium","Plugin stability","Revit plugin aspect ratios and window size, SketchUp CAPTCHA loops, and crashes before renders finish push people to the browser."],
+   ["high","Close the Enscape → Veras gap","Users export one image at a time and want a split-screen view. The integration today offers little over standalone."],
+   ["high","Prompting inside Veras","Users draft prompts in ChatGPT, Gemini or Claude. Could the AI Assistant remove the need to start elsewhere?"],
+   ["high","Credit transparency","Few know failed renders refund credits. Outage and overload notices would stop the guessing."]]},
+ {id:"ec",code:"P-05",c:"--p5",name:"The Emerging Creator",quote:"Help me understand what I can do.",
+  roles:["Student"],need:"Learning",barrier:"Control",relationship:"Mixed, but highly interested",value:"Learning + visual quality",behavior:"Learn & experiment",ideal:"AI guide",
+  flow:["Guide","Explain","Demonstrate","Let me try"],
+  summary:"Students and newcomers to rendering. They want to learn how to get a result, not just receive one, and they often blame themselves when AI misbehaves.",
+  stats:[
+   {v:57.9,t:"of Students say learning new tools is their biggest pressure. No other role comes close",s:"Project pressure · n=38"},
+   {v:90,t:"of Students say clients value visual quality or realism most",s:"Client values · n=20"},
+   {v:46.7,t:"of Students want AI to generate concepts and alternatives",s:"Wanted capability · n=15"},
+   {v:26.9,t:"of Students haven't started using AI, while 34.6% use it daily: a polarised group",s:"AI usage · n=26"},
+   {v:40,t:"of Students say lack of control is the biggest limit of AI visualization",s:"AI limits · n=10"},
+   {v:64.3,t:"of Students are significantly affected by hardware prices, the highest of any role",s:"Hardware prices · n=14"}],
+  cares:["Learning","Experimentation","Visual quality and realism","Discovering new workflows"],
+  pressures:["Learning new tools, far ahead of deadlines (15.8%)"],
+  frustr:["Not knowing what's possible","Hard to control results","Too many new systems at once","No signal whether it's their prompt or the AI"],
+  asks:["Show me how to achieve this.","Tell me why this render came out this way."],
+  arch:["AI-Enabled Novice"],
+  impl:[
+   ["high","Discoverability and in-product education","Design Lock, the Edit tab and video output go undiscovered; users found them during research sessions after months of workarounds."],
+   ["high","Prompt quality signals","Users can't tell a weak prompt from AI randomness, so effort to ‘get good at Veras’ may turn into frustration."],
+   ["high","Explain what each update adds","Update feedback: people rate new features low because they haven't learned them yet, and ask for better explanations in every release."],
+   ["medium","Community and prompt library","People want to see what others prompt and get."],
+   ["high","Support and documentation","The AI support chat struggles with real problems, and some tickets went unanswered."]]}
+];
+
+// Interview quotes (Veras Research Explorer, Preliminary insights). p = persona id
+const QUOTES = [
+ {p:"vc",who:"T.M.",role:"Architect, large firm · composites 12–24 variations",theme:"Geometry control",text:"With brick material, for example, it may change the brick from running bond… to stack bond. It will change small details like that, that I haven't been able to find a prompt to control or freeze."},
+ {p:"vc",who:"T.M.",role:"Architect, large firm",theme:"Speed",text:"rapidly expedited the amount I can iterate and produce a preliminary concept image"},
+ {p:"vc",who:"C.W.",role:"Production designer, film and architecture",theme:"Control",text:"when it comes to specific design, when you're doing specific set design or architecture, of course, you want to control what the image is."},
+ {p:"vc",who:"R.O.",role:"Principal, two-person studio",theme:"Quality regression",text:"in February, very low, very low work to do on Photoshop. And this time, things gone wrong… quality was low."},
+ {p:"vc",who:"B.Z.",role:"Rendering and CAD specialist",theme:"Starting point",text:"at first, when I started getting sort of used to Veras, I was just taking images of renderings that I had done previously and seeing what the program could produce."},
+ {p:"vc",who:"A.T.",role:"Four-person visualization studio",theme:"Site context",text:"the surroundings: the streets, the pavement, everything has to be pretty much exactly as it's going to be."},
+ {p:"da",who:"M.R.",role:"Architect, high-volume rendering role",theme:"Consistency",text:"it's pretty consistent being inconsistent."},
+ {p:"da",who:"M.R.",role:"Architect, high-volume rendering role",theme:"Consistency",text:"it'll do render 1 really well… but render 2 and 3, sometimes they would come out very computer-generated… it's missed critical information. It's not reading the prompt properly."},
+ {p:"da",who:"S.T.",role:"Architect, regional practice",theme:"Site context",text:"the main part is context. What I've seen is, sometimes, we don't have a road on the side of the building, but still, after mentioning it as well, I get a road on the side of it."},
+ {p:"da",who:"S.T.",role:"Architect, regional practice",theme:"Upscaling",text:"if I like something in 1K with the same prompt… when I take it to 4K, there are like 20% changes."},
+ {p:"da",who:"E.J.",role:"Architecture studio team",theme:"Site context",text:"we want to be sure that when our building will be changed, the environment will not… gonna be changed by artificial intelligence."},
+ {p:"da",who:"N.C.",role:"Architectural firm team",theme:"Late-stage precision",text:"definitely the preliminary phase is much easier because, you know, you just have an idea and then you project it. But when the project is done… we need to be very specific"},
+ {p:"da",who:"J.F.",role:"Lead designer",theme:"Authorship",text:"I call this upgrading or enhancement of rendering. This is what I'm using, but I'm not using you for design per se."},
+ {p:"da",who:"T.M.",role:"Architect, large firm",theme:"Technical stage",text:"once I've selected that concept image and the material detailing that we want to use when we're producing the building construction documents, Veras will not be accurate enough."},
+ {p:"da",who:"J.G.",role:"Design leader, ~400-person firm",theme:"Credits",text:"may have just used, like, thousands of credits at that point. And then all of a sudden we're in a bind for the rest of the month."},
+ {p:"fe",who:"R.T.",role:"Residential kitchen and bath designer",theme:"Client expectations",text:"I've recently been getting feedback from clients that was just unhappy with the renderings that we were doing… now, all of a sudden, I think just with the introduction of AI, people are seeing a lot better renderings"},
+ {p:"fe",who:"R.T.",role:"Residential kitchen and bath designer",theme:"Fidelity",text:"our visuals for clients are to show them exactly what they're getting, not a rough idea."},
+ {p:"fe",who:"R.T.",role:"Residential kitchen and bath designer",theme:"Negative prompts",text:"I would put in the prompts like, 'do not add sinks, do not add any additional things'… and sometimes it still does it."},
+ {p:"fe",who:"R.T.",role:"Residential kitchen and bath designer",theme:"Prompt compliance",text:"Sometimes it seems like it's ignoring the very direct, clear prompts."},
+ {p:"fe",who:"A.G.",role:"Retail interior designer, 20+ years",theme:"Rendering gap",text:"with this program, I can generate easily and in a fast way 3D views but not rendering."},
+ {p:"wp",who:"I.T.",role:"Freelance architectural technologist",theme:"External prompting",text:"I'm using AI to instruct AI, basically."},
+ {p:"wp",who:"I.T.",role:"Freelance architectural technologist",theme:"Time cost",text:"having to spend half a day rendering up images on V-Ray wasn't cost-effective."},
+ {p:"wp",who:"I.T.",role:"Freelance architectural technologist",theme:"Consistency",text:"the kitchen doors would be a slightly different color, the roses that they put on the table on the first render's not there on the second render… that inconsistency across renders I find quite difficult."},
+ {p:"wp",who:"I.T.",role:"Freelance architectural technologist",theme:"Plugin friction",text:"bloody annoying."},
+ {p:"wp",who:"D.S.",role:"Residential designer",theme:"Speed",text:"when I say it takes 10 tries, that 10 tries is about a minute and a half. So it's a lot of huge time saving for me"},
+ {p:"wp",who:"P.S.",role:"Architect, Enscape pipeline",theme:"Integration",text:"exporting images from Enscape and uploading them one by one into Veras."},
+ {p:"wp",who:"M.R.",role:"Architect, high-volume rendering role",theme:"Volume pressure",text:"I was in my new position, and they wanted more renders to be done… it takes quite a while to kind of produce good high-quality renders."},
+ {p:"ec",who:"N.C.",role:"Architectural firm team · AI-enabled novice",theme:"Discovery",text:"one of the architects in the office sent it to us. I don't know how he got it, so we went online and we downloaded a trial. We really like it, and that's when I said, let's do this."},
+ {p:"ec",who:"N.C.",role:"Architectural firm team · AI-enabled novice",theme:"Loyalty",text:"we really like the software, that I can tell you. That's what we keep using, even though we're still in pain and struggling, but it's very good software."},
+ {p:"ec",who:"R.O.",role:"Principal, two-person studio",theme:"Learning curve",text:"working with AI started for us with Midjourney… then a little bit of Stable Diffusion. Very hard, very complex."},
+ {p:"ec",who:"E.J.",role:"Architecture studio team",theme:"Camera changes",text:"we have the same building, the same street, but a different point of view — and it didn't change the buildings, but it should have been changed."},
+ {p:"vc",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · pricing",theme:"Credits vs consistency",text:"Why would you box your users with credit for AI while it's still not consistent? This way instead of showing the final finished product through chaos colab page I will be forced to show it elsewhere because the final touches cost credits"},
+ {p:"vc",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · product updates",theme:"Lighting",text:"i love the light management and ive been asking for the invisible reflection of the light objects for so long, thank you for updating."},
+ {p:"da",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · product updates",theme:"Credits",text:"Veras is amazing, not stoked about the credit requirements"},
+ {p:"fe",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · pricing",theme:"Material access",text:"\"still primitive\", furthermore it is absurd that there are differences in subscriptions for the use of the materials, given that the program is not exactly cheap!"},
+ {p:"fe",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · V-Ray user, pricing",theme:"Asset access",text:"I'm a big fan of Vray… you put a star on 90% of the things in the model and material browser… not all of us earn enough to pay that money, whether monthly or not, even worse on an annual basis […] I would like my project to look as realistic as possible… and I still can't do that with 100 or so models."},
+ {p:"wp",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · team lead",theme:"Licensing & stability",text:"Your most recent updates have been incredibly buggy, especially with regard to licencing. My team frequently cannot use the software we pay for due to licence issues. This develops further to Cosmos and Veras failing to acquire a licence inside Sketchup. 1 year ago we see far less of these issues, now it is every, single, day."},
+ {p:"wp",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · product updates",theme:"Stability",text:"After the latest updates, I often experience issues when opening Enscape, as well as with the Cosmos Browser. As a result, I spend a significant amount of time trying to resolve various problems. For this reason, I am not fully satisfied with the new features yet, as I have not been able to use them smoothly under normal working conditions."},
+ {p:"wp",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · product updates",theme:"Workflow",text:"The newly added functionalities are useful and improve the overall workflow. Looking forward to further refinements."},
+ {p:"wp",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · product updates",theme:"Licensing",text:"It's okay, better than previous version. The Licence server problem is solved. AI is cool"},
+ {p:"wp",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · product updates",theme:"Updates",text:"Everything is flowing good, keep update new things"},
+ {p:"ec",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · product updates",theme:"Feature discovery",text:"My rating of 5 on the added functionalities is because I haven't used them enough to get a good grasp of their functions."},
+ {p:"ec",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · product updates",theme:"Feature education",text:"explain better new features in every actualisation"},
+ {p:"da",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · Enscape Premium",theme:"Team onboarding",text:"The VERAS UI is quite clunky and not intuitive at all, it has taken quite some time and a lot of burned chaos credits for just our more advanced users to understand the veras process and functionality, and then even more to then train other users."},
+ {p:"da",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · Enscape Collection",theme:"Credits",text:"Veras is wonderful and I blown away at the results I am getting. I just wish the credits went a little further."},
+ {p:"wp",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · Enscape Premium, solo user",theme:"Credit visibility",text:"The new chaos credit system is really not a great addition, especially since there seems to be little information on how many credits are consumed using Veras. As a solo user who relies heavily on enscape with veras, I really shouldn't have to purchase additional credits each month and worry about overuse, but I find myself running out of credits often.[…]"},
+ {p:"wp",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · V-Ray Collection, SketchUp",theme:"Integration & licensing",text:"I really like being able to use Veras straight from V-Ray, but I did have a snag since I have both a SU Studio License and a V-Ray Collection license, and it wouldn't load. I've contacted support about this. Also I'm missing the selection capabilities that Veras standalone/3D mode offers."},
+ {p:"vc",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · V-Ray Solo, 3ds Max",theme:"Image errors",text:"It has improved with every update. Veras certainly shows a lot of potential, but it is still in its infancy and needs more refinement. There are still too many errors in the images so far."},
+ {p:"vc",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · V-Ray Collection, 3ds Max",theme:"Credits for iteration",text:"Love the Veras integration! But I feel you need to increase the credit level allowance on Nano Banana ! Way to small amount for the trial and error process that AI rendering is. But good choice the integrate Veras!!!"},
+ {p:"vc",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · V-Ray Solo, Rhino",theme:"Shift to AI",text:"I've started using Chaos Veras heavily, and as a result, I find myself using traditional rendering features much less often."},
+ {p:"ec",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · Enscape Premium",theme:"Prompting help",text:"Recently bought Veras and using it quite a lot. Really like it, but could use even more tutorials in prompting (i know there is some)."},
+ {p:"ec",src:"CSAT survey",who:"Anonymous",role:"CSAT respondent · pricing",theme:"Cost of access",text:"Everything new so pricey Veras gain more credit to generate and need to pay more to premium chaos library"}
+];
+
+// Customer Research on Asset Workflows & AI (21–30 April 2025). Paraphrased from research notes; names withheld.
+const OBS = [
+ {p:"wp",who:"J.S.",role:"3D visualization specialist, freelancer · 3ds Max with V-Ray / Vantage",
+  uses:[["Upscaling","Renders stills and videos at 2K in Vantage, then upscales to 4K with Topaz Labs. Happy with the results."],["3D models from reference images","Experimenting with tools that generate furniture models from reference photos; still looking for the right one."]],
+  note:"Should AI Enhancer offer plain upscaling without enhancing? Specific branded furniture is the top asset request, too diverse for a library to cover, so AI generation delivered through Cosmos is worth testing."},
+ {p:"da",who:"G.R.",role:"Director of Visualization, architecture firm · Enscape in Revit, 3ds Max with V-Ray",
+  uses:[["Seasonal variations","Experienced visualizers use Photoshop; the firm's architects use an AI tool (mnml.ai) instead."],["Virtual staging","In early design, architects use AI to show how a space will look furnished."]],
+  note:"Seasonal variations used to need special assets or Photoshop skills. Building them as an AI Enhancer capability beats producing seasonal asset variants in Cosmos."},
+ {p:"da",who:"C.L.",role:"Associate Principal, architecture practice",
+  uses:[["Upscaling","Uses Magnific regularly."],["3D model generation","Tried Meshy and 3D AI Studio: ‘decent’ for filling the back of a scene, not for close-ups, especially furniture and chairs."],["Wants next","Better asset search, including search by uploaded reference image; AI material generation for specific materials; a conversational way to work with AI tools."]],
+  note:"Upscaling is table stakes for an architectural AI offering. Added to the alpha list for the Material Generator."}
+];
+
+// CSAT survey · Key Feature Interest Trends. Solo n=453, Tiers n=458 (data as of 19.12). null = option not offered in that survey.
+const FEAT = [
+ ["Assets with artificial lights",58.94,null],["AI Lighting Mood Match",null,49.13],["Terrain tools",null,48.47],["Enhanced site context",32.01,45.85],
+ ["Section tool (dynamic cutaway)",34,41.05],["Interior parallax",29.8,39.3],["Vertical water",null,34.06],["AI-generated asset variants",32.45,33.62],
+ ["AI-driven project furnishing",32.67,null],["AI-generated materials",null,31.88],["Quick animation presets",null,29.48],["Chaos Assistant (AI-accelerated)",21.85,24.67],
+ ["Mobile experience (iPad/iOS)",23.18,24.24],["Enscape Inspector",20.09,21.62],["VR & immersive",19.43,19.65],["Real-time team collaboration",16.11,16.81],
+ ["360 cloud presentations",14.35,15.94],["Scenarios (impact)",8.39,null],["Automated building performance",7.95,null],["Embodied carbon calculations",5.3,null],
+ ["Document design workflow",5.08,5.9],["None of the above",6.62,4.59],["Other",3.09,4.59]
+];
+const FSIG = {
+ vc:["Assets with artificial lights","AI Lighting Mood Match","AI-generated materials"],
+ da:["Enhanced site context","Section tool (dynamic cutaway)","Terrain tools"],
+ fe:["AI-driven project furnishing","AI-generated asset variants","Interior parallax"],
+ wp:["Quick animation presets","Chaos Assistant (AI-accelerated)","Enscape Inspector"],
+ ec:["Chaos Assistant (AI-accelerated)","AI Lighting Mood Match","Mobile experience (iPad/iOS)"]
+};
+function featBars(names){
+  const rows=(names?names.map(n=>FEAT.find(f=>f[0]===n)):FEAT);
+  const top=60,pct=v=>v/top*100,ticks=[0,15,30,45,60];
+  return `<div class="fb">${rows.map(f=>`<div class="fb-r"><span class="lab">${esc(f[0])}</span>
+    <div class="fb-b">${[["Solo",f[1],"fs"],["Tiers",f[2],"ft"]].map(x=>`<div class="brow" tabindex="0" data-tip="${esc(`<b>${x[1]==null?"Not offered":fmt(x[1])}</b>${f[0]} · ${x[0]} respondents`)}"><span class="k">${x[0]}</span>
+      <span class="track">${ticks.slice(1).map(t=>`<i class="g" style="left:${pct(t)}%"></i>`).join("")}${x[1]==null?"":`<i class="b ${x[2]}" style="width:${pct(x[1])}%"></i>`}</span><span class="val">${x[1]==null?"n/o":fmt(x[1])}</span></div>`).join("")}</div></div>`).join("")}
+   <div class="fb-r"><span></span><div class="axis" style="grid-template-columns:44px minmax(0,1fr) 58px;padding:0 6px"><span></span><span class="ticks">${ticks.map(t=>`<span style="left:${pct(t)}%">${t}%</span>`).join("")}</span><span></span></div></div></div>
+   <div class="legend"><span><i class="kb" style="background:var(--solo)"></i>Solo plan, n=453</span><span><i class="kb" style="background:var(--seq)"></i>Tiers plans, n=458</span><span>n/o = option not offered in that survey</span></div>`;
+}
+
+// Needs, pain points and opportunities: the core of each persona. ev = supporting evidence (data, quotes, research notes).
+const NPO = {
+ vc:{
+  needs:[
+   ["Direct the result, don't roll the dice","They know the look they want. AI should take direction and refine toward it, not hand back a random draw.",["Inconsistent quality is Visualization Artists' #1 AI limit (30.6%)","C.W.: “you want to control what the image is”"]],
+   ["Production-grade realism","Materials, lighting, people and foliage that hold up in a client presentation.",["66.2% of Visualization Artists say clients value quality or realism most","80% of 3D Generalists want AI for materials, lighting and visual quality"]],
+   ["Lighting they can shape","Fine control over artificial lights, mood and time of day.",["Assets with artificial lights: 58.9% of Solo (top CSAT feature)","AI Lighting Mood Match: 49.1% of Tiers","CSAT: “i love the light management…”"]],
+   ["Variation worth compositing","Many coherent options from one direction, so they can pick and combine parts.",["T.M. generates 12–24 variations and composites them in Photoshop"]]],
+  pains:[
+   ["Inconsistent output","Same prompt, same settings, a different result. The first render is often the best and every iteration after adds artefacts or an ‘AI-y’ look.",["M.R.: “it's pretty consistent being inconsistent”","CSAT: “still too many errors in the images so far”"]],
+   ["Details change silently","Brick bonds, textures and small features shift and can't be frozen by prompting.",["T.M.: running bond becomes stack bond"]],
+   ["Quality drifts over time and after edits","Edits and upscales are perceived to degrade the image, so the last mile moves to Photoshop.",["R.O.: almost no Photoshop work in February, poor quality since","Every interviewee post-processes in Photoshop or similar"]],
+   ["Paying for trial and error","Credits run out on the iteration that AI rendering needs, and final touches cost extra.",["CSAT: “Way to small amount for the trial and error process that AI rendering is”","CSAT: “Why would you box your users with credit for AI while it's still not consistent?”"]],
+   ["Deadlines and a homogenised look","Time pressure is high, and clients are growing tired of standard AI outputs.",["Tight deadlines top pressure: 35.9% of 3D Generalists, 30.9% of Visualization Artists"]]],
+  opps:[
+   ["critical","Reproducible results","Lock a look and develop it: seeds, history and variations that stay coherent.",["Output consistency is the #1 finding of the interview synthesis"]],
+   ["high","AI lighting control","Artificial lights, mood match and lighting presets that respond to direction.",["Lighting is the top CSAT feature signal for both Solo and Tiers"]],
+   ["high","Design Lock for details","Preserve geometry and material detail across views and iterations.",["Internal estimate: Design Lock works as intended ~75% of the time"]],
+   ["high","A credit model that supports iteration","Cheap draft previews, clear per-render cost and fewer credits for final touches.",["S.T. suggested a low-cost 0.5K preview","CSAT verbatims on credits and Nano Banana allowance"]],
+   ["medium","Edits and upscales without loss","Treat upscaling as table stakes and stop quality degrading on repeat edits.",["Users rely on Topaz and Magnific for upscaling"]]]},
+ da:{
+  needs:[
+   ["Keep the design intact","Geometry, openings and materials must stay as modelled. AI enhances the visual, not the design.",["Lack of control is Architects' #1 AI limit (38.2%)","J.F.: “I'm not using you for design per se”"]],
+   ["Change one thing at a time","Select a part, change it, leave everything else alone.",["A.G. needed ~20 full re-renders on one project","“Change this part without changing everything else.”"]],
+   ["The real site, every view","Roads, neighbours and landscape that match the actual context and stay put between angles.",["Enhanced site context: 45.9% of Tiers want it","S.T. and E.J. both report context changing between renders"]],
+   ["Fast alternatives in early design","Concepts, seasons and furnished spaces for early client conversations.",["37.8% of Architects want AI for concepts & alternatives","G.R.: architects use mnml.ai for seasonal variations and virtual staging"]],
+   ["Team control","Credit visibility, a way to bill AI renders, and quick onboarding for junior staff.",["J.G. manages ~400 people on shared credits"]]],
+  pains:[
+   ["AI overrides the model","Windows shrink, pools appear on terraces, negative prompts are ignored.",["Prompt compliance is rated Critical in the interview synthesis"]],
+   ["Invented or shifting context","Veras adds roads that don't exist and changes neighbouring buildings with the camera.",["S.T.: “I get a road on the side of it”","E.J.: the environment changes with each view"]],
+   ["Not precise enough for late stages","Early stages are easy; once the design is fixed, deviation creates rework and Veras exits the workflow.",["T.M.: “Veras will not be accurate enough” for construction documents","N.C.: “when the project is done… we need to be very specific”"]],
+   ["Credits burn across the team","No per-render visibility, no billing path, and credits spent just learning the UI.",["J.G.: juniors “used thousands of credits”","CSAT: “a lot of burned chaos credits… to then train other users”"]],
+   ["Squeezed on three sides","Deadlines, new tools and client revisions all compete for time.",["69.9% of Architects name one of these as their top pressure"]]],
+  opps:[
+   ["critical","Geometry preservation and prompt compliance","An ‘enhance only’ mode that respects the model and negative prompts.",["Every interviewee corrects AI errors in Photoshop"]],
+   ["critical","Stable site context","Keep or import real context and hold it constant across views.",["Top CSAT feature signal for Tiers alongside lighting and terrain"]],
+   ["high","Selection-based partial edits","Mask and change one element without a full re-render.",["Partial edits flagged across interviews"]],
+   ["high","Team credit controls","Per-render cost, per-user pools and exportable usage for client billing.",["Large-firm leaders can't bill AI rendering back to clients"]],
+   ["medium","Seasons and virtual staging","Early-design variations as an AI Enhancer capability.",["Architects already use third-party tools for this"]]]},
+ fe:{
+  needs:[
+   ["The exact product, in the render","Specific tiles, faucets and branded furniture that survive the render unchanged.",["Branded furniture is the top asset request from customers","R.T. and A.G. upload product references"]],
+   ["Options clients can react to, fast","The same room with different finishes, lighting or furniture in minutes.",["83.3% of Interior Designers say clients value quality, realism or speed","Speed matters more here (23.3%) than for other roles"]],
+   ["Furnish and vary spaces","AI furnishing and asset variants to stage rooms quickly.",["AI-driven project furnishing: 32.7% of Solo","AI-generated asset variants: 33.6% of Tiers"]],
+   ["Learning framed in their craft","Guidance on interiors, styling and materials rather than generic AI.",["46.9% want Interior Design & Styling tutorials; 6.2% pick AI workflows"]]],
+  pains:[
+   ["AI redesigns the room","It adds sinks and crown moulding or moves hardware, despite clear negative prompts.",["R.T.: “do not add sinks… and sometimes it still does it”","Unrealistic details are Interior Designers' #1 AI limit (30%)"]],
+   ["Prompts get long and fragile","Exact finishes need complex prompts, and long prompts can fail.",["A.G. found short, direct prompts beat long ChatGPT-written ones"]],
+   ["Clients' bar has moved","Renders that once won awards now disappoint clients who have seen AI.",["R.T.: clients “unhappy with the renderings that we were doing”"]],
+   ["Too many new tools","Learning new tools is their biggest pressure, above deadlines.",["34.1% of Interior Designers"]],
+   ["Materials behind paywalls","Asset and material access varies by subscription.",["CSAT: “absurd that there are differences in subscriptions for the use of the materials”"]]],
+  opps:[
+   ["critical","‘Enhance, don't redesign’","Negative prompts that hold, and a mode that never adds fixtures.",["Any geometry change is unacceptable at this stage"]],
+   ["high","Reference-image and product fidelity","Cosmos assets as reference input, AI 3D from a product photo, and search by image.",["Research note: branded furniture is too diverse for a library alone"]],
+   ["high","AI furnishing and variants","Stage and restyle rooms from the asset library.",["Two of the top CSAT feature signals"]],
+   ["high","Guidance at the moment of need","Short, interior-specific tips inside the tool instead of separate AI courses.",["Learning tools is this persona's top pressure"]],
+   ["medium","In-app masking","Fix a detail without detouring to Canva or Photoshop.",["R.T. and A.G. both leave Veras to fix details"]]]},
+ wp:{
+  needs:[
+   ["AI inside the host app","Use AI where they already model and render, with the same power as standalone.",["21.7% of 3D Generalists cite workflow integration","CSAT: “missing the selection capabilities that Veras standalone/3D mode offers”"]],
+   ["Predictable cost","Know what a render costs and stop worrying about running out.",["CSAT: “little information on how many credits are consumed”","75% of Freelancers say hardware prices affect purchases"]],
+   ["Things that just work","Licensing, plugins and updates that don't break the working day.",["CSAT: licence issues “every, single, day”"]],
+   ["Prompting done for them","Help writing the prompt from what's already in the scene.",["I.T.: “I'm using AI to instruct AI, basically.”"]]],
+  pains:[
+   ["The export loop","Export → switch tool → generate → download → re-import → fix, one image at a time.",["P.S.: “uploading them one by one into Veras”"]],
+   ["Licences and buggy updates","Paying teams can't open the software; Enscape and Cosmos Browser fail after updates.",["CSAT verbatims from Enscape, V-Ray and SketchUp users"]],
+   ["Plugin friction","CAPTCHA loops, wrong aspect ratios and oversized windows push people to the browser.",["I.T.: “bloody annoying”","N.G. abandoned the Revit plugin"]],
+   ["Credit anxiety","Solo users buy extra credits monthly and still run out.",["CSAT, Enscape Premium solo user"]],
+   ["Budget and hardware limits","Cost pressure keeps many from adopting AI at all.",["30.4% of Freelancers don't use AI","25% of 3D Generalists tried AI but rarely use it"]]],
+  opps:[
+   ["high","Close the host ↔ Veras loop","Split-screen with Enscape, feature parity in plugins, no manual export.",["Enscape integration currently offers little over standalone"]],
+   ["high","Licensing and update stability","Treat licence failures as a top-priority reliability issue.",["Repeated CSAT complaints since recent updates"]],
+   ["high","Built-in prompt assistant","Let the AI Assistant write and improve prompts from scene context.",["Most interviewees draft prompts in ChatGPT, Gemini or Claude"]],
+   ["high","Credit transparency","Per-render cost, refund on failure made visible, outage notices.",["Few users know failed renders refund credits"]],
+   ["medium","Plugin stability and lightweight paths","Fix plugin ergonomics; keep AI cloud-side so hardware isn't a barrier.",["71.5% of poll respondents say hardware prices affect software purchases"]]]},
+ ec:{
+  needs:[
+   ["Learn by doing","Guidance that explains why a result came out the way it did, then lets them try.",["57.9% of Students say learning new tools is their biggest pressure"]],
+   ["Know what's possible","Discover features before they need them.",["Design Lock, Edit tab and video output went undiscovered in interviews","CSAT: “haven't used them enough to get a good grasp”"]],
+   ["Feedback on their prompts","A signal of whether it's the prompt or the AI.",["Users blame their own skill for AI randomness"]],
+   ["Affordable access","Room to experiment without cost blocking them.",["64.3% of Students are significantly hit by hardware prices","CSAT: “Everything new so pricey”"]],
+   ["Examples to learn from","See what others prompt and get.",["Community and prompt library requested in interviews"]]],
+  pains:[
+   ["“Is it me or the AI?”","Effort to get good at Veras doesn't reliably pay off, and there's no signal why.",["Perceived skill issue named as a key usability challenge"]],
+   ["Hidden features","Powerful tools sit under dropdowns and in experimental menus.",["Users solved by hand what features were built to solve"]],
+   ["Too many tools at once","New tools arrive faster than they can learn them.",["No other role comes close to Students on learning pressure"]],
+   ["Thin support and docs","The AI support chat struggles with real problems; release notes don't teach.",["CSAT: “explain better new features in every actualisation”","CSAT: “could use even more tutorials in prompting”"]]],
+  opps:[
+   ["high","In-product education","Contextual tips, guided first projects and progressive disclosure.",["Feature discoverability rated High in the interview synthesis"]],
+   ["high","Prompt quality signals","The AI Assistant rates and improves a prompt before it spends credits.",["Open question from the research: intuitive signals on prompt depth"]],
+   ["high","Updates that teach","Every release explains what's new and how to use it.",["CSAT verbatims on new features"]],
+   ["medium","Prompt library and community","Shared prompts and results to learn from.",["Requested across interview profiles"]],
+   ["medium","Low-cost learning mode","Cheap drafts for practice.",["Cost sensitivity is highest among Students"]]]}
+};
+
+// Process steps per persona, reconstructed from the interviews (Veras Research Explorer), CSAT verbatims and asset-workflow research.
+const PHASES_P = {1:"Before Veras",2:"Entry point",3:"Inside Veras",4:"After Veras"};
+const PROC = {
+ vc:{src:"T.M., C.W., B.Z., A.T., R.O. · CSAT",steps:[
+  {ph:1,t:"Build the narrative",d:"Visit the site and think through viewpoints, from maintenance crews to a driver passing at 100 m.",tools:["Site photos"],who:"T.M."},
+  {ph:1,t:"Prepare the base image",d:"A grey massing model with no materials, or a finished V-Ray / Vantage render.",tools:["Rhino","3ds Max","V-Ray","Vantage"],who:"C.W., B.Z., A.T."},
+  {ph:2,t:"Early concept or final polish",d:"Director alignment and hero concepts early; lighting, people and foliage realism on a finished render late.",tools:["Web app","V-Ray integration"],who:"C.W., A.T."},
+  {ph:3,t:"Generate many variations",d:"12–24 outputs from one prompt and a strong seed, treated as raw material.",tools:["Prompt","Seeds"],who:"T.M.",pain:"Same prompt gives a different result; small details like brick bond change.",opp:"Reproducible results"},
+  {ph:3,t:"Hold the design across views",d:"Try Design Lock when moving the camera.",tools:["Design Lock"],who:"B.Z.",pain:"Locks the whole camera or fails when the view changes; long sessions ‘get tired’.",opp:"Design Lock for details"},
+  {ph:4,t:"Composite in Photoshop",d:"Matte-painting approach: combine the best parts of several outputs.",tools:["Photoshop"],who:"T.M., B.Z.",pain:"The last mile always leaves Veras; credits spent on final touches.",opp:"Edits and upscales without loss"},
+  {ph:4,t:"Hand off or rebuild",d:"Film work goes to illustrators and VFX; technical stages are rebuilt precisely in 3ds Max and V-Ray.",tools:["3ds Max","V-Ray"],who:"C.W., T.M."}]},
+ da:{src:"M.R., P.S., S.T., E.J., N.C., J.G., J.F.",steps:[
+  {ph:1,t:"Model the design",d:"The source model lives in the BIM or CAD tool. Veras is a downstream step, never a replacement.",tools:["Archicad","Revit","SketchUp"],who:"M.R., P.S., N.C., S.T."},
+  {ph:1,t:"Set context, camera and light",d:"Place trees, streets and furniture from the Enscape library; fix framing and lighting before export.",tools:["Enscape"],who:"M.R., S.T."},
+  {ph:1,t:"Draft the prompt elsewhere",d:"Refine prompts in Gemini or Claude to avoid burning credits; keep good ones in text files per project.",tools:["Gemini","Claude","ChatGPT"],who:"M.R., P.S., E.J.",pain:"Prompting guidance lives outside the product.",opp:"Built-in prompt help"},
+  {ph:2,t:"Export views one by one",d:"Upload each Enscape view to the Veras web app; the Enscape palette felt unreliable.",tools:["Web app","Enscape plugin"],who:"P.S.",pain:"Manual export loop; wants Enscape and Veras side by side.",opp:"Close the host ↔ Veras loop"},
+  {ph:3,t:"Preset, seeds and iterations",d:"Start from a preset like Autumn, run 4 seeds, ~10 attempts per usable image; pick 2K to save credits.",tools:["Presets","4 seeds"],who:"M.R., S.T., N.C.",pain:"Invented roads, shifting neighbours, changed windows; ~50% of credits wasted.",opp:"Geometry preservation and stable site context"},
+  {ph:3,t:"Upscale for the client",d:"Take the chosen 1K image to 4K.",tools:["Upscale"],who:"S.T.",pain:"About 20% of the image changes on upscale."},
+  {ph:4,t:"Fix in Photoshop",d:"Erase additions, correct hues, fix people.",tools:["Photoshop","Affinity"],who:"All",pain:"Every interviewee does this, no exceptions."},
+  {ph:4,t:"Place into the package",d:"Put renders back on Archicad sheets with plans and elevations; present over Zoom, PPT or print.",tools:["Archicad sheets","PPT"],who:"M.R.",pain:"Teams can't bill AI render costs back to clients.",opp:"Team credit controls"}]},
+ fe:{src:"R.T., A.G. · CSAT · asset research",steps:[
+  {ph:1,t:"Lay out the room",d:"Kitchen and bath layouts in cabinetry software, or 3D views from Archicad.",tools:["Cabinetry software","Archicad"],who:"R.T., A.G."},
+  {ph:1,t:"Collect product references",d:"Photos of the exact tile, faucet or branded furniture the client chose.",tools:["Product photos"],who:"R.T., A.G.",pain:"Branded products are rarely in any asset library.",opp:"Reference-image and product fidelity"},
+  {ph:2,t:"Upload render + reference",d:"Late stage: the design is approved; Veras should only improve the look.",tools:["Web app","Reference image"],who:"R.T."},
+  {ph:3,t:"Prompt with negatives",d:"Long prompts listing materials, plus ‘do not add sinks, do not add anything’.",tools:["Prompt","Negative prompt"],who:"R.T., A.G.",pain:"AI adds fixtures and moves hardware anyway.",opp:"‘Enhance, don't redesign’"},
+  {ph:3,t:"Filter the seeds",d:"Run 4 options, expect about 2 usable; redo the whole image to change one element.",tools:["4 seeds"],who:"R.T., A.G.",pain:"No partial edits: ~20 full redesign iterations on one project.",opp:"In-app masking"},
+  {ph:4,t:"Fix details elsewhere",d:"Mask and correct in Canva or Photoshop.",tools:["Canva","Photoshop"],who:"R.T."},
+  {ph:4,t:"Show the client exactly",d:"The visual must show exactly what they're getting, not a rough idea.",tools:["Client presentation"],who:"R.T."}]},
+ wp:{src:"I.T., D.S., P.S., N.G., J.S. · CSAT",steps:[
+  {ph:1,t:"Model for the client",d:"Residential walkthroughs and stills, often self-taught tools.",tools:["SketchUp","Chief Architect","3ds Max"],who:"I.T., D.S., J.S."},
+  {ph:1,t:"Have ChatGPT write the prompt",d:"‘I'm using AI to instruct AI.’",tools:["ChatGPT"],who:"I.T.",opp:"Built-in prompt assistant"},
+  {ph:2,t:"Open Veras from the host",d:"Plugin inside SketchUp, Revit or V-Ray; fall back to the browser when it breaks.",tools:["Plugins","Web app"],who:"I.T., N.G. · CSAT",pain:"CAPTCHA loops, licence failures, wrong aspect ratios, missing selection tools.",opp:"Licensing and plugin stability"},
+  {ph:3,t:"Iterate fast",d:"About 10 tries in ~1.5 minutes, instead of hours of manual lighting.",tools:["Presets","Seeds"],who:"D.S.",pain:"Four consistent views of one room is exactly what fails.",opp:"Reproducible results"},
+  {ph:3,t:"Watch the credits",d:"Buy extra credits monthly and ration use.",tools:["Credits"],who:"CSAT",pain:"Little information on credit consumption; runs out often.",opp:"Credit transparency"},
+  {ph:4,t:"Upscale outside",d:"Render at 2K, upscale to 4K with a dedicated tool.",tools:["Topaz","Magnific"],who:"J.S., C.L."},
+  {ph:4,t:"Deliver",d:"Walkthroughs and stills to residential clients.",tools:["Stills","Walkthroughs"],who:"I.T."}]},
+ ec:{src:"N.C., A.G., R.O. · CSAT · interview synthesis",steps:[
+  {ph:1,t:"Discover Veras",d:"A colleague shares it, or a search like ‘best AI tools for rendering’ in Google or ChatGPT.",tools:["Google","ChatGPT","Word of mouth"],who:"N.C."},
+  {ph:2,t:"Start a trial",d:"Download, pick a preset and jump straight to final-looking images.",tools:["Trial","Presets"],who:"N.C."},
+  {ph:3,t:"Trial-and-error prompting",d:"Try long LLM-written prompts, then learn short direct ones work better.",tools:["Prompt","ChatGPT"],who:"A.G.",pain:"No signal whether it's the prompt or the AI.",opp:"Prompt quality signals"},
+  {ph:3,t:"Burn credits learning",d:"Repeat renders to understand what the tool does.",tools:["Credits"],who:"CSAT",pain:"Experimenting costs money they don't have.",opp:"Low-cost learning mode"},
+  {ph:3,t:"Find features late",d:"Design Lock and the Edit tab turn up after weeks of workarounds, sometimes during the research session.",tools:["Design Lock","Edit tab"],who:"Interview synthesis",pain:"Powerful features sit in dropdowns.",opp:"In-product education"},
+  {ph:4,t:"Look for help",d:"Tutorials, release notes and support chat.",tools:["Tutorials","Support"],who:"CSAT",pain:"Support chat can't solve real problems; updates aren't explained.",opp:"Updates that teach"},
+  {ph:4,t:"Stay loyal, with friction",d:"‘We're still in pain and struggling, but it's very good software.’",tools:[],who:"N.C."}]}
+};
+function procMap(id){
+  const P_=PROC[id];let last=0;
+  const steps=P_.steps.map((s,i)=>{const newPh=s.ph!==last;last=s.ph;
+    return `<li class="ps${s.pain?" haspain":""}${s.ai?" isai":""}" data-ph="${s.ph}">
+      <span class="ps-ph ${newPh?"":"cont"}">${newPh?PHASES_P[s.ph]:"&nbsp;"}</span>
+      <div class="ps-node"><span class="ps-n">${i+1}</span></div>
+      <div class="ps-card">
+        ${s.ai?`<span class="ai-b">AI</span>`:""}<b>${esc(s.t)}</b><p>${esc(s.d)}</p>
+        ${s.tools.length?`<div class="ps-tools">${s.tools.map(t=>`<span>${esc(t)}</span>`).join("")}</div>`:""}
+        ${s.pain?`<div class="ps-pain"><span class="pi" aria-hidden="true">!</span><span><b class="lbl">Pain point</b>${esc(s.pain)}</span></div>`:""}
+        ${s.opp?`<div class="ps-opp"><span class="oi" aria-hidden="true">↗</span><span><b class="lbl">Opportunity</b>${esc(s.opp)}</span></div>`:""}
+        <span class="ps-who">${esc(s.who)}</span>
+      </div></li>`}).join("");
+  const nP=P_.steps.filter(s=>s.pain).length;
+  return `<div class="pmeta"><div class="legend"><span><i class="lp">!</i>Pain point</span><span><i class="lo">↗</i>Opportunity</span><span><i class="la">AI</i>AI used at this step</span><span class="muted">${P_.steps.length} steps · ${nP} with pain points</span></div><span class="cnote" style="margin:0">Reconstructed from: ${esc(P_.src)}</span></div>
+   <div class="pscroll"><ol class="proc">${steps}</ol></div>`;
+}
+
+// Churn Survey raw export (1 Jun – 31 Aug 2026, all Chaos products, 23,522 cancellations incl. 1,772 Veras and 2,742 Chaos Credits).
+// AI-related questions and comments come from small subsets; each block states its own base.
+const CHURN = {
+ tools:[["ChatGPT",40],["Nano Banana",27],["Gemini",18],["Claude",9],["Magnific",6],["ArchSynth",4],["Midjourney",3],["Visoid",3],["ComfyUI",3]],
+ cmp:[
+  {t:"Couldn't achieve the desired results",s:"Value blockers, among those who saw no value",v:[49.8,211],a:[25.0,1379]},
+  {t:"Didn't fit my workflow",s:"Value blockers",v:[25.6,211],a:[28.4,1379]},
+  {t:"Low value was the main reason to cancel",s:"Main reason",v:[11.9,1772],a:[5.9,23522]},
+  {t:"Never started or used it once or twice",s:"Usage",v:[56.4,1772],a:[37.9,23522]},
+  {t:"Switched to an AI tool",s:"Among those who switched",v:[35.1,74],a:[21.7,954]},
+  {t:"Better performance would have made it worth it",s:"Worth the price",v:[14.5,454],a:[7.0,6505]},
+  {t:"Easier to use would have made it worth it",s:"Worth the price",v:[11.9,454],a:[7.4,6505]}],
+ ai:{t:"How AI or automation changed their workflow",n:320,note:"Only asked of cancellers who said AI or automation reduced their need",rows:[["Replaced most of the work",32.2],["Replaced some of the work",28.1],["Not sure",21.3],["Changed the process, no direct replacement",10.9],["Adopted AI, no overlap with the product",7.5]]},
+ themes:{t:"What AI-related comments are about",n:291,unit:"count",note:"Comments that mention AI or an AI tool by name, keyword-coded; a comment can fit several themes",rows:[["Price vs cheaper or free AI tools",65],["Asking for better or more integrated AI",33],["Control, prompt adherence, consistency",31],["AI replacing their work or clients",19],["Pushback on AI (keep it separate, less AI)",13]]},
+ credits:{t:"What credit comments are about",n:518,unit:"count",note:"Comments mentioning credits or tokens, keyword-coded; 421 are Chaos Credits cancellations",rows:[["Running out, want more per plan",85],["Monthly refresh or rollover",67],["Cost, or paying twice for Veras and credits",38],["Want the previous or unlimited model",30],["Confusing to understand",22]]}
+};
+function listBars(o){const cnt=o.unit==="count";const mx=Math.max(...o.rows.map(r=>r[1])),top=cnt?Math.ceil(mx/10)*10:(mx>60?100:Math.ceil(mx/10)*10);const f=v=>cnt?String(v):fmt(v);
+  return `<div class="lb"><h4>${esc(o.t)}<span>n=${o.n.toLocaleString("en-US")}</span></h4>${o.note?`<p class="cnote" style="margin:-4px 0 8px">${esc(o.note)}</p>`:""}
+  ${o.rows.map(r=>`<div class="brow" tabindex="0" data-tip="${esc(`<b>${f(r[1])}${cnt?" comments":""}</b>${r[0]}`)}"><span class="lab">${esc(r[0])}</span><span class="track"><i class="b" style="width:${r[1]/top*100}%"></i></span><span class="val">${f(r[1])}</span></div>`).join("")}</div>`}
+function churnCmp(){const top=60,pct=v=>Math.min(v,top)/top*100,ticks=[0,15,30,45,60];
+  return `<div class="fb">${CHURN.cmp.map(c=>`<div class="fb-r"><span class="lab">${esc(c.t)}<small class="cm-s">${esc(c.s)}</small></span>
+    <div class="fb-b">${[["Veras",c.v,"ft"],["All",c.a,"fs"]].map(x=>`<div class="brow" tabindex="0" data-tip="${esc(`<b>${fmt(x[1][0])}</b>${x[0]==="Veras"?"Veras cancellers":"All products"} · n=${x[1][1].toLocaleString("en-US")}`)}"><span class="k">${x[0]}</span>
+      <span class="track">${ticks.slice(1).map(t=>`<i class="g" style="left:${pct(t)}%"></i>`).join("")}<i class="b ${x[2]}" style="width:${pct(x[1][0])}%"></i></span><span class="val">${fmt(x[1][0])}</span></div>`).join("")}</div></div>`).join("")}
+   <div class="fb-r"><span></span><div class="axis" style="grid-template-columns:44px minmax(0,1fr) 58px;padding:0 6px"><span></span><span class="ticks">${ticks.map(t=>`<span style="left:${pct(t)}%">${t}%</span>`).join("")}</span><span></span></div></div></div>
+   <div class="legend"><span><i class="kb" style="background:var(--seq)"></i>Veras cancellers</span><span><i class="kb" style="background:var(--solo)"></i>All Chaos products</span><span>Hover a bar for its base</span></div>`}
+
+// Churn insights added to personas
+NPO.vc.needs[0][2].push("Churn Survey: 49.8% of Veras cancellers who saw no value “couldn't achieve the desired results” (25.0% across products)");
+NPO.vc.pains.push(["General AI tools replace the render step","Some customers now get ‘good enough’ images from ChatGPT, Gemini or Nano Banana instead of a renderer.",["Churn Survey: 35.1% of Veras switchers moved to an AI tool (26 of 74)","Tools named in churn comments: ChatGPT 40, Nano Banana 27, Gemini 18"]]);
+NPO.vc.opps.splice(1,0,["high","A hybrid of AI and predictability","Pair AI enhancement with renderer-grade control, so pros don't have to choose between them.",["Churn Survey: V-Ray leavers say they'd return for a hybrid workflow; 33 AI comments ask for better or more integrated AI"]]);
+NPO.da.pains[0][2].push("Churn Survey, Veras: “The generated results often changed or removed important parts of my designs.”");
+NPO.da.needs[1][2].push("Churn Survey: “Clients always have alterations to the design, and this is what gets us stuck”");
+NPO.da.needs.splice(3,0,["Start from the drawings they have","Turn a 2D floor plan into accurate eye-level views, elevations and furniture layouts without changing the plan.",["Churn Survey, Veras cancellers ask for 2D plan → 3D views that respect the source geometry"]]);
+NPO.da.opps.splice(3,0,["high","Master prompt, per-view tweaks","Render from an existing 3D model with one master prompt, plus reusable drag-and-drop prompts per perspective.",["Churn Survey, missing features: “The tweaking prompts should be modular for reuse…”"]]);
+NPO.da.opps.push(["medium","2D plans to consistent views","Generate coordinated views from AutoCAD or PDF plans while keeping the plan geometry fixed.",["Requested by Veras cancellers from architecture and construction"]]);
+NPO.fe.pains[0][2].push("Churn Survey: “It does not want to redesign my project on every render.”");
+NPO.fe.pains.push(["General AI feels easier to steer","Some compare Veras unfavourably with ChatGPT for simple client visuals and control.",["Churn Survey: 31 AI comments are about control, prompt adherence or consistency"]]);
+NPO.wp.needs[0][2].push("Churn Survey: “didn't fit my workflow” for 25.6% of Veras cancellers who saw no value");
+NPO.wp.needs[1][2].push("Churn Survey: price is the top reason Veras customers cancel (32.8%); comments ask for pausing, usage-based plans and token add-ons");
+NPO.wp.pains[1][2].push("Churn Survey: licence management is 45.9% of admin issues");
+NPO.wp.pains.push(["Cheaper AI is one tab away","Price is judged against low-cost or free AI tools, not against other renderers.",["Churn Survey: 65 AI-related comments compare price with cheaper or free AI tools","Credit comments: 85 about running out, 38 about cost or paying twice"]]);
+NPO.wp.opps.push(["high","Flexible plans for project-based work","Pause, usage-based billing and one-off credit add-ons instead of forced monthly refresh.",["Churn Survey: 67 credit comments are about monthly refresh or rollover"]]);
+NPO.ec.needs[0][2].push("Churn Survey: 56.4% of Veras cancellers never started or used it only once or twice (37.9% across products)");
+NPO.ec.pains.push(["Trials run out before they learn","Trial credits are gone before they understand the tool, and each learning attempt costs money.",["Churn Survey: “in less than two hours I used up my credits… with useless tests”"]]);
+NPO.ec.opps[0][3].push("Churn Survey: 26.3% of Veras cancellers never got started");
+NPO.ec.opps.push(["high","Trials built for learning","Credit-based trials without a short clock, a reminder before conversion, and a guided first project.",["Churn Survey: Veras cancellers ask for longer, credit-based trials and conversion reminders"]]);
+NPO.ec.opps.push(["medium","Student and entry pricing","A lower-cost path for learners and new graduates.",["Churn Survey: students and M.Arch graduates cite price"]]);
+
+QUOTES.push(
+ {p:"vc",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · V-Ray",theme:"Hybrid workflow",text:"Regrettably, we’re using AI more. If V-Ray develops a hybrid workflow in the future, we’ll be back, as we miss its predictability."},
+ {p:"vc",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · V-Ray",theme:"AI photorealism",text:"We want photorealism, and even though using Nano Banana Pro is painful, the results we are getting are in a different league from Vray (even with our years of experience)."},
+ {p:"vc",src:"Churn Survey",who:"Anonymous",role:"Churn respondent",theme:"AI replacing 3D",text:"Ai is killing 3D"},
+ {p:"da",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras Pro",theme:"Geometry",text:"The product would have been more valuable to me if it preserved the original geometry, materials, and architectural elements more accurately when enhancing renders. The generated results often changed or removed important parts of my designs."},
+ {p:"da",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras Pro",theme:"Editing",text:"Get better at editing renderings once they are generated. Clients always have alterations to the design, and this is what gets us stuck..."},
+ {p:"da",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras Pro, construction",theme:"2D plans",text:"I would reconsider if Veras could generate accurate eye-level interior views directly from 2D floor plans while respecting the source geometry."},
+ {p:"da",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras Starter",theme:"Master prompt",text:"The ability to use an existing 3D model within Veras (obj or 3ds file) to generate 3D photorealistic renderings using a master prompt then add modular tweaking prompts for each perspective within the 3D model. The tweaking prompts should be modular for reuse so that I can drag/drop them as needed depending on the perspective I'm in."},
+ {p:"fe",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Chaos Credits",theme:"Control",text:"The program is truly impossible to control. I can give it very specific commands and it ignores what I am asking, Chat GPT is much easier to use and control. It does not want to redesign my project on every render."},
+ {p:"fe",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras Starter",theme:"Prompt adherence",text:"Prompts did not produce the results I was expecting. Completely ignored instructions. Changed elements even when explicitly prompted not to. Super frustrating."},
+ {p:"fe",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · V-Ray",theme:"ChatGPT for clients",text:"I found it simpler and quicker to use ChatGPT to render my simple cabinetry designs into the customers homes and provide those visuals to the client instead of doing a whole render myself"},
+ {p:"wp",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras",theme:"Price vs AI",text:"I can do the same with Nano Banana, half the price"},
+ {p:"wp",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras Pro",theme:"Plugin",text:"If it would have worked and not crashed every time I try to open it in SketchUp, I would have used your service, but it's asking me every time to log in. When I log in, it just crashes."},
+ {p:"wp",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras",theme:"Token add-ons",text:"Please offer token add-ons for subscribers with sudden heavy usage. I'd resubscribe if you did."},
+ {p:"wp",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Chaos Credits",theme:"Paying twice",text:"Chaos 3000 Credits is great, and I like the rendering quality, but right now I’m paying twice—once for Veras AI and again for Chaos 3000—and I want to consolidate it into a single payment."},
+ {p:"wp",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Enscape",theme:"BIM + general AI",text:"I think your product is one of the best for my needs, but it is still much time intensive than prompting my AI using my BIM model directly... I need the interface to be faster, the control to be better to justify the delta in cost from my Gemini subscription"},
+ {p:"wp",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Mac user",theme:"Value for money",text:"I am a Mac user, and I was hoping for Vray quality. This is not it. I opened the software once for the price I paid. Biggest waste of money"},
+ {p:"ec",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras Starter",theme:"Trial credits",text:"I downloaded the trial version, but in less than two hours I used up my credits using version 7 Pro with useless tests, and I wasn't able to test the program satisfactorily."},
+ {p:"ec",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Chaos Credits",theme:"Learning costs",text:"It's a nightmare getting the desired result, but each attempt still eats up credits, so just trying to learn how to use it I'm burning through money."},
+ {p:"ec",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Enscape",theme:"Conversational control",text:"Needs more conversational control. Using other AI I can have a back and forth of feedback. This is just a series of one shots."},
+ {p:"ec",src:"Churn Survey",who:"Anonymous",role:"Churn respondent · Veras Starter",theme:"Training",text:"Currently shopping around, did like results produced but found hard to get ai to do some simply prompts/changes. Found there was near to know training videos/docs - get the feeling with right know how you could produce some good results."}
+);
+
+// Where AI enters each persona's workflow: [tool, what it's used for, who]
+const AIMAP = {
+ vc:{1:[["Midjourney, Stable Diffusion","Earlier concept exploration, before Veras","C.W., R.O."]],
+     2:[["Veras","Director alignment and hero concepts from a grey massing model","C.W., T.M."]],
+     3:[["Veras","12–24 variations; locking the design across views","T.M., B.Z."],["Nano Banana Pro","Chosen by some for photorealism","Churn Survey"]],
+     4:[["Topaz, Magnific","AI upscaling to 4K","J.S., C.L."],["Meshy, 3D AI Studio","AI 3D models for scene backgrounds","C.L."]]},
+ da:{1:[["Gemini, Claude, ChatGPT","Draft and test prompts before spending credits","M.R., P.S., E.J."],["mnml.ai","Seasonal variations and virtual staging in early design","G.R."]],
+     2:[["Veras plugin or web app","Enhance exported Enscape or Revit views","P.S., M.R."]],
+     3:[["Veras","Presets, 4 seeds, ~10 attempts per usable image","M.R., S.T."]],
+     4:[["Gemini, Photoshop","Small edits and fixes","Interview synthesis"],["Nano Banana","Revit screenshots + general AI as an alternative","Churn Survey"]]},
+ fe:{1:[["ChatGPT","Writes long material-by-material prompts","A.G."]],
+     2:[["Reference images","Product photos as AI input","R.T., A.G."]],
+     3:[["Veras","Negative prompts and seed filtering","R.T."]],
+     4:[["Canva, Photoshop","Masking and fixes outside Veras","R.T."],["ChatGPT","Places cabinetry into photos of client homes","Churn Survey"]]},
+ wp:{1:[["ChatGPT","Writes the whole prompt","I.T."]],
+     2:[["Host plugins","Veras inside SketchUp, Revit or V-Ray","I.T., N.G."]],
+     3:[["Veras","~10 fast tries in about 90 seconds","D.S."],["AI 3D model generators","Furniture models from reference photos","J.S."]],
+     4:[["Topaz, Magnific","Upscaling 2K → 4K","J.S., C.L."]]},
+ ec:{1:[["ChatGPT, Google","Research ‘best AI tools for rendering’","Interview synthesis"]],
+     2:[["Veras trial and presets","First images","N.C."]],
+     3:[["ChatGPT","LLM-written prompts, then short direct ones","A.G."]],
+     4:[["AI support chat","Help when stuck; often unhelpful","Interview synthesis"]]}
+};
+// steps (0-based) in PROC where AI is used
+const AISTEPS = {vc:[2,3,4,5],da:[2,3,4,5],fe:[2,3,4],wp:[1,2,3,5],ec:[0,1,2,3]};
+Object.keys(AISTEPS).forEach(k=>AISTEPS[k].forEach(i=>{if(PROC[k].steps[i])PROC[k].steps[i].ai=true}));
+function aiEntry(id){const m=AIMAP[id];
+  return `<div class="aie">${[1,2,3,4].map(ph=>`<div class="aie-c"><span class="aie-ph">${PHASES_P[ph]}</span>
+    ${(m[ph]||[]).map(x=>`<div class="aie-i"><b>${esc(x[0])}</b><span>${esc(x[1])}</span><em>${esc(x[2])}</em></div>`).join("")||`<span class="muted" style="font-size:.84rem">No AI use reported</span>`}</div>`).join("")}</div>`}
+
+// CAB (Customer Advisory Board) feature ratings, 1–5, n=14 (NeRFs and Gaussian splats n=12)
+const CAB = [
+ ["Generate Materials","Generate materials and textures through prompts or reference images",4.29,4.00,4.57],
+ ["Enhanced CG People","Better quality and diversity of CG human stand-ins",4.29,4.07,4.50],
+ ["Intelligent Materials","Automatically apply materials to 3D objects",4.07,3.86,4.29],
+ ["Realtime to Production","Make a Vantage or Enscape render look more like V-Ray or Corona",4.00,4.07,4.00],
+ ["Smart Scene Populator","Populate, build out or extend scenes with prompts",4.00,4.00,4.00],
+ ["Image to Scene","Generate a 3D interior layout from a photo",3.93,4.07,3.93],
+ ["Streaming on any device","Stream real-time 3D on any device for collaboration",3.86,3.79,3.93],
+ ["Point cloud support","Render to point clouds",3.62,3.31,3.92],
+ ["Mood Changer","Change mood or style of stills with text or image prompts",3.43,3.71,3.43],
+ ["Gaussian splats","Render to Gaussian splats in Chaos renderers",3.25,3.33,3.25],
+ ["NeRFs","Render to Neural Radiance Fields in Chaos renderers",3.17,3.42,3.17],
+ ["Material Aging","Simulate materials ageing over time",3.00,3.36,3.00]];
+const CABSIG = {vc:["Enhanced CG People","Realtime to Production","Mood Changer"],da:["Smart Scene Populator","Point cloud support","Image to Scene"],fe:["Generate Materials","Intelligent Materials","Image to Scene"],wp:["Realtime to Production","Streaming on any device","Intelligent Materials"],ec:["Mood Changer","Generate Materials","Smart Scene Populator"]};
+function cabBars(names){const rows=names?names.map(n=>CAB.find(c=>c[0]===n)):CAB;const pct=v=>(v-1)/4*100,ticks=[1,2,3,4,5];
+  return `<div class="fb">${rows.map(c=>`<div class="fb-r"><span class="lab">${esc(c[0])}<small class="cm-s">${esc(c[1])} · opportunity ${c[4].toFixed(2)}</small></span>
+   <div class="fb-b">${[["Imp.",c[2],"ft","Importance"],["Exc.",c[3],"fs","Excitement"]].map(x=>`<div class="brow" tabindex="0" data-tip="${esc(`<b>${x[1].toFixed(2)} / 5</b>${c[0]} · ${x[3]} (mean, CAB n=14)`)}"><span class="k">${x[0]}</span>
+    <span class="track">${ticks.slice(1).map(t=>`<i class="g" style="left:${pct(t)}%"></i>`).join("")}<i class="b ${x[2]}" style="width:${pct(x[1])}%"></i></span><span class="val">${x[1].toFixed(2)}</span></div>`).join("")}</div></div>`).join("")}
+   <div class="fb-r"><span></span><div class="axis" style="grid-template-columns:44px minmax(0,1fr) 58px;padding:0 6px"><span></span><span class="ticks">${ticks.map(t=>`<span style="left:${pct(t)}%">${t}</span>`).join("")}</span><span></span></div></div></div>
+   <div class="legend"><span><i class="kb" style="background:var(--seq)"></i>Importance</span><span><i class="kb" style="background:var(--solo)"></i>Excitement</span><span>Mean score 1–5 · CAB n=14</span></div>`}
+
+// CAB insights added to personas (workshop notes are paraphrased; Chaos staff marked)
+NPO.vc.needs[1][2].push("CAB rating: Enhanced CG People, opportunity 4.50 of 5 (n=14)");
+NPO.vc.needs.push(["Their own visual language","Custom stylistic modifiers tied to the firm's look and recurring project needs.",["CAB workshop: high interest in defining custom visual and stylistic modifiers"]]);
+NPO.vc.pains[1][2].push("CAB workshop: concern that AI video changes context and design details (S.N., KPF)");
+NPO.vc.opps.forEach(o=>{if(o[1]==="AI lighting control")o[3].push("CAB workshop: AI Mood Match drew the most votes and no negative reactions")});
+NPO.vc.opps.push(["medium","AI render critique","Instant feedback on the render and scene setup.",["CAB workshop: positive response, no concerns raised"]]);
+NPO.da.needs[0][2].push("CAB workshop: geometry beats pixels, because geometry can still be edited (R.B., Chaos)");
+NPO.da.needs.forEach(n=>{if(n[0]==="Fast alternatives in early design")n[2].push("CAB workshop: vegetation generated by region and climate (S.N., KPF)")});
+NPO.da.opps.push(["high","Material sync back to the host","Write AI-generated materials and textures back to Revit and other hosts.",["CAB workshop: strong positive response; S.F. (Overland Partners) wants it to work like Enscape's material push to Revit"]]);
+NPO.da.opps.push(["medium","Design QA and code checks","Real-time design critique and code-compliance review while modelling.",["CAB workshop: proposed by R.B. and P.M. (Chaos); M.B. (CBT Architects) already pilots DTO on two projects"]]);
+NPO.fe.needs[0][2].push("CAB rating: Generate Materials is the top opportunity (4.57 of 5); Intelligent Materials 4.29");
+NPO.fe.needs.forEach(n=>{if(n[0]==="Furnish and vary spaces")n[2].push("CAB rating: Smart Scene Populator 4.00, Image to Scene 3.93; S.F. (Overland Partners) has long asked for prompt-based asset population")});
+NPO.fe.opps.splice(2,0,["high","Assets and materials from an image","Suggest Cosmos assets and materials from a reference photo.",["CAB workshop: second-highest vote count","S.F. (Overland Partners): valuable given 40,000+ Cosmos assets"]]);
+NPO.wp.needs[0][2].push("CAB workshop: one place for AI means not jumping between platforms (S.N., KPF)");
+NPO.wp.opps.splice(1,0,["high","One context-aware AI assistant","A panel in every product that knows the viewport and the project, and can act, check and iterate.",["CAB workshop: centralisation valued; some prefer a canvas or node-based view to chat (S.N., A.S.)","One concern: no second opinion inside a single ecosystem (M.B., CBT Architects)"]]);
+NPO.wp.pains.push(["AI images, but not usable models","AI makes images and video easy, but VR and downstream use still need textured, lit models.",["CAB workshop: A.S. (Turner Fleischer) on the VR export gap"]]);
+NPO.ec.needs[0][2].push("CAB workshop: members asked for AI that helps train staff");
+NPO.ec.opps.push(["medium","Guided choices, not blank prompts","Suggest relevant options, like HDRIs for Mood Match, while keeping custom uploads.",["CAB workshop: A.S. (Turner Fleischer) preferred a guided approach"]]);
+NPO.ec.opps.push(["medium","Memory of past work","An assistant that remembers past projects and firm standards.",["CAB workshop: persistent memory valued for keeping firm knowledge (R.B., Chaos)"]]);
+
+const CABSENT=[["AI Mood Match","Top votes","Reference image adjusts scene lighting. No negative reactions; a guided flow with HDRI suggestions preferred (A.S.)","hi"],
+ ["Suggest Cosmos assets & materials from an image","2nd in votes","Linked to location-specific asset ideas; valued given 40,000+ Cosmos assets (S.F.)","hi"],
+ ["Camera motion, object animation, time-of-day by prompt","3rd in votes","Relevant for both Veras and Envision animation","hi"],
+ ["Veras material and texture sync back to the host","Strong positive","Specific to Veras, but applies to any AI-generated material","pos"],
+ ["Custom visual and stylistic modifiers","High interest","Connect AI to the firm's creative language","pos"],
+ ["AI render critique","Positive","Instant feedback on the render and scene setup; no concerns","pos"],
+ ["AI image editing in the browser","Positive","Many members still use Photoshop, so there's room to keep edits in one place","pos"],
+ ["Central AI Assistant","Mixed","Centralisation valued; some want to see implementation first","mix"],
+ ["Video-to-video animation","Mixed","Confusing at first, better once explained as an enhancer for draft animations; motion valued over curated paths; concern it changes details","mix"]];
+const CABHMW=[["Geometry & assets","3D geometry from prompts, prompt-based asset population (S.F.), vegetation by region and climate (S.N.), auto-fixing model issues, even Revit models from renderings (A.S.)"],
+ ["Materials & model integration","AI materials pushed back to the host app, textures carried into VR, and the gap between easy AI images and fully textured VR models (A.S., S.F.)"],
+ ["QA & code compliance","Real-time design critique, a QA companion, and code-compliance review; tools like UpCodes and DTO already being piloted (M.B.)"],
+ ["Training & specifications","AI that helps train staff and reviews specifications with suggested alternatives"]];
+const CABASST=["Centralising AI features makes it easier to combine them without jumping between platforms (S.N., KPF)",
+ "A visual board or canvas beats chat when creating several iterations at once (S.N., KPF); a node-based open canvas is also of interest (A.S., Turner Fleischer)",
+ "Persistent memory to pull elements from past projects and keep firm knowledge (R.B., Chaos)",
+ "Concern about losing a ‘second opinion’ when everything sits in one ecosystem (M.B., CBT Architects)",
+ "Liked in principle, but members want to see the implementation before judging (A.S., S.F.)",
+ "Planned as a context panel in each product that understands the viewport and project context and can act, self-check and iterate, e.g. place and evaluate cameras (D.R., Chaos)"];
+
+const CROSS = [
+ {t:"The Large-Firm Design Leader",who:"J.G.",p:["da"],d:"Manages up to 400 people on Enscape workflows. Sees AI as an ‘embellisher’. Needs fast staff training and credit control; renders that took days now take hours, which breaks billing."},
+ {t:"The Creative Director / Film Illustrator",who:"C.W.",p:["vc"],d:"Veras alongside Rhino and Photoshop. Uses AI for director alignment; final assets still need illustration and VFX. Needs strict geometry locking and a way past the homogenised AI look."},
+ {t:"The Solo / Small-Firm Architect",who:"T.M., M.G., I.T., D.S., J.F.",p:["da","wp"],d:"Cost-driven; replaces outsourced 3D artists. Uses Veras during design, not only at the end. Relies on external LLMs for prompts."},
+ {t:"The Enscape-embedded Architect",who:"M.R., P.S.",p:["da","wp"],d:"Archicad or Revit → Enscape → Veras. Values camera and lighting control from Enscape; wants split-screen instead of exporting one image at a time."},
+ {t:"The AI-Enabled Novice",who:"N.C., S.T.",p:["ec","fe"],d:"Lacks rendering skills or budget. Veras closes a skill gap while client expectations rise. Struggles with prompting; support gaps hurt most."},
+ {t:"The Material-Focused Interior Designer",who:"R.T., A.G.",p:["fe"],d:"Moving rendering in-house: kitchens, retail, small brands. Describes specific materials and uploads product references; long prompts for exact finishes are a struggle."}
+];
+
+const CHAIN = [
+ {k:"Client expectation",v:"59.3%",d:"say clients value visual quality or realism most",n:"Client values · 226"},
+ {k:"What users want",v:"59.6%",d:"want AI for concepts & alternatives or better visual quality",n:"Wanted capability · 176"},
+ {k:"Where it's heading",v:"70.2%",d:"pick real-time rendering or AI-assisted creation as the key trend",n:"Future workflow · 440"},
+ {k:"Current behaviour",v:"57.1%",d:"already use AI daily or a few times a week",n:"AI usage · 331",hi:true},
+ {k:"Pressure",v:"50.0%",d:"say tight deadlines or learning new tools is their top pressure",n:"Project pressure · 514"},
+ {k:"Constraint",v:"71.5%",d:"say hardware prices affect software purchases",n:"Hardware prices · 242"},
+ {k:"Where AI fails",v:"49.7%",d:"say lack of control or inconsistent quality limits AI visualization",n:"AI limits · 163"}
+];
+
+// Heat grid: metrics x persona primary role
+const HEAT = [
+ {l:"Lack of control is the top AI limit",q:"q1",i:0},
+ {l:"Inconsistent quality is the top AI limit",q:"q1",i:1},
+ {l:"Unrealistic details is the top AI limit",q:"q1",i:4},
+ {l:"Workflow integration is the top AI limit",q:"q1",i:3},
+ {l:"Use AI every day",q:"q4",i:0},
+ {l:"Don't use AI or haven't started",q:"q4",i:[4,5]},
+ {l:"Learning new tools is the top pressure",q:"q8",i:1},
+ {l:"Tight deadlines is the top pressure",q:"q8",i:0},
+ {l:"Clients value quality or realism",q:"q7",i:[0,1]},
+ {l:"Want AI for concepts & alternatives",q:"q2",i:0},
+ {l:"Want AI for materials & visual quality",q:"q2",i:1}
+];
+const HEAT_COLS = [["vc","Visualization Artist"],["da","Architect"],["fe","Interior Designer"],["wp","Freelancer"],["ec","Student"]];
+
+const DIMS = [
+ {t:"Control",d:"How much the user needs to direct the result.",l:"Directs everything",r:"Accepts suggestions",pos:{da:8,vc:30,fe:48,wp:66,ec:84}},
+ {t:"Exploration",d:"How much AI is used to discover possibilities.",l:"Explores constantly",r:"Knows the target",pos:{fe:10,ec:26,da:50,vc:66,wp:86}},
+ {t:"Integration",d:"How deeply AI must fit an established production workflow.",l:"Must live in the pipeline",r:"Fine as a separate tool",pos:{wp:8,vc:28,da:46,fe:66,ec:88}}
+];
+
+/* ================= HELPERS ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const P=id=>PERSONAS.find(p=>p.id===id);
+const fmt=v=>(Math.round(v*10)/10).toFixed(1).replace(/\.0$/,"")+"%";
+const tip=$("#tip");
+function showTip(e,html){tip.innerHTML=html;tip.hidden=false;moveTip(e)}
+function moveTip(e){let x,y;if(e.clientX!=null&&e.type!=="focus"){x=e.clientX+14;y=e.clientY+14}else{const r=e.target.getBoundingClientRect();x=r.left+r.width/2;y=r.bottom+8}
+  const w=tip.offsetWidth,h=tip.offsetHeight;if(x+w>innerWidth-8)x=innerWidth-w-8;if(y+h>innerHeight-8)y=y-h-28;tip.style.left=x+"px";tip.style.top=y+"px"}
+function hideTip(){tip.hidden=true}
+function bindTips(root){root.querySelectorAll("[data-tip]").forEach(el=>{
+  const h=()=>el.getAttribute("data-tip");
+  el.addEventListener("pointerenter",e=>showTip(e,h()));el.addEventListener("pointermove",moveTip);el.addEventListener("pointerleave",hideTip);
+  el.addEventListener("focus",e=>showTip(e,h()));el.addEventListener("blur",hideTip)})}
+
+const state={cs:"all",qi:0,evOpen:false,qsrc:"all",tab:"personas",p:"vc",q:"q1",role:null,dq:"q1",qp:"all",qs:"",cmp:["vc","da","fe"],cq:"q1"};
+try{const h=location.hash.replace("#","");if(PERSONAS.some(p=>p.id===h))state.p=h;else if(["compare","context"].includes(h))state.tab=h}catch(e){}
+function setTab(t,push=true){state.tab=t;["personas","compare","context"].forEach(k=>{$("#v-"+k).hidden=k!==t;$("#tab-"+k).setAttribute("aria-selected",k===t)});
+  if(push){try{history.replaceState(null,"","#"+(t==="personas"?state.p:t))}catch(e){}}window.scrollTo({top:0});hideTip();window._barCheck&&window._barCheck()}
+
+/* ================= HERO CARDS ================= */
+function renderCards(){
+  $("#pbarIn").innerHTML=PERSONAS.map(p=>`<button style="--pc:var(${p.c})" data-pick="${p.id}" aria-pressed="${state.p===p.id}"><i></i>${p.name.replace("The ","")}</button>`).join("");
+  $("#pgrid").innerHTML=PERSONAS.map(p=>`<button class="pcard" role="tab" style="--pc:var(${p.c})" data-pick="${p.id}" aria-pressed="${state.p===p.id}" aria-selected="${state.p===p.id}" tabindex="${state.p===p.id?0:-1}">
+    <span class="tag"><span class="eyebrow">${p.code}</span><span class="sw"></span></span>
+    <h3>${p.name.replace("The ","")}</h3><q>${esc(p.quote)}</q><span class="roles">${p.roles.join(" · ")}</span></button>`).join("");
+}
+
+/* ================= PERSONA DETAIL ================= */
+function barChart(qid,role){
+  const Q=POLLS[qid],R=Q.roles[role];
+  if(!R) return `<p class="muted">This poll has no ${esc(role)} breakdown.</p>`;
+  const vals=R[1];
+  const mx=Math.max(...vals.filter(v=>v!=null),...Q.all);
+  const top=mx>60?Math.ceil(mx/20)*20:Math.ceil(mx/10)*10;
+  const step=top>60?20:10;
+  const ticks=[];for(let t=0;t<=top;t+=step)ticks.push(t);
+  const pct=v=>(v/top*100);
+  const rows=Q.cats.map((c,i)=>{const v=vals[i],a=Q.all[i];
+    const tipH=`<b>${v==null?"n/r":fmt(v)}</b>${esc(role)} · ${esc(c)}<br><span class='k' style='background:var(--sheet)'></span>All respondents ${fmt(a)}`;
+    return `<div class="brow" tabindex="0" data-tip="${esc(tipH)}"><span class="lab">${esc(c)}</span>
+      <span class="track">${ticks.slice(1).map(t=>`<i class="g" style="left:${pct(t)}%"></i>`).join("")}
+        ${v==null?"":`<i class="b" style="width:${Math.max(pct(v),.6)}%"></i>`}<i class="t" style="left:calc(${pct(a)}% - 1px)"></i></span>
+      <span class="val">${v==null?"n/r":fmt(v)}</span></div>`}).join("");
+  return `<p class="chartq">${esc(Q.title)}</p><p class="cnote" style="margin:0 0 10px">${esc(role)}, n=${R[0]} · all respondents, n=${Q.n}${Q.partial?" · source lists top topics only per role":""}</p>
+   <div class="bars">${rows}</div>
+   <div class="axis"><span></span><span class="ticks">${ticks.map(t=>`<span style="left:${pct(t)}%">${t}%</span>`).join("")}</span><span></span></div>
+   <div class="legend"><span><i class="kb"></i>${esc(role)}</span><span><i class="kt"></i>All respondents</span></div>`;
+}
+const EVS=[];
+function evList(ev,d,t){if((!ev||!ev.length)&&!d)return "";const i=EVS.push({t,d,ev:ev||[]})-1;return i}
+function npoItem(t,d,ev,prio,full){const i=EVS.push({t,d:full?"":d,ev:ev||[]})-1;const n=(ev||[]).length;
+  return `<div class="it npi${full?" full":""}">${prio?`<span class="pr ${prio}">${prio==="critical"?"Critical":prio==="high"?"High":"Medium"}</span>`:""}<div class="it-t"><b>${esc(t)}</b>${full?`<p>${esc(d)}</p>`:""}</div>${n||!full?`<button class="evb" data-evi="${i}" aria-expanded="false" aria-label="${full?"Show references":"Show detail and references"}"><i aria-hidden="true">i</i>${n}</button>`:""}</div>`}
+function renderPersona(){
+  EVS.length=0;hideEv();
+  const p=P(state.p),N=NPO[p.id];
+  if(!state.role||!p.roles.includes(state.role))state.role=p.roles[0];
+  const pq=QUOTES.filter(q=>q.p===p.id);
+  const qs=Object.keys(POLLS);
+  const el=$("#pd");el.style.setProperty("--pc",`var(${p.c})`);
+  el.innerHTML=`
+  <div class="pd-top">
+    <div class="pd-id">
+      <div class="code"><span class="sw"></span><span class="eyebrow">${p.code} · AI Experience Persona · ${p.roles.join(", ")}</span></div>
+      <h2>${p.name}</h2>
+      <p class="bigq">“${esc(p.quote)}”</p>
+      <p class="muted">${esc(p.summary)}</p>
+      <div class="stack" style="gap:6px"><span class="eyebrow">Ideal AI experience · ${esc(p.ideal)}</span>
+        <div class="flow">${p.flow.map((f,i)=>`${i?"<em>→</em>":""}<span>${esc(f)}</span>`).join("")}</div></div>
+    </div>
+    <div class="glance">
+      <div><span class="eyebrow">Needs most</span><b>${esc(N.needs[0][0])}</b><p>${esc(N.needs[0][1])}</p></div>
+      <div><span class="eyebrow">Biggest pain point</span><b>${esc(N.pains[0][0])}</b><p>${esc(N.pains[0][1])}</p></div>
+      <div><span class="eyebrow">Biggest opportunity</span><b>${esc(N.opps[0][1])}</b><p>${esc(N.opps[0][2])}</p></div>
+      <dl class="kv"><dt>AI barrier</dt><dd>${p.barrier}</dd><dt>Relationship</dt><dd>${p.relationship}</dd><dt>Values</dt><dd>${p.value}</dd></dl>
+    </div>
+  </div>
+  <p class="npo-hint">Click <span class="hint-i">i</span> to see the references behind an insight.</p>
+  <div class="pd-sec npo">
+    <div class="col"><h3><span class="ic">◎</span>Needs</h3>
+      ${N.needs.map(n=>npoItem(n[0],n[1],n[2],null,true)).join("")}
+      <div class="asks"><span class="eyebrow">What they'd ask AI</span>${p.asks.map(x=>`<div>“${esc(x)}”</div>`).join("")}</div>
+    </div>
+    <div class="col"><h3><span class="ic">!</span>Pain points</h3>
+      ${N.pains.map(n=>npoItem(n[0],n[1],n[2],null,true)).join("")}
+    </div>
+    <div class="col"><h3><span class="ic">↗</span>Opportunities for Veras</h3>
+      ${[...N.opps].sort((a,b)=>({critical:0,high:1,medium:2}[a[0]]-{critical:0,high:1,medium:2}[b[0]])).map(n=>npoItem(n[1],n[2],n[3],n[0],true)).join("")}
+    </div>
+  </div>
+  <div class="pd-sec">
+    <div class="sec-h"><h3>Where AI enters their workflow</h3><span class="eyebrow">Tools they use and who uses them</span></div>
+    ${aiEntry(p.id)}
+  </div>
+  <div class="pd-sec">
+    <div class="sec-h"><h3>How they work today</h3><span class="eyebrow scrollhint">Scroll sideways for all steps →</span></div>
+    ${procMap(p.id)}
+  </div>
+  <div class="pd-sec">
+    <div class="sec-h"><h3>In their words</h3><div class="arch">${p.arch.map(a=>`<span class="chip">${esc(a)}</span>`).join("")}</div></div>
+    ${p.id==="ec"?`<p class="src-note">No students were interviewed. These quotes come from interviewees and CSAT respondents who were new to rendering or to AI.</p>`:""}
+    <div class="qcar" id="qcar"></div>
+  </div>
+  ${OBS.some(o=>o.p===p.id)?`<div class="pd-sec">
+    <div class="sec-h"><h3>AI they already use outside Veras</h3><span class="eyebrow">Asset workflows &amp; AI research · April 2025</span></div>
+    <div class="obs">${OBS.filter(o=>o.p===p.id).map(obsCard).join("")}</div></div>`:""}
+  <details class="pd-sec evid" ${state.evOpen?"open":""}>
+    <summary><h3>Supporting evidence</h3><span class="muted">Poll results, CSAT feature interest and CAB ratings behind this persona</span></summary>
+    <div class="evid-b">
+      <div class="stats">${p.stats.map(s=>`<div class="stat"><b>${fmt(s.v)}</b><span class="bar"><i style="width:${s.v}%"></i></span><p>${esc(s.t)}</p><span class="src">${esc(s.s)}</span></div>`).join("")}</div>
+      <div class="sub"><h4>Poll results by role</h4>
+        <div class="controls">
+          <div class="seg" id="pqseg" aria-label="Poll">${qs.map(k=>`<button data-pq="${k}" aria-pressed="${state.q===k}">${POLLS[k].short}</button>`).join("")}</div>
+          ${p.roles.length>1?`<div class="seg" id="prseg" aria-label="Role">${p.roles.map(r=>`<button data-prole="${esc(r)}" aria-pressed="${state.role===r}">${r}</button>`).join("")}</div>`:""}
+        </div>
+        <div id="pchart">${barChart(state.q,state.role)}</div></div>
+      <div class="sub"><h4>Features they'd reach for</h4><p class="cnote" style="margin:0 0 10px">CSAT survey, all respondents. Not split by role; these are the features that best match this persona's needs.</p>
+        ${featBars(FSIG[p.id])}</div>
+      <div class="sub"><h4>CAB feature ratings</h4><p class="cnote" style="margin:0 0 10px">Customer Advisory Board, 14 members, mean importance and excitement (1–5). Not split by role; features chosen to match this persona.</p>
+        ${cabBars(CABSIG[p.id])}</div>
+    </div>
+  </details>`;
+  el.querySelector(".evid").addEventListener("toggle",e=>{state.evOpen=e.target.open});
+  renderCarousel();
+  bindTips(el);
+}
+function renderCarousel(){
+  const p=P(state.p),all=QUOTES.filter(q=>q.p===p.id);
+  const cnt=k=>k==="all"?all.length:all.filter(q=>(q.src||"Interview")===k).length;
+  const list=all.filter(q=>state.cs==="all"||(q.src||"Interview")===state.cs);
+  const themes=[...new Set(list.map(q=>q.theme))];
+  $("#qcar").innerHTML=`
+   <div class="qc-bar">
+     <div class="seg" role="group" aria-label="Quote source">${[["all","All"],["Interview","Interviews"],["CSAT survey","CSAT survey"],["Churn Survey","Churn Survey"]].filter(x=>cnt(x[0])).map(x=>`<button data-cs="${x[0]}" aria-pressed="${state.cs===x[0]}">${x[1]} · ${cnt(x[0])}</button>`).join("")}</div>
+     <div class="qc-nav"><span class="mono muted" id="qpos">1 / ${list.length}</span>
+       <button class="navb" data-qnav="-1" aria-label="Previous quote">←</button><button class="navb" data-qnav="1" aria-label="Next quote">→</button></div>
+   </div>
+   <div class="qtrack" id="qtrack" tabindex="0" aria-label="Quotes, use arrow keys to move">${list.map((q,i)=>qSlide(q,i)).join("")}</div>
+   <div class="qdots" id="qdots">${list.map((q,i)=>`<button data-qgo="${i}" aria-label="Quote ${i+1}: ${esc(q.theme)}" aria-current="${i===0}"></button>`).join("")}</div>
+   <div class="qthemes"><span class="eyebrow">Jump to a theme</span>${themes.map(t=>`<button class="chip" data-qtheme="${esc(t)}">${esc(t)}</button>`).join("")}</div>`;
+  const tr=$("#qtrack");
+  const upd=()=>{const cards=[...tr.children];if(!cards.length)return;const x=tr.scrollLeft;let i=0,best=1e9;cards.forEach((c,k)=>{const d=Math.abs(c.offsetLeft-tr.offsetLeft-x);if(d<best){best=d;i=k}});
+    if(tr.scrollLeft+tr.clientWidth>=tr.scrollWidth-4)i=cards.length-1;
+    $("#qpos").textContent=`${i+1} / ${cards.length}`;document.querySelectorAll("#qdots button").forEach((b,k)=>b.setAttribute("aria-current",k===i));state.qi=i};
+  tr.addEventListener("scroll",()=>{clearTimeout(tr._t);tr._t=setTimeout(upd,160)});
+  tr.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key==="ArrowLeft"){e.preventDefault();qGo((state.qi||0)+(e.key==="ArrowRight"?1:-1))}});
+  state.qi=0;
+}
+function qGo(i){const tr=$("#qtrack");if(!tr)return;const cards=tr.children;i=Math.max(0,Math.min(cards.length-1,i));
+  tr.scrollTo({left:cards[i].offsetLeft-tr.offsetLeft,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});state.qi=i;
+  $("#qpos").textContent=`${i+1} / ${cards.length}`;document.querySelectorAll("#qdots button").forEach((b,k)=>b.setAttribute("aria-current",k===i))}
+function qSlide(q,i){const p=P(q.p),csat=(q.src||"Interview")!=="Interview";
+  return `<figure class="qs" style="--pc:var(${p.c});--pt:color-mix(in oklab,var(${p.c}) 11%,var(--sheet))">
+   <div class="qs-top"><span class="qs-theme">${esc(q.theme)}</span><span class="qs-src ${csat?"csat":""}">${esc(q.src||"Interview")}</span></div>
+   <blockquote>${esc(q.text)}</blockquote>
+   <figcaption><span class="av">${q.who==="Anonymous"?(q.src==="Churn Survey"?"CH":"CS"):q.who.replace(/\./g,"")}</span><span><b>${q.who}</b>${esc(q.role)}</span></figcaption></figure>`}
+
+function renderPChart(){
+  document.querySelectorAll("#pqseg [data-pq]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.pq===state.q));
+  document.querySelectorAll("#prseg [data-prole]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.prole===state.role));
+  $("#pchart").innerHTML=barChart(state.q,state.role);bindTips($("#pchart"));
+}
+function qCard(q){const p=P(q.p);return `<div class="qc" style="--pc:var(${p.c});--pt:color-mix(in oklab,var(${p.c}) 11%,var(--sheet))">
+  <span class="theme">${esc(q.theme)} · ${esc(q.src||"Interview")}</span><blockquote>${esc(q.text)}</blockquote>
+  <div class="who"><span class="av">${q.who==="Anonymous"?(q.src==="Churn Survey"?"CH":"CS"):q.who.replace(/\./g,"")}</span><div><b>${q.who}</b>${esc(q.role)}</div></div></div>`}
+
+function obsCard(o){return `<div class="ob"><div class="who"><span class="av">${o.who.replace(/\./g,"")}</span><div><b>${o.who}</b>${esc(o.role)}</div></div>
+  <dl>${o.uses.map(u=>`<div><dt>${esc(u[0])}</dt><dd>${esc(u[1])}</dd></div>`).join("")}</dl>
+  <p class="onote"><span class="eyebrow">Research note</span> ${esc(o.note)}</p></div>`}
+function pick(id,scroll){state.p=id;state.cs="all";if(state.tab!=="personas")setTab("personas",false);renderCards();renderPersona();
+  try{history.replaceState(null,"","#"+id)}catch(e){}
+  const st=$("#pbar").classList.contains("on");
+  if(st||(scroll&&innerWidth<980)){const off=document.querySelector(".topbar").offsetHeight+$("#pbar").offsetHeight+10;
+    window.scrollTo({top:$("#pd").getBoundingClientRect().top+scrollY-off,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}}
+
+document.addEventListener("click",e=>{
+  const tb=e.target.closest("[data-tab]");if(tb){setTab(tb.dataset.tab);return}
+  const pk=e.target.closest("[data-pick]");if(pk){pick(pk.dataset.pick,true);return}
+  const cm=e.target.closest("[data-cmp]");if(cm){const id=cm.dataset.cmp,on=state.cmp.includes(id);
+    if(on&&state.cmp.length<=2){$("#cmpNote").textContent="Keep at least two personas selected.";return}
+    state.cmp=on?state.cmp.filter(x=>x!==id):PERSONAS.map(p=>p.id).filter(x=>x===id||state.cmp.includes(x));renderCompare();return}
+  const cqb=e.target.closest("[data-cq]");if(cqb){state.cq=cqb.dataset.cq;renderCompare();return}
+  const pq=e.target.closest("[data-pq]");if(pq){state.q=pq.dataset.pq;renderPChart();return}
+  const pr=e.target.closest("[data-prole]");if(pr){state.role=pr.dataset.prole;renderPChart();return}
+  const dq=e.target.closest("[data-dq]");if(dq){state.dq=dq.dataset.dq;renderData();return}
+  const csb=e.target.closest("[data-cs]");if(csb){state.cs=csb.dataset.cs;renderCarousel();return}
+  const qn=e.target.closest("[data-qnav]");if(qn){qGo((state.qi||0)+ +qn.dataset.qnav);return}
+  const qg=e.target.closest("[data-qgo]");if(qg){qGo(+qg.dataset.qgo);return}
+  const qt=e.target.closest("[data-qtheme]");if(qt){const i=[...document.querySelectorAll("#qtrack .qs-theme")].findIndex(x=>x.textContent===qt.dataset.qtheme);if(i>=0)qGo(i);return}
+  const qsb=e.target.closest("[data-qsrc]");if(qsb){state.qsrc=qsb.dataset.qsrc;renderBank();return}
+  const qp=e.target.closest("[data-qp]");if(qp){state.qp=qp.dataset.qp;renderBank();return}
+  const go=e.target.closest("[data-go]");if(go){pick(go.dataset.go,false);return}
+});
+$("#pgrid").addEventListener("keydown",e=>{if(!["ArrowRight","ArrowLeft"].includes(e.key))return;
+  const i=PERSONAS.findIndex(p=>p.id===state.p),n=(i+(e.key==="ArrowRight"?1:-1)+PERSONAS.length)%PERSONAS.length;
+  pick(PERSONAS[n].id,false);$(`#pgrid [data-pick="${PERSONAS[n].id}"]`).focus()});
+
+/* ================= COMPARE ================= */
+const PRIMARY={vc:"Visualization Artist",da:"Architect",fe:"Interior Designer",wp:"Freelancer",ec:"Student"};
+const short=p=>p.name.replace("The ","");
+function renderCompare(){
+  const sel=PERSONAS.filter(p=>state.cmp.includes(p.id));
+  $("#cmpPick").innerHTML=PERSONAS.map(p=>`<button class="tog" style="--pc:var(${p.c})" data-cmp="${p.id}" aria-pressed="${state.cmp.includes(p.id)}"><span class="box"></span>${short(p)}</button>`).join("");
+  $("#cmpNote").textContent=`${sel.length} of 5 selected`;
+  const head=`<th></th>${sel.map(p=>`<th><button data-go="${p.id}" style="all:unset;cursor:pointer" title="Open ${esc(p.name)}"><span class="ph"><i style="background:var(${p.c})"></i>${short(p)}</span></button></th>`).join("")}`;
+  const rows=[["Quote",p=>"“"+p.quote+"”"],["Top needs",p=>NPO[p.id].needs.slice(0,3).map(n=>n[0]),true],["Top pain points",p=>NPO[p.id].pains.slice(0,3).map(n=>n[0]),true],["Top opportunities",p=>NPO[p.id].opps.slice(0,3).map(n=>n[1]),true],["Roles",p=>p.roles.join(" / ")],["AI barrier",p=>p.barrier],["Ideal AI",p=>p.ideal],["Ideal flow",p=>p.flow.join(" → ")]];
+  $("#cmpTable").innerHTML=`<thead><tr>${head}</tr></thead><tbody>${rows.map(r=>`<tr class="${r[2]?"core":""}"><th>${r[0]}</th>${sel.map(p=>`<td>${r[2]?`<ul class="tl">${r[1](p).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:esc(r[1](p))}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  $("#aiMatrix").innerHTML=`<thead><tr><th>Persona</th>${[1,2,3,4].map(ph=>`<th>${PHASES_P[ph]}</th>`).join("")}</tr></thead><tbody>${sel.map(p=>`<tr><th><span class="ph"><i style="background:var(${p.c})"></i>${short(p)}</span></th>${[1,2,3,4].map(ph=>`<td>${(AIMAP[p.id][ph]||[]).map(x=>`<div class="aim-i"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join("")||"<span class='muted'>—</span>"}</td>`).join("")}</tr>`).join("")}</tbody>`;
+  // head to head
+  const Q=POLLS[state.cq];
+  $("#cq").innerHTML=Object.keys(POLLS).map(k=>`<button data-cq="${k}" aria-pressed="${state.cq===k}">${POLLS[k].short}</button>`).join("");
+  const vals=sel.map(p=>{const R=Q.roles[PRIMARY[p.id]];return R?R[1]:null});
+  const flat=[...Q.all];vals.forEach(v=>v&&v.forEach(x=>{if(x!=null)flat.push(x)}));
+  const mx=Math.max(...flat),top=mx>60?Math.ceil(mx/20)*20:Math.ceil(mx/10)*10,step=top>60?20:10,ticks=[];for(let t=0;t<=top;t+=step)ticks.push(t);
+  const pct=v=>v/top*100;
+  $("#cchart").innerHTML=`<p class="chartq">${esc(Q.title)}</p><p class="cnote" style="margin:0 0 12px">${sel.map(p=>{const R=Q.roles[PRIMARY[p.id]];return `${short(p)}: ${PRIMARY[p.id]}s, n=${R?R[0]:"–"}`}).join(" · ")} · all respondents n=${Q.n}${Q.partial?" · n/r = not reported":""}</p>
+   ${Q.cats.map((c,i)=>`<div class="gb-cat"><h4>${esc(c)}<span>All respondents ${fmt(Q.all[i])}</span></h4>
+     ${sel.map((p,k)=>{const v=vals[k]?vals[k][i]:null;const t=`<b>${v==null?"n/r":fmt(v)}</b>${esc(p.name)} (${PRIMARY[p.id]}s) · ${esc(c)}<br>All respondents ${fmt(Q.all[i])}`;
+       return `<div class="brow" tabindex="0" style="--pc:var(${p.c})" data-tip="${esc(t)}"><span class="lab"><i></i>${short(p)}</span>
+       <span class="track">${ticks.slice(1).map(t=>`<i class="g" style="left:${pct(t)}%"></i>`).join("")}${v==null?"":`<i class="b" style="width:${Math.max(pct(v),.6)}%"></i>`}<i class="t" style="left:calc(${pct(Q.all[i])}% - 1px)"></i></span>
+       <span class="val">${v==null?"n/r":fmt(v)}</span></div>`}).join("")}</div>`).join("")}
+   <div class="axis" style="grid-template-columns:minmax(110px,170px) minmax(0,1fr) 58px"><span></span><span class="ticks">${ticks.map(t=>`<span style="left:${pct(t)}%">${t}%</span>`).join("")}</span><span></span></div>
+   <div class="legend">${sel.map(p=>`<span style="--pc:var(${p.c})"><i class="kb"></i>${short(p)}</span>`).join("")}<span><i class="kt"></i>All respondents</span></div>`;
+  bindTips($("#cchart"));
+  // heat
+  const val=(h,role)=>{const R=POLLS[h.q].roles[role];if(!R)return null;const ix=Array.isArray(h.i)?h.i:[h.i];return ix.reduce((s,i)=>s+R[1][i],0)};
+  const all=[];HEAT.forEach(h=>sel.forEach(p=>{const v=val(h,PRIMARY[p.id]);if(v!=null)all.push(v)}));
+  const hmx=Math.ceil(Math.max(...all)/10)*10;$("#scaleMax").textContent=hmx+"%";
+  $("#heat").innerHTML=`<thead><tr><th>Signal</th>${sel.map(p=>`<th><span class="ph"><i style="background:var(${p.c})"></i>${short(p)}</span><span style="display:block;margin-top:2px">${PRIMARY[p.id]}</span></th>`).join("")}</tr></thead>
+  <tbody>${HEAT.map(h=>{const Q=POLLS[h.q];const rv=sel.map(p=>val(h,PRIMARY[p.id])),best=Math.max(...rv);
+    return `<tr><th>${esc(h.l)}<small>${Q.short} · all respondents ${fmt(Array.isArray(h.i)?h.i.reduce((s,i)=>s+Q.all[i],0):Q.all[h.i])}</small></th>${sel.map((p,k)=>{const v=rv[k],R=Q.roles[PRIMARY[p.id]];
+    const a=v/hmx,bg=`color-mix(in oklab,var(--seq) ${Math.round(6+a*94)}%,var(--sheet))`,fg=a>.5?"var(--on-seq)":"var(--ink)";
+    const t=`<b>${fmt(v)}</b>${PRIMARY[p.id]}s, n=${R[0]}<br>${esc(Q.title)}`;
+    return `<td style="background:${bg};color:${fg}"><button data-tip="${esc(t)}" style="${v===best?"text-decoration:underline;text-underline-offset:3px":""}">${fmt(v)}</button></td>`}).join("")}</tr>`}).join("")}</tbody>`;
+  bindTips($("#heat"));
+  // dims
+  $("#dims").innerHTML=DIMS.map(d=>{const ids=Object.keys(d.pos).filter(id=>state.cmp.includes(id)).sort((a,b)=>d.pos[a]-d.pos[b]);
+    return `<div class="dim"><h4>${d.t}</h4><p>${d.d}</p><div class="dline" style="margin-bottom:22px">${ids.map((id,k)=>{const p=P(id);
+      return `<span class="dot" style="left:${d.pos[id]}%;--pc:var(${p.c})" tabindex="0" data-tip="${esc("<b>"+p.name+"</b>"+d.t+": "+(d.pos[id]<50?d.l:d.r).toLowerCase())}"></span><span class="dl ${k%2?"b":""}" style="left:${d.pos[id]}%">${short(p).split(" ")[0]}</span>`}).join("")}
+      <span class="end" style="left:0;top:auto;bottom:-16px">← ${d.l}</span><span class="end" style="right:0;top:auto;bottom:-16px">${d.r} →</span></div></div>`}).join("");
+  bindTips($("#dims"));
+}
+
+/* ================= STORY ================= */
+function renderChain(){
+  $("#chain").innerHTML=CHAIN.map((c,i)=>`<div class="link ${c.hi?"hi":""}"><span class="n">${String(i+1).padStart(2,"0")} / 07</span><h4>${c.k}</h4><b>${c.v}</b><p>${esc(c.d)}</p><span class="n">${c.n}</span></div>`).join("");
+}
+
+/* ================= DATA EXPLORER ================= */
+function renderData(){
+  const Q=POLLS[state.dq];
+  $("#qsel").innerHTML=Object.keys(POLLS).map(k=>`<button data-dq="${k}" aria-pressed="${state.dq===k}">${POLLS[k].short} · ${POLLS[k].n}</button>`).join("");
+  $("#qtitle").textContent=Q.title;
+  $("#qnote").textContent=`${Q.n} responses. The bottom row is all respondents.${Q.partial?" Only each role's top topics are reported in the source; n/r = not reported.":""} Underlined = highest role in each column.`;
+  const roles=ROLES.filter(r=>Q.roles[r]);
+  const flat=[];roles.forEach(r=>Q.roles[r][1].forEach(v=>{if(v!=null)flat.push(v)}));Q.all.forEach(v=>flat.push(v));
+  const mx=Math.min(100,Math.ceil(Math.max(...flat)/10)*10);$("#dmax").textContent=mx+"%";
+  const colBest=Q.cats.map((c,i)=>Math.max(...roles.filter(r=>Q.roles[r][0]>=10).map(r=>Q.roles[r][1][i]??-1)));
+  const cell=(v,t,best)=>{if(v==null)return `<td style="color:var(--ink-3)"><button data-tip="${esc(t)}">n/r</button></td>`;const a=Math.min(v/mx,1);
+    return `<td style="background:color-mix(in oklab,var(--seq) ${Math.round(6+a*94)}%,var(--sheet));color:${a>.5?"var(--on-seq)":"var(--ink)"}"><button data-tip="${esc(t)}" style="${best?"text-decoration:underline;text-underline-offset:3px":""}">${fmt(v)}</button></td>`};
+  $("#dheat").innerHTML=`<thead><tr><th>Role</th>${Q.cats.map(c=>`<th style="min-width:92px">${esc(c)}</th>`).join("")}</tr></thead><tbody>
+   ${roles.map(r=>{const [n,vals]=Q.roles[r];const ps=ROLE_P[r];
+     return `<tr><th>${esc(r)}<small>n=${n}${n<10?" · very small sample":""}</small><span class="row" style="gap:4px;margin-top:4px">${ps.map(id=>{const p=P(id);return `<button class="chip" data-go="${id}" style="display:inline-flex;align-items:center;gap:4px"><i style="width:7px;height:7px;border-radius:50%;background:var(${p.c})"></i>${p.name.replace("The ","")}</button>`}).join("")}</span></th>
+     ${vals.map((v,i)=>cell(v,`<b>${v==null?"n/r":fmt(v)}</b>${esc(r)}s picking “${esc(Q.cats[i])}”<br>All respondents: ${fmt(Q.all[i])}`,n>=10&&v===colBest[i])).join("")}</tr>`}).join("")}
+   <tr><th>All respondents<small>n=${Q.n}</small></th>${Q.all.map((v,i)=>cell(v,`<b>${fmt(v)}</b>All respondents picking “${esc(Q.cats[i])}”`,false)).join("")}</tr></tbody>`;
+  bindTips($("#dheat"));
+}
+
+/* ================= QUOTE BANK ================= */
+function renderBankFilters(){
+  $("#qsf").innerHTML=[["all","All sources"],["Interview","Interviews"],["CSAT survey","CSAT survey"],["Churn Survey","Churn Survey"]].map(x=>`<button data-qsrc="${x[0]}" aria-pressed="${state.qsrc===x[0]}">${x[1]}</button>`).join("");
+  $("#qpf").innerHTML=[["all","All"],...PERSONAS.map(p=>[p.id,p.name.replace("The ","")])].map(x=>`<button data-qp="${x[0]}" aria-pressed="${state.qp===x[0]}">${x[1]}</button>`).join("");
+}
+function renderBank(){
+  renderBankFilters();
+  const s=state.qs.trim().toLowerCase();
+  const list=QUOTES.filter(q=>(state.qp==="all"||q.p===state.qp)&&(state.qsrc==="all"||(q.src||"Interview")===state.qsrc)&&(!s||(q.text+" "+q.theme+" "+q.who+" "+q.role).toLowerCase().includes(s)));
+  $("#qcount").textContent=`${list.length} of ${QUOTES.length} quotes`;
+  $("#qbank").innerHTML=list.map(qCard).join("")||`<p class="muted">No quotes match. Try another word or clear the persona filter.</p>`;
+}
+$("#qsearch").addEventListener("input",e=>{state.qs=e.target.value;renderBank()});
+
+function renderCross(){
+  $("#cross").innerHTML=CROSS.map(c=>`<div class="xc"><span class="eyebrow">Interview archetype · ${esc(c.who)}</span><h4>${esc(c.t)}</h4><p>${esc(c.d)}</p>
+   <div class="maps">${c.p.map(id=>{const p=P(id);return `<button data-go="${id}" style="all:unset;cursor:pointer"><span><i style="background:var(${p.c})"></i>${p.name}</span></button>`}).join("")}</div></div>`).join("");
+}
+
+/* ================= INIT ================= */
+const total=Object.values(POLLS).reduce((s,q)=>s+q.n,0);$("#totalResp").textContent=total.toLocaleString("en-US");
+renderCards();renderPersona();renderCompare();renderChain();renderData();renderBank();renderCross();$("#cabAll").innerHTML=cabBars();bindTips($("#cabAll"));$("#cabSent").innerHTML=CABSENT.map(x=>`<div class="se ${x[3]}"><span class="se-t">${x[1]}</span><b>${esc(x[0])}</b><p>${esc(x[2])}</p></div>`).join("");$("#cabHmw").innerHTML=CABHMW.map(x=>`<div><b>${esc(x[0])}</b><p>${esc(x[1])}</p></div>`).join("");$("#cabAsst").innerHTML=CABASST.map(x=>`<li>${esc(x)}</li>`).join("");$("#churnCmp").innerHTML=churnCmp();bindTips($("#churnCmp"));$("#churnGrid").innerHTML=["themes","ai","credits"].map(k=>listBars(CHURN[k])).join("");bindTips($("#churnGrid"));document.querySelector(".churn-tools").innerHTML=`<span class="eyebrow">AI tools named in churn comments</span>`+CHURN.tools.map(t=>`<span class="chip">${t[0]} · ${t[1]}</span>`).join("");$("#featAll").innerHTML=featBars();bindTips($("#featAll"));$("#obsAll").innerHTML=OBS.map(o=>{const p=P(o.p);return obsCard(o).replace('<div class="ob">',`<div class="ob" style="--pc:var(${p.c});--pt:color-mix(in oklab,var(${p.c}) 11%,var(--sheet))"><span class="chip" style="align-self:flex-start">${p.name}</span>`)}).join("");setTab(state.tab,false);
+/* reference popover: hover to preview, click to pin */
+var evPinned=null;
+function showEv(btn){const o=EVS[+btn.dataset.evi];if(!o)return;const pop=$("#evpop");
+  pop.innerHTML=`<b class="ep-t">${esc(o.t)}</b>${o.d?`<p class="ep-d">${esc(o.d)}</p>`:""}${o.ev.length?`<span class="eyebrow">References · ${o.ev.length}</span><ul>${o.ev.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`:""}`;pop.hidden=false;
+  const r=btn.getBoundingClientRect(),w=pop.offsetWidth,h=pop.offsetHeight;let x=r.left,y=r.bottom+6;if(x+w>innerWidth-8)x=innerWidth-w-8;if(x<8)x=8;if(y+h>innerHeight-8)y=r.top-h-6;pop.style.left=x+"px";pop.style.top=y+"px"}
+function hideEv(){const pop=document.getElementById("evpop");if(pop)pop.hidden=true;if(evPinned){evPinned.setAttribute("aria-expanded","false");evPinned=null}}
+document.addEventListener("click",e=>{const b=e.target.closest(".evb");
+  if(b){e.stopPropagation();if(evPinned===b){hideEv();return}hideEv();evPinned=b;b.setAttribute("aria-expanded","true");showEv(b);return}
+  if(evPinned&&!e.target.closest("#evpop"))hideEv()},true);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")hideEv()});
+addEventListener("scroll",()=>{if($("#evpop").hidden)return;if(evPinned&&document.body.contains(evPinned))showEv(evPinned);else $("#evpop").hidden=true},{passive:true});
+
+/* compact persona bar */
+(function(){const tb=document.querySelector(".topbar"),bar=$("#pbar"),grid=$("#pgrid");
+ const setTb=()=>document.documentElement.style.setProperty("--tb",tb.offsetHeight+"px");setTb();addEventListener("resize",setTb);
+ let on=false;
+ const check=()=>{const show=state.tab==="personas"&&grid.getBoundingClientRect().bottom<tb.offsetHeight+(bar.offsetHeight||52)+24;
+   if(show!==on){on=show;bar.classList.toggle("on",on);bar.setAttribute("aria-hidden",!on);
+     if(on){const a=bar.querySelector('[aria-pressed="true"]');if(a)a.scrollIntoView({block:"nearest",inline:"nearest"})}}};
+ let raf=0;addEventListener("scroll",()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;check()})},{passive:true});
+ addEventListener("resize",check);window._barCheck=check;check()})();
+</script>
+
+</body>
+</html>
