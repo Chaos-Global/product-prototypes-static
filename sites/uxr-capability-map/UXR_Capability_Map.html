@@ -129,8 +129,8 @@ table.hm{border-collapse:separate;border-spacing:0;font-size:12.5px;width:100%}
 .pchip .av{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:600 10px var(--mono);background:var(--sunk)}
 .pchip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
 .pchip[aria-pressed="true"] .av{background:var(--accent);color:var(--accent-ink)}
-.pchip .done{width:6px;height:6px;border-radius:50%;background:var(--ok)}
-.pchip .done.part{background:var(--warn)}
+.pchip .prog{width:30px;height:4px;border-radius:2px;background:var(--line);overflow:hidden;flex:none}
+.pchip .prog i{display:block;height:100%;background:var(--ok)}
 .addbtn{border:1px dashed var(--line);background:none;border-radius:999px;padding:6px 12px;color:var(--muted)}
 .addform{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 input[type=text],select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
@@ -229,11 +229,35 @@ input[type=text],select{font:inherit;color:var(--ink);background:var(--surface);
 .chip.core{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line);font-size:10px;padding:2px 6px;vertical-align:1px}
 .sync{font:500 11.5px var(--body);color:var(--muted);display:inline-flex;align-items:center;gap:6px;margin-left:6px;align-self:center}
 .sync:empty{display:none}
+.sync .linkbtn{font-size:11.5px}
 .sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
 .sync[data-s="sync"]::before,.sync[data-s="save"]::before{background:var(--warn);animation:pulse 1s ease-in-out infinite}
 .sync[data-s="err"]{color:var(--crit)}.sync[data-s="err"]::before{background:var(--crit)}
 @keyframes pulse{50%{opacity:.3}}
 @media (prefers-reduced-motion:reduce){.sync::before{animation:none!important}}
+.toasts{position:fixed;left:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:grid;gap:8px;max-width:min(440px,calc(100vw - 32px));pointer-events:none}
+body.has-savebar .toasts{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+.toast{pointer-events:auto;background:var(--ink);color:var(--bg);border-radius:8px;padding:10px 14px;display:flex;gap:14px;align-items:center;justify-content:space-between;box-shadow:0 8px 24px rgb(0 0 0 / .2);font-size:13.5px}
+.toast .linkbtn{color:inherit}
+.linkbtn{background:none;border:0;padding:0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.chip.you{background:var(--accent);color:var(--accent-ink)}
+.ferr{flex-basis:100%;margin:6px 0 0;color:var(--crit);font-size:13px}
+.ferr[hidden]{display:none}
+.chk{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--ink);white-space:nowrap}
+.addbox{flex-basis:100%;display:grid;gap:6px;margin-top:6px;padding:12px;border:1px solid var(--line);border-radius:8px}
+.addrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.addrow input[type=text]{flex:1 1 220px;min-width:0}
+.pactions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ptitle{display:grid;gap:4px;min-width:0}
+.ptitle .addform{margin:2px 0}
+.onboard{margin-top:14px;padding:14px 16px;border-radius:8px;background:var(--accent-soft);display:grid;gap:8px}
+.onboard ol{margin:0;padding-left:20px;display:grid;gap:4px}
+.erow.todo .nm{font-weight:500}
+.skel{display:grid;gap:8px;margin-top:16px}
+.skel i{display:block;height:12px;border-radius:4px;background:var(--sunk);animation:pulse 1.4s ease-in-out infinite}
+.skel i:nth-child(2){width:80%}.skel i:nth-child(3){width:60%}
+.ver{margin:28px 0 0;font:11px var(--mono);color:var(--muted);text-align:center}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
 .fwtabs{border-bottom:1px solid var(--line);padding-bottom:6px}
 .scalekey{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;font-size:12px}
 .scalekey div{padding:8px 10px;border-radius:6px;background:var(--sunk)}
@@ -263,8 +287,10 @@ details summary{cursor:pointer;font-weight:600}
   <section class="view" id="v-person"></section>
   <section class="view" id="v-team" hidden></section>
   <section class="view" id="v-plan" hidden></section>
+  <p class="ver">UXR Capability Map · v5 · 8 Oct 2026 · scores stored in the team's Google Sheet</p>
 </main>
 <div class="savebar" id="savebar" hidden></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script>
 const FW = {"cats": [{"id": "research", "name": "UX Research", "core": true, "group": "Core 8", "skills": [["research1", "Planning and scoping research"], ["research2", "Qualitative methods (interviews, usability testing)"], ["research3", "Quantitative methods (surveys, A/B testing)"], ["research4", "Synthesizing insights & creating personas"], ["research5", "Journey mapping & service blueprinting"], ["res6", "AI-assisted research & synthesis"], ["tools4", "Research tools (Maze, Lookback, Dovetail)"], ["tools5", "Product analytics (Hotjar, GA, Amplitude)"]]}, {"id": "ui", "name": "UI Design", "core": true, "group": "Core 8", "skills": [["ui1", "Layout and composition"], ["ui2", "Visual hierarchy and spacing"], ["ui3", "UI patterns and design systems"], ["ui4", "Branding and visual consistency"], ["ui5", "Figma proficiency"], ["ui6", "Data-dense UI for professional tools"]]}, {"id": "ai", "name": "AI Prototyping", "core": true, "group": "Core 8", "skills": [["ai1", "AI prototyping tools (Figma Make, v0, Lovable, Cursor)"], ["ai2", "Prompting & AI-assisted workflows"], ["ai3", "Code literacy (HTML/CSS, React basics)"], ["ai4", "Designing AI features (agents, trust, explainability)"]]}, {"id": "ixd", "name": "Interaction Design", "core": true, "group": "Core 8", "skills": [["ixd1", "Task flows & user flows"], ["ixd2", "Wireframing & prototyping (low to high fidelity)"], ["ixd3", "Microinteractions & transitions"], ["ixd4", "Accessibility (WCAG compliance)"], ["ixd5", "Desktop, plugin & cross-platform patterns"]]}, {"id": "fac", "name": "Facilitation", "core": true, "group": "Core 8", "skills": [["collab2", "Leading workshops & ideation sessions"], ["fac1", "Running design critiques & reviews"], ["fac2", "Customer co-creation sessions"], ["tools2", "Whiteboarding tools (Miro, FigJam)"]]}, {"id": "pres", "name": "Presenting", "core": true, "group": "Core 8", "skills": [["growth3", "Public speaking / presenting work"], ["pres1", "Research & design storytelling"], ["pres2", "Presenting to leadership"]]}, {"id": "writing", "name": "Writing", "core": true, "group": "Core 8", "skills": [["writing1", "UX writing / microcopy"], ["writing2", "Clear documentation of design decisions"], ["writing3", "Communicating with stakeholders"], ["wr1", "Usability & heuristic evaluation reports"]]}, {"id": "ia", "name": "Information Architecture", "core": true, "group": "Core 8", "skills": [["ia1", "Content organization and labeling"], ["ia2", "Navigation systems"], ["ia3", "Taxonomies and metadata"], ["ia4", "Card sorting & tree testing"]]}, {"id": "collab", "name": "Collaboration & Team", "core": false, "group": "Professional", "skills": [["collab1", "Cross-functional collaboration (PMs, Devs, etc.)"], ["collab3", "Giving and receiving feedback"], ["collab4", "Peer mentoring / supporting juniors"], ["collab5", "Stakeholder management"]]}, {"id": "strategy", "name": "Strategy & Business", "core": false, "group": "Professional", "skills": [["strategy1", "Product thinking"], ["strategy2", "Product management understanding"], ["strategy3", "Aligning UX with business goals"], ["strategy4", "Prioritization & scoping"], ["strategy5", "UX metrics and success criteria"], ["str1", "Domain knowledge: 3D, rendering & AEC workflows"], ["str2", "Competitive analysis"]]}, {"id": "delivery", "name": "Execution & Delivery", "core": false, "group": "Professional", "skills": [["delivery1", "Design handoff to development"], ["delivery2", "Agile teams / design sprints"], ["delivery3", "Jira / Confluence & project tools"], ["delivery4", "QA support and design QA"]]}, {"id": "growth", "name": "Growth & Leadership", "core": false, "group": "Professional", "skills": [["growth1", "Proactiveness in learning & growth"], ["growth2", "Leading initiatives / ownership"], ["growth4", "Coaching / people leadership"], ["growth5", "UX advocacy"]]}], "new": ["res6", "ui6", "ai1", "ai2", "ai3", "ai4", "ixd5", "fac1", "fac2", "pres1", "pres2", "wr1", "str1", "str2"]};
@@ -278,9 +304,12 @@ const cats=()=>state.fw==="core"?CORE:FW.cats;
 const skillCats=cats;
 const allSkills=()=>skillCats().flatMap(c=>c.skills.map(([id,name])=>({id,name,cat:c})));
 
-const state={mentorView:"mentee",mentorFocus:"",fw:"detailed",pfw:"detailed",tab:"person",drafts:{},members:{},sel:null,hmMode:"c",kbAxis:null,adding:false,confirmDel:false,saving:"",db:null,ready:false};
-try{const s=JSON.parse(localStorage.getItem("uxr-map-ui")||"{}");Object.assign(state,{mentorView:s.mentorView||"mentee",pfw:s.pfw||"detailed",tab:s.tab||"person",sel:s.sel||null,hmMode:s.hmMode||"c"})}catch(e){}
-const persist=()=>{try{localStorage.setItem("uxr-map-ui",JSON.stringify({mentorView:state.mentorView,pfw:state.pfw,tab:state.tab,sel:state.sel,hmMode:state.hmMode}))}catch(e){}};
+const state={mentorView:"mentee",mentorFocus:"",fw:"detailed",pfw:"detailed",tab:"person",drafts:{},members:{},sel:null,hmMode:"c",kbAxis:null,
+  adding:false,addName:"",addMe:false,renaming:false,renameVal:"",confirmDel:false,efilter:"all",efSnap:null,me:null,outbox:[],pendingDel:null,ver:0,db:null,ready:false,loadingFirst:false,
+  sync:{phase:"idle",err:false,at:null,msg:""}};
+try{const s=JSON.parse(localStorage.getItem("uxr-map-ui")||"{}");Object.assign(state,{mentorView:s.mentorView||"mentee",pfw:s.pfw||"detailed",tab:s.tab||"person",sel:s.sel||null,hmMode:s.hmMode||"c",efilter:s.efilter||"all",me:s.me||null})}catch(e){}
+try{state.outbox=(JSON.parse(localStorage.getItem("uxr-map-outbox")||"[]")||[]).filter(o=>o&&o.op&&o.id)}catch(e){state.outbox=[]}
+const persist=()=>{try{localStorage.setItem("uxr-map-ui",JSON.stringify({mentorView:state.mentorView,pfw:state.pfw,tab:state.tab,sel:state.sel,hmMode:state.hmMode,efilter:state.efilter,me:state.me}))}catch(e){}};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -290,7 +319,16 @@ const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
 const f1=v=>v==null?"–":v.toFixed(1);
 const getM=id=>state.drafts[id]?.member??state.members[id];
 const changeCount=patch=>{let n=0;(function w(o){for(const k in o){if(o[k]&&typeof o[k]==="object")w(o[k]);else n++}})(patch);return n};
-const roster=()=>Object.entries(state.members).map(([id,m])=>({id,...m})).sort((a,b)=>a.name.localeCompare(b.name));
+// results that depend only on the team data are cached until the data changes
+const MEMO={ver:-1,fw:"",m:new Map()};
+function memo(k,fn){if(MEMO.ver!==state.ver||MEMO.fw!==state.fw){MEMO.ver=state.ver;MEMO.fw=state.fw;MEMO.m.clear()}if(!MEMO.m.has(k))MEMO.m.set(k,fn());return MEMO.m.get(k)}
+const bump=()=>{state.ver++};
+const roster=()=>memo("roster",()=>Object.entries(state.members).map(([id,m])=>({id,...m})).sort((a,b)=>a.name.localeCompare(b.name)));
+const ALL_IDS=FW.cats.flatMap(c=>c.skills.map(s=>s[0]));
+const ratedAll=m=>ALL_IDS.reduce((n,id)=>n+(cur(m,id)!=null?1:0),0);
+const today=()=>new Date().toISOString().slice(0,10);
+const normName=s=>String(s||"").trim().replace(/\s+/g," ");
+const dupOf=(name,except)=>{const k=normName(name).toLocaleLowerCase();return k?roster().find(p=>p.id!==except&&p.name.toLocaleLowerCase()===k):null};
 
 function entry(m,sid){return m.detailed?.[sid]||{}}
 function cur(m,sid){const v=entry(m,sid).c;return v>=1&&v<=5?v:null}
@@ -302,7 +340,8 @@ function effT(m,sid){const c=cur(m,sid);return tgt(m,sid)??want(m,sid)??c}
 function rated(m){return roster().length&&allSkills().filter(s=>cur(m,s.id)!=null).length}
 
 // team stats per skill
-function skillStats(sid){
+function skillStats(sid){return memo("ss:"+sid,()=>skillStats_(sid))}
+function skillStats_(sid){
   const ms=roster(),cs=[],ts=[];let depth=0,experts=0,focus=0,na=0;const learners=[],holders=[];
   for(const m of ms){const c=cur(m,sid);if(c==null)continue;cs.push(c);ts.push(effT(m,sid));
     if(c>=4){depth++;holders.push(m)} if(c===5)experts++;const r=rel(m,sid);if(r==="h")focus++;if(r==="n")na++;
@@ -317,24 +356,59 @@ function skillStats(sid){
   const priority=n?(4-a)+learners.length/n+focus/n*.5+(depth<=1?1:0):0;
   return {n,avg:a,avgT:at,depth,experts,focus,na,learners,holders,status,priority};
 }
-function catAvg(cat,m){const v=cat.skills.map(([id])=>m?cur(m,id):skillStats(id).avg).filter(x=>x!=null);return avg(v)}
-function catAvgT(cat,m){const v=cat.skills.map(([id])=>m?effT(m,id):skillStats(id).avgT).filter(x=>x!=null);return avg(v)}
+function catAvg(cat,m){if(!m)return memo("ca:"+cat.id,()=>catAvg_(cat));return catAvg_(cat,m)}
+function catAvgT(cat,m){if(!m)return memo("ct:"+cat.id,()=>catAvgT_(cat));return catAvgT_(cat,m)}
+function catAvg_(cat,m){const v=cat.skills.map(([id])=>m?cur(m,id):skillStats(id).avg).filter(x=>x!=null);return avg(v)}
+function catAvgT_(cat,m){const v=cat.skills.map(([id])=>m?effT(m,id):skillStats(id).avgT).filter(x=>x!=null);return avg(v)}
 
 // ---------- rendering ----------
-function render(){
+// Re-render without moving the page: keep the row/panel you were working in at the same spot, and keep focus.
+let lastI={el:null,at:0};
+document.addEventListener("pointerdown",e=>{lastI={el:e.target,at:Date.now()}},true);
+document.addEventListener("focusin",e=>{lastI={el:e.target,at:Date.now()}},true);
+function focusKey(el){
+  if(!el||el===document.body)return null;const d=el.dataset||{};
+  if(d.set)return `[data-set="${d.set}"][data-sid="${d.sid}"][data-v="${d.v}"]`;
+  if(el.id)return "#"+CSS.escape(el.id);
+  if(d.axis&&el.classList.contains("handle"))return `.radar .handle[data-axis="${d.axis}"]`;
+  for(const k of ["act","ef","pfw","person","hm","clayer","cfocus","mview"])if(d[k]!==undefined)return `[data-${k}="${CSS.escape(d[k])}"]`;
+  return null}
+function stableRender(fn){
+  const view=$("#v-"+state.tab);const H=72;
+  let anchor=null,top=0;
+  if(view&&!view.hidden){
+    const pref=lastI.el&&Date.now()-lastI.at<5000&&view.contains(lastI.el)?lastI.el.closest("[data-anchor]"):null;
+    const pick=el=>{const r=el.getBoundingClientRect();return r.bottom>H&&r.top<innerHeight?r:null};
+    if(pref&&pick(pref)){anchor=pref.dataset.anchor;top=pref.getBoundingClientRect().top}
+    else{const all=[...view.querySelectorAll("[data-anchor]")];let el=all.find(e=>{const r=e.getBoundingClientRect();return r.top>=H&&r.top<innerHeight})||all.find(e=>pick(e));
+      if(el){anchor=el.dataset.anchor;top=el.getBoundingClientRect().top}}
+  }
+  const act=document.activeElement,fk=focusKey(act),sel=act&&act.tagName==="INPUT"&&act.type==="text"?[act.selectionStart,act.selectionEnd]:null;
+  fn();
+  if(anchor){const el=$("#v-"+state.tab)?.querySelector(`[data-anchor="${CSS.escape(anchor)}"]`);if(el){const d=el.getBoundingClientRect().top-top;if(Math.abs(d)>.5)window.scrollBy(0,d)}}
+  if(fk&&document.activeElement!==act){const el=document.querySelector(fk);if(el){el.focus({preventScroll:true});if(sel&&el.setSelectionRange)try{el.setSelectionRange(sel[0],sel[1])}catch(e){}}}
+}
+function render(){stableRender(renderNow)}
+function renderNow(){
   state.fw=state.tab==="person"?state.pfw:"detailed";
   document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===state.tab));
   for(const t of ["team","person","plan"])$("#v-"+t).hidden=state.tab!==t;
+  renderSync();
   if(state.needKey){["#v-team","#v-person","#v-plan"].forEach(s=>$(s).innerHTML="");
+    const waiting=state.outbox.length;
     $("#v-"+state.tab).innerHTML=`<div class="panel gate"><h2>Enter the team passcode</h2><p class="muted">The UXR team's scores are protected with a shared passcode. Ask the map owner if you don't have it. You only need to enter it once on this device.</p>
-      <form id="keyform" class="addform"><input type="password" id="teamkey" aria-label="Team passcode" autocomplete="current-password" required><button class="btn" type="submit">Open the map</button></form>
-      ${state.keyError?`<p style="color:var(--crit);margin:10px 0 0">${esc(state.keyError)}</p>`:""}</div>`;
-    setTimeout(()=>$("#teamkey")?.focus(),0);renderSavebar();return}
-  if(!state.ready){const msg=`<div class="panel empty"><h2>Loading the team's ratings…</h2><p>Scores are kept in the team's Google Sheet. Once it answers, the team map, individual profiles and planning views fill in here.</p></div>`;
-    ["#v-team","#v-person","#v-plan"].forEach(s=>$(s).innerHTML=msg);return}
+      <form id="keyform" class="addform"><input type="password" id="teamkey" aria-label="Team passcode" autocomplete="current-password" required><button class="btn" type="submit" ${state.checkingKey?"disabled":""}>${state.checkingKey?"Checking…":"Open the map"}</button></form>
+      ${state.keyError?`<p class="ferr">${esc(state.keyError)}</p>`:""}
+      ${waiting?`<p class="muted" style="margin:8px 0 0">${waiting} ${waiting===1?"change is":"changes are"} saved on this device and will sync once you're in.</p>`:""}</div>`;
+    if(!state.checkingKey)setTimeout(()=>$("#teamkey")?.focus({preventScroll:true}),0);renderSavebar();return}
+  if(state.loadingFirst||!state.ready){const msg=`<div class="panel empty"><h2>Loading the team's scores…</h2><p>Reading the team's Google Sheet. The first load after a quiet period can take up to 30 seconds; after that the map opens instantly on this device.</p><div class="skel"><i></i><i></i><i></i></div></div>`;
+    ["#v-team","#v-person","#v-plan"].forEach(s=>$(s).innerHTML=msg);renderSavebar();return}
   if(!roster().length){const msg=`<div class="panel empty"><h2>No designers yet</h2><p>Open <b>Individual mapping</b> and choose <b>Add designer</b> to start the map.</p></div>`;
-    $("#v-team").innerHTML=msg;$("#v-plan").innerHTML=msg;renderPerson();return}
-  if(state.tab==="team")renderTeam();if(state.tab==="person")renderPerson();if(state.tab==="plan")renderPlan();renderSavebar();
+    $("#v-team").innerHTML=msg;$("#v-plan").innerHTML=msg;renderPerson();renderSavebar();return}
+  if(state.tab==="team")renderTeam();if(state.tab==="person")renderPerson();if(state.tab==="plan")renderPlan();
+  // give every panel a stable anchor so background refreshes never move the page
+  const view=$("#v-"+state.tab);view.querySelectorAll(".panel:not([data-anchor]),.hire:not([data-anchor])").forEach((el,i)=>el.dataset.anchor=state.tab+"-"+i);
+  renderSavebar();
 }
 
 function heatCls(v){return v==null?"v0":"v"+v}
@@ -416,7 +490,7 @@ function renderTeam(){
   for(const c of sc){
     if(state.fw!=="core")h+=`<tr class="cat"><td colspan="${ms.length+4}">${esc(c.name)} <span class="muted num">· ${f1(catAvg(c))}</span>${c.core?' <span class="chip core">Core 8</span>':""}</td></tr>`;
     for(const [sid,name] of c.skills){const st=stats[sid];
-      h+=`<tr><th class="sk" scope="row">${esc(name)}</th>${ms.map(m=>{const cv=cur(m,sid),r=rel(m,sid);let v,cls,tt;
+      h+=`<tr data-anchor="hm-${sid}"><th class="sk" scope="row">${esc(name)}</th>${ms.map(m=>{const cv=cur(m,sid),r=rel(m,sid);let v,cls,tt;
         if(state.hmMode==="g"){const w=want(m,sid);v=w&&cv?w-cv:null;cls=v==null?"v0":v>=2?"gp2":"gp";tt=v?`wants +${v}`:"";v=v?"+"+v:"";}
         else{v=state.hmMode==="t"?(tgt(m,sid)??null):cv;cls=heatCls(v)+(r==="n"&&state.hmMode==="c"?" rn":"");tt=v??"";v=v??"·"}
         return `<td class="c ${cls}" title="${esc(m.name)} · ${esc(name)}${tt!==""?": "+tt:""}${r?" · "+REL[r][0]:""}">${v}</td>`}).join("")}
@@ -478,7 +552,7 @@ function commitAxis(i,v){
     if(k<0)break;nv[k]+=s;diff-=s}
   c.skills.forEach(([sid],k)=>{patch[sid]={[key]:nv[k]}});
   stage(state.sel,{[branch]:patch});
-  const h=$(`.radar .handle[data-axis="${i}"]`);if(state.kbAxis===i&&h)h.focus();
+  const h=$(`.radar .handle[data-axis="${i}"]`);if(state.kbAxis===i&&h)h.focus({preventScroll:true});
 }
 let drag=null;
 document.addEventListener("pointerdown",e=>{
@@ -488,7 +562,7 @@ document.addEventListener("pointerdown",e=>{
 });
 document.addEventListener("pointermove",e=>{if(!drag)return;const v=valueAt(drag.svg,drag.i,e);if(v!==drag.v){drag.v=v;previewAxis(drag.i,v)}});
 document.addEventListener("pointerup",()=>{if(!drag)return;const d=drag;drag=null;state.kbAxis=null;commitAxis(d.i,d.v)});
-document.addEventListener("pointercancel",()=>{if(drag){drag=null;renderPerson()}});
+document.addEventListener("pointercancel",()=>{if(drag){drag=null;stableRender(renderPerson)}});
 document.addEventListener("keydown",e=>{
   const h=e.target.closest?.(".radar .handle");if(!h||!state.db)return;
   const dir={ArrowUp:1,ArrowRight:1,ArrowDown:-1,ArrowLeft:-1}[e.key];if(!dir)return;e.preventDefault();
@@ -498,66 +572,94 @@ document.addEventListener("keydown",e=>{
 
 function pick(kind,sid,val,opts,label){return `<span class="pick ${kind}" data-l="${label}" role="group" aria-label="${label}">${opts.map(([v,t])=>`<button data-set="${kind}" data-sid="${sid}" data-v="${v}" class="${String(val)===String(v)?"on":""}" aria-pressed="${String(val)===String(v)}" title="${esc(t)}">${kind==="rel"?REL[v][0]:v}</button>`).join("")}</span>`}
 
+function pendingIds(){return new Set(state.outbox.map(o=>o.id))}
 function renderPerson(){
   const ms=roster();
   if(state.sel&&!state.members[state.sel])state.sel=null;
+  if(!state.sel&&state.me&&state.members[state.me])state.sel=state.me;
   if(!state.sel&&ms.length)state.sel=ms[0].id;
   const m=state.sel?{id:state.sel,...getM(state.sel)}:null;
-  const sk=allSkills();
-  let h=`<div class="panel"><div class="phead"><h2>Designers</h2><span class="muted">Pick yourself to add or update your scores. Confirm your changes to share them with the team.</span></div><div class="people">`;
-  h+=ms.map(p=>{const n=sk.filter(s=>cur(p,s.id)!=null).length;return `<button class="pchip" data-person="${p.id}" aria-pressed="${p.id===state.sel}"><span class="av">${esc(initials(p.name))}</span>${esc(p.name)}<span class="done ${n===sk.length?"":"part"}" title="${n} of ${sk.length} rated"></span>${state.drafts[p.id]?'<span class="chip warn">unsaved</span>':""}</button>`}).join("");
-  h+=state.adding?`<form class="addform" id="addform"><input type="text" id="newname" placeholder="Full name" aria-label="Full name" required maxlength="60"><button class="btn" type="submit">Add</button><button class="btn ghost" type="button" data-act="cancel-add">Cancel</button></form>`
-    :`<button class="addbtn" data-act="add">+ Add designer</button>`;
+  const sk=allSkills(),fullN=ALL_IDS.length,pend=pendingIds();
+  // --- people
+  let h=`<div class="panel" data-anchor="people"><div class="phead"><h2>Designers</h2><span class="muted">${state.me&&state.members[state.me]?"Select a designer to view or update their map.":"Select your name to rate yourself. The map will open on your profile next time."}</span></div><div class="people">`;
+  h+=ms.map(p=>{const n=ratedAll(p),pc=Math.round(n/fullN*100);return `<button class="pchip" data-person="${p.id}" aria-pressed="${p.id===state.sel}" title="${n} of ${fullN} skills rated">${av(p)}<span>${esc(p.name)}</span>${p.id===state.me?'<span class="chip you">You</span>':""}${state.drafts[p.id]?'<span class="chip warn">Unsaved</span>':pend.has(p.id)?'<span class="chip plain">Syncing</span>':""}<span class="prog" aria-hidden="true"><i style="width:${pc}%"></i></span></button>`}).join("");
+  if(state.adding){
+    h+=`<form class="addform addbox" id="addform" novalidate>
+      <label class="eyebrow" for="newname">New designer</label>
+      <div class="addrow"><input type="text" id="newname" value="${esc(state.addName)}" placeholder="Full name, e.g. Ivelina Stoyanova" maxlength="60" autocomplete="off">
+      <label class="chk"><input type="checkbox" id="addme" ${state.addMe?"checked":""}> This is me</label>
+      <button class="btn" type="submit" id="addsubmit">Add designer</button><button class="btn ghost" type="button" data-act="cancel-add">Cancel</button></div>
+      <p class="ferr" id="adderr" hidden></p></form>`}
+  else h+=`<button class="addbtn" data-act="add">+ Add designer</button>`;
   h+=`</div></div>`;
-  if(!m){$("#v-person").innerHTML=h;return}
+  if(!m){$("#v-person").innerHTML=h;validateAdd();return}
+  // --- profile
   const stats=Object.fromEntries(sk.map(s=>[s.id,skillStats(s.id)]));
-  const ratedN=sk.filter(s=>cur(m,s.id)!=null).length;
-  const mine=sk.filter(s=>cur(m,s.id)!=null);
+  const nAll=ratedAll(m),mine=sk.filter(s=>cur(m,s.id)!=null),isMe=state.me===m.id;
   const strengths=mine.filter(s=>cur(m,s.id)>=4).sort((a,b)=>cur(m,b.id)-cur(m,a.id)||(cur(m,b.id)-(stats[b.id].avg||0))-(cur(m,a.id)-(stats[a.id].avg||0))).slice(0,6);
   const grow=mine.filter(s=>want(m,s.id)).sort((a,b)=>(want(m,b.id)-cur(m,b.id))-(want(m,a.id)-cur(m,a.id))||(rel(m,b.id)==="h")-(rel(m,a.id)==="h")).slice(0,6);
-  const unique=mine.filter(s=>cur(m,s.id)>=4&&stats[s.id].depth<=2);
   const mtr=computeMentoring(),myGoals=mtr.goals.filter(g=>g.mentee.id===m.id),iMentor=mtr.goals.filter(g=>g.mentor?.id===m.id);
   const mentorsFor=sid=>roster().filter(p=>p.id!==m.id&&cur(p,sid)!=null&&cur(p,sid)>=Math.max(4,(want(m,sid)||4))).sort((a,b)=>cur(b,sid)-cur(a,sid)).slice(0,3);
-  h+=`<div class="panel"><div class="ph"><div><span class="eyebrow">Individual profile</span><h2>${esc(m.name)}</h2>
-      <span class="muted">${ratedN} of ${sk.length} skills rated · average <span class="num">${f1(avg(mine.map(s=>cur(m,s.id))))}</span></span></div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">      ${state.confirmDel?`<span class="confirm"><span class="muted">Remove ${esc(first(m.name))} and all scores?</span><button class="btn danger" data-act="del-yes">Remove</button><button class="btn ghost" data-act="del-no">Keep</button></span>`:`<button class="btn ghost" data-act="del">Remove</button>`}</div></div>
+  const title=state.renaming?`<form id="renameform" class="addform" novalidate><input type="text" id="renamein" value="${esc(state.renameVal)}" maxlength="60" aria-label="Designer name" autocomplete="off"><button class="btn" type="submit" id="renamesubmit">Save name</button><button class="btn ghost" type="button" data-act="rename-cancel">Cancel</button><p class="ferr" id="renameerr" hidden></p></form>`
+    :`<h2>${esc(m.name)} ${isMe?'<span class="chip you">You</span>':""}</h2>`;
+  h+=`<div class="panel" data-anchor="profile"><div class="ph"><div class="ptitle"><span class="eyebrow">Individual profile${pend.has(m.id)?' · syncing to the sheet':""}</span>${title}
+      <span class="muted">${nAll} of ${fullN} skills rated${mine.length?` · average <span class="num">${f1(avg(mine.map(s=>cur(m,s.id))))}</span>`:""}</span></div>
+      <div class="pactions">
+        ${isMe?`<button class="btn ghost" data-act="not-me">Not me</button>`:`<button class="btn ghost" data-act="me">This is me</button>`}
+        ${state.renaming?"":`<button class="btn ghost" data-act="rename">Rename</button>`}
+        ${state.confirmDel?`<span class="confirm"><span>Remove ${esc(first(m.name))} and all their scores?</span><button class="btn danger" data-act="del-yes">Remove</button><button class="btn ghost" data-act="del-no">Keep</button></span>`:`<button class="btn ghost" data-act="del">Remove</button>`}
+      </div></div>
+    ${nAll<5?`<div class="onboard"><b>${isMe?"Welcome! ":""}Getting started with ${esc(first(m.name))}'s map</b>
+      <ol><li>Start with <b>Core 8</b> (38 skills). Full skillset adds collaboration, strategy, delivery and leadership.</li>
+      <li>For each skill, tap your level today from 1 (Awareness) to 5 (Expert). Or drag a point on the chart to set a whole area at once.</li>
+      <li>Optionally set a target level and how relevant the skill is to your role.</li>
+      <li>Click <b>Confirm changes</b> at the bottom. Your scores are shared with the team.</li></ol>
+      <div><button class="btn" data-act="start-core">Rate the Core 8</button></div></div>`:""}
     <div class="tabs fwtabs" role="tablist" aria-label="Skill framework" style="margin-top:14px">
-      <button role="tab" data-pfw="detailed" aria-selected="${state.pfw==="detailed"}">Full skillset · ${FW.cats.reduce((n,c)=>n+c.skills.length,0)} skills</button>
-      <button role="tab" data-pfw="core" aria-selected="${state.pfw==="core"}">Core 8 · ${CORE.reduce((n,c)=>n+c.skills.length,0)} skills</button></div>
-    <p class="muted" style="font-size:12px;margin:8px 0 0">${state.pfw==="core"?"The 8 core UX areas. Same scores as the full skillset, without the professional areas (collaboration, strategy, delivery, leadership).":"All 12 areas. The first 8 are the Core 8; the rest are professional skills."}</p>
+      <button role="tab" data-pfw="core" aria-selected="${state.pfw==="core"}">Core 8 · ${CORE.reduce((n,c)=>n+c.skills.length,0)} skills</button>
+      <button role="tab" data-pfw="detailed" aria-selected="${state.pfw==="detailed"}">Full skillset · ${fullN} skills</button></div>
+    <p class="muted" style="font-size:12px;margin:8px 0 0">${state.pfw==="core"?"The 8 core UX areas. Same scores as the full skillset, without the professional areas.":"All 12 areas. The first 8 are the Core 8; the rest are professional skills."}</p>
     <div class="profile" style="margin-top:12px"><div class="radar">
-      <div class="radar-tools"><span class="muted hint">Drag a point to change your level today, or tap the axis at a level. Nothing is saved until you confirm.${state.fw==="detailed"?" Moving an area shifts all its skills together; fine-tune single skills below.":""}</span></div>
+      <div class="radar-tools"><span class="muted hint">Drag a point to change the level for a whole area, or tap the axis. Nothing is shared until you confirm.</span></div>
       ${radar(m)}
       <div class="legend" style="justify-content:center"><span><i style="background:var(--h4)"></i>${esc(first(m.name))} today</span><span><i style="background:var(--t-tgt)"></i>Target</span><span><i style="background:var(--t-team)"></i>Team average</span></div></div>
       <div style="display:grid;gap:16px;align-content:start;min-width:0">
-        <div><h3 style="margin-bottom:8px">Strengths</h3>${strengths.length?`<ul class="list">${strengths.map(s=>`<li><span class="t">${esc(s.name)}</span><span class="num">${cur(m,s.id)} ${meter(cur(m,s.id))}</span><span class="s">Team avg ${f1(stats[s.id].avg)}${stats[s.id].depth<=2?" · one of only "+stats[s.id].depth+" at Advanced+ — a go-to person":""}</span></li>`).join("")}</ul>`:`<p class="muted">Rate skills at 4 or 5 to see strengths here.</p>`}</div>
-        <div><h3 style="margin-bottom:8px">Growth plan</h3>${grow.length?`<ul class="list">${grow.map(s=>{const mt=mentorsFor(s.id);return `<li><span class="t">${esc(s.name)}</span><span class="num">${cur(m,s.id)} → ${want(m,s.id)}${tgt(m,s.id)==null?'<span class="muted">*</span>':""}</span><span class="s">${(()=>{const g=myGoals.find(x=>x.skill.id===s.id);if(g&&g.mentor)return `Mentor: <b>${esc(g.mentor.name)}</b> (${cur(g.mentor,s.id)})${g.alts.length?" · backup "+g.alts.map(a=>esc(first(a.name))).join(", "):""}`;if(g)return "No one on the team is at 4+ yet: external training";return mt.length?"Could learn from: "+mt.map(p=>`${esc(first(p.name))} (${cur(p,s.id)})`).join(", "):"No one on the team is above this level yet: external training"})()}</span></li>`}).join("")}</ul>${grow.some(s=>tgt(m,s.id)==null)?`<p class="muted" style="font-size:12px;margin:8px 0 0">* Target not set; inferred as 4 because it's a Focus skill. Set your own target below.</p>`:""}`:`<p class="muted">Set targets above your current level to build a growth plan.</p>`}</div>
+        <div><h3 style="margin-bottom:8px">Strengths</h3>${strengths.length?`<ul class="list">${strengths.map(s=>`<li><span class="t">${esc(s.name)}</span><span class="num">${cur(m,s.id)} ${meter(cur(m,s.id))}</span><span class="s">Team avg ${f1(stats[s.id].avg)}${stats[s.id].depth<=2?" · one of only "+stats[s.id].depth+" at Advanced+, a go-to person":""}</span></li>`).join("")}</ul>`:`<p class="muted">Skills rated 4 or 5 show up here.</p>`}</div>
+        <div><h3 style="margin-bottom:8px">Growth plan</h3>${grow.length?`<ul class="list">${grow.map(s=>{const mt=mentorsFor(s.id);return `<li><span class="t">${esc(s.name)}</span><span class="num">${cur(m,s.id)} → ${want(m,s.id)}${tgt(m,s.id)==null?'<span class="muted">*</span>':""}</span><span class="s">${(()=>{const g=myGoals.find(x=>x.skill.id===s.id);if(g&&g.mentor)return `Mentor: <b>${esc(g.mentor.name)}</b> (${cur(g.mentor,s.id)})${g.alts.length?" · backup "+g.alts.map(a=>esc(first(a.name))).join(", "):""}`;if(g)return "No one on the team is at 4+ yet: external training";return mt.length?"Could learn from: "+mt.map(p=>`${esc(first(p.name))} (${cur(p,s.id)})`).join(", "):"No one on the team is above this level yet: external training"})()}</span></li>`}).join("")}</ul>${grow.some(s=>tgt(m,s.id)==null)?`<p class="muted" style="font-size:12px;margin:8px 0 0">* Target not set; inferred as 4 because it's a Focus skill.</p>`:""}`:`<p class="muted">Set a target above your current level, or mark skills as Focus, to build a growth plan.</p>`}</div>
         ${iMentor.length?`<div><h3 style="margin-bottom:8px">${esc(first(m.name))} mentors</h3><ul class="list">${iMentor.map(g=>`<li><span class="t">${esc(g.mentee.name)}</span><span class="num">${g.from} → ${g.to}</span><span class="s">${esc(g.skill.name)}</span></li>`).join("")}</ul></div>`:""}
       </div></div></div>`;
-  // editor
-  h+=`<div class="panel"><div class="phead"><div><span class="eyebrow">Self-assessment</span><h2>Rate ${esc(first(m.name))}'s skills</h2></div></div>
+  // --- editor
+  const unratedIds=sk.filter(s=>cur(m,s.id)==null).map(s=>s.id),newN=sk.filter(s=>NEW.has(s.id)).length;
+  if(state.efilter==="unrated"&&(!state.efSnap||state.efSnap.who!==m.id+state.pfw))state.efSnap={who:m.id+state.pfw,ids:new Set(unratedIds)};
+  const show=sid=>state.efilter==="unrated"?state.efSnap.ids.has(sid):state.efilter==="new"?NEW.has(sid):true;
+  h+=`<div class="panel" data-anchor="editor" id="editor"><div class="phead"><div><span class="eyebrow">Self-assessment</span><h2>Rate ${esc(first(m.name))}'s skills</h2></div>
+    <div class="seg" role="group" aria-label="Show skills"><button data-ef="all" aria-pressed="${state.efilter==="all"}">All · ${sk.length}</button><button data-ef="unrated" aria-pressed="${state.efilter==="unrated"}">Not rated · ${unratedIds.length}</button>${newN?`<button data-ef="new" aria-pressed="${state.efilter==="new"}">New · ${newN}</button>`:""}</div></div>
     <details style="margin-bottom:16px"><summary>Rating guide</summary><div class="scalekey" style="margin-top:10px">${SCALE.map(([v,l,d])=>`<div><b>${v}</b><strong>${l}</strong><br><span class="muted">${d}</span></div>`).join("")}</div>
-    <p class="muted" style="font-size:12px">Ask yourself how easily you can explain the methods and benefits, and how recently you used the skill (past month, quarter, previous role). Tap a selected value again to clear it.${state.fw==="detailed"?" Relevance: <b>Focus</b> = high relevance and interest, <b>Core</b> = core competency but not a focus, <b>N/A</b> = not relevant or no interest.":""}</p></details>
+    <p class="muted" style="font-size:12px">Ask yourself how easily you can explain the methods and benefits, and how recently you used the skill (past month, quarter, previous role). Tap a selected value again to clear it. Relevance: <b>Focus</b> = high relevance and interest, <b>Core</b> = core competency but not a focus, <b>N/A</b> = not relevant or no interest.</p></details>
     <div class="editor">`;
+  let shown=0;
   for(const c of skillCats()){
-    h+=`<div class="ecat"><h3><span>${esc(c.name)}</span><span class="num muted" style="font-size:12px">${f1(catAvg(c,m))} · team ${f1(catAvg(c))}</span></h3>
-      <div class="erow ehdr" aria-hidden="true"><span>Skill</span><span class="lab">Current</span><span class="lab">Target</span>${state.fw==="detailed"?'<span class="lab">Relevance</span>':"<span></span>"}</div>`;
-    for(const [sid,name] of c.skills){
+    const rows=c.skills.filter(([sid])=>show(sid));if(!rows.length)continue;shown+=rows.length;
+    const done=c.skills.filter(([sid])=>cur(m,sid)!=null).length;
+    h+=`<div class="ecat" data-anchor="cat-${c.id}"><h3><span>${esc(c.name)}</span><span class="num muted" style="font-size:12px">${done}/${c.skills.length} rated · ${f1(catAvg(c,m))} · team ${f1(catAvg(c))}</span></h3>
+      <div class="erow ehdr" aria-hidden="true"><span>Skill</span><span class="lab">Current</span><span class="lab">Target</span><span class="lab">Relevance</span></div>`;
+    for(const [sid,name] of rows){
       const e=entry(m,sid);
-      h+=`<div class="erow"><span class="nm">${esc(name)}${NEW.has(sid)?' <span class="chip new">New</span>':""}</span>${pick("cur",sid,e.c,SCALE.map(([v,l])=>[v,l]),"Now")}${pick("tgt",sid,e.t,SCALE.map(([v,l])=>[v,l]),"Target")}${state.fw==="detailed"?pick("rel",sid,e.r,Object.entries(REL).map(([k,[l,d]])=>[k,d]),"Relevance"):"<span></span>"}</div>`}
+      h+=`<div class="erow ${cur(m,sid)==null?"todo":""}" data-anchor="row-${sid}"><span class="nm">${esc(name)}${NEW.has(sid)?' <span class="chip new">New</span>':""}</span>${pick("cur",sid,e.c,SCALE.map(([v,l])=>[v,l]),"Now")}${pick("tgt",sid,e.t,SCALE.map(([v,l])=>[v,l]),"Target")}${pick("rel",sid,e.r,Object.entries(REL).map(([k,[l,d]])=>[k,d]),"Relevance")}</div>`}
     h+=`</div>`}
+  if(!shown)h+=`<p class="muted empty">${state.efilter==="unrated"?"Every skill in this view is rated.":"Nothing to show."} <button class="linkbtn" data-ef="all">Show all skills</button></p>`;
   h+=`</div></div>`;
   $("#v-person").innerHTML=h;
-  if(state.adding)setTimeout(()=>$("#newname")?.focus(),0);
+  validateAdd();
 }
-
 // ---------- mentoring ----------
 const MAX_LOAD=3;
 function growthGoals(m,stats){
   return allSkills().filter(s=>want(m,s.id)).sort((a,b)=>
     (want(m,b.id)-cur(m,b.id))-(want(m,a.id)-cur(m,a.id))||(rel(m,b.id)==="h")-(rel(m,a.id)==="h")||(stats[a.id].avg??5)-(stats[b.id].avg??5)).slice(0,2);
 }
-function computeMentoring(){
+function computeMentoring(){return memo("mt",computeMentoring_)}
+function computeMentoring_(){
   const ms=roster(),sk=allSkills(),stats=Object.fromEntries(sk.map(s=>[s.id,skillStats(s.id)]));
   const goals=[];
   for(const m of ms)for(const s of growthGoals(m,stats)){
@@ -631,155 +733,249 @@ function renderPlan(){
   $("#v-plan").innerHTML=h;
 }
 
-// ---------- writes ----------
+// ---------- edits: draft → confirm → outbox → Google Sheet ----------
 function stage(id,patch){
   const d=state.drafts[id]=state.drafts[id]||{member:structuredClone(state.members[id]),patch:{}};
   deepMerge(d.member,structuredClone(patch));deepMerge(d.patch,structuredClone(patch));
-  state.saving="";const y=window.scrollY;renderPerson();window.scrollTo({top:y});renderSavebar();
+  bump();stableRender(renderPerson);renderSavebar();
 }
 function renderSavebar(){
-  const bar=$("#savebar"),d=state.tab==="person"&&state.sel&&state.drafts[state.sel];
-  if(!d){bar.hidden=!state.saving||state.tab!=="person";bar.innerHTML=state.saving?`<div class="wrap sbin"><span>${esc(state.saving)}</span></div>`:"";return}
+  const bar=$("#savebar"),d=state.tab==="person"&&!state.needKey&&state.sel&&state.drafts[state.sel];
+  if(!d){bar.hidden=true;bar.innerHTML="";document.body.classList.remove("has-savebar");return}
   const n=changeCount(d.patch),nm=first(state.members[state.sel]?.name||"");
-  bar.hidden=false;const st=state.saving,busy=st==="Saving…",bad=st.startsWith("Not saved");
-  bar.innerHTML=`<div class="wrap sbin"><span>${bad?`<b class="sb-err">${esc(st)}</b>`:busy?`<b>Saving ${n} ${n===1?"change":"changes"}…</b> Keep this page open.`:`<b>${n} unsaved ${n===1?"change":"changes"}</b> to ${esc(nm)}'s map`}</span>
-    <span class="sbtn"><button class="btn ghost" data-act="discard">Discard</button><button class="btn" data-act="confirm" ${busy?"disabled":""}>${busy?"Saving…":bad?"Try again":"Confirm changes"}</button></span></div>`;
+  bar.hidden=false;document.body.classList.add("has-savebar");
+  bar.innerHTML=`<div class="wrap sbin"><span><b>${n} unsaved ${n===1?"change":"changes"}</b> to ${esc(nm)}'s map. Confirm to share with the team.</span>
+    <span class="sbtn"><button class="btn ghost" data-act="discard">Discard</button><button class="btn" data-act="confirm">Confirm changes</button></span></div>`;
 }
-async function confirmDraft(){
-  const id=state.sel,d=state.drafts[id];if(!d||!state.db||state.saving==="Saving…")return;
-  state.saving="Saving…";renderSavebar();
-  try{await state.db.doc("members/"+id).update({...d.patch,updatedAt:new Date().toISOString().slice(0,10)});
-    if(state.drafts[id]===d)delete state.drafts[id];state.saving="Saved";}
-  catch(e){state.saving=e?.code==="unauthorized"?"Not saved: the team passcode was rejected. Reload the page and enter the current one.":e?.code==="not_found"?"Not saved: this designer was removed from the sheet. Reload the page.":"Not saved: couldn't reach the Google Sheet. Your changes are kept here, so confirm again in a moment.";}
-  render();setTimeout(()=>{if(state.saving==="Saved"){state.saving="";renderSavebar()}},2500);
+function confirmDraft(){
+  const id=state.sel,d=state.drafts[id];if(!d)return;
+  delete state.drafts[id];
+  enqueue({op:"update",id,patch:{...d.patch,updatedAt:today()}});
+  toast(`Saved ${first(state.members[id]?.name||"")}'s changes.${navigator.onLine===false?" They'll sync when you're back online.":""}`);
 }
-function deepMerge(a,b){for(const k in b){if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])){a[k]=a[k]||{};deepMerge(a[k],b[k])}else a[k]=b[k]}return a}
+function deepMerge(a,b){for(const k in b){if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])){a[k]=a[k]&&typeof a[k]==="object"?a[k]:{};deepMerge(a[k],b[k])}else a[k]=b[k]}return a}
+function toast(msg,opt={}){
+  const box=$("#toasts"),el=document.createElement("div");el.className="toast";el.setAttribute("role","status");
+  const s=document.createElement("span");s.textContent=msg;el.append(s);
+  if(opt.action){const b=document.createElement("button");b.className="linkbtn";b.textContent=opt.action.label;b.onclick=()=>{opt.action.fn();el.remove()};el.append(b)}
+  box.append(el);setTimeout(()=>el.remove(),opt.ms||3500);
+}
 
-document.addEventListener("click",async e=>{
-  const t=e.target.closest("button,th[data-person]");if(!t)return;const act0=t.dataset.act;
-  if(t.dataset.pfw){state.pfw=t.dataset.pfw;persist();const y=window.scrollY;render();window.scrollTo({top:y});return}
-  if(t.dataset.tab){state.tab=t.dataset.tab;state.confirmDel=false;persist();render();return}
+// add / rename validation updates the form in place (no re-render while typing)
+function validateAdd(){
+  const err=$("#adderr"),btn=$("#addsubmit");if(!err||!btn)return;
+  const name=normName(state.addName),dup=dupOf(name);
+  btn.disabled=name.length<2||!!dup;
+  if(dup){err.hidden=false;err.innerHTML=`${esc(dup.name)} is already on the map. <button type="button" class="linkbtn" data-person="${dup.id}">Open profile</button>`}
+  else err.hidden=true;
+}
+function validateRename(){
+  const err=$("#renameerr"),btn=$("#renamesubmit");if(!err||!btn)return;
+  const name=normName(state.renameVal),dup=dupOf(name,state.sel);
+  btn.disabled=name.length<2||!!dup||name===state.members[state.sel]?.name;
+  err.hidden=!dup;if(dup)err.textContent=`${dup.name} is already on the map.`;
+}
+function slug(name){return name.toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)}
+function addDesigner(){
+  const name=normName(state.addName);if(name.length<2||dupOf(name))return;
+  const base=slug(name)||"designer-"+Date.now().toString(36);let id=base,i=2;
+  const taken=x=>state.members[x]||api.server[x]||state.outbox.some(o=>o.id===x);while(taken(id))id=base+"-"+i++;
+  enqueue({op:"set",id,data:{name,detailed:{},updatedAt:today()}});
+  if(state.addMe)state.me=id;
+  state.sel=id;state.adding=false;state.addName="";state.confirmDel=false;state.renaming=false;state.pfw="core";state.efilter="unrated";state.efSnap=null;persist();
+  render();window.scrollTo({top:0});
+  toast(`Added ${name}. Start with the Core 8, then confirm.`);
+}
+function renameDesigner(){
+  const id=state.sel,name=normName(state.renameVal);if(!id||name.length<2||dupOf(name,id))return;
+  state.renaming=false;
+  if(name!==state.members[id]?.name){enqueue({op:"update",id,patch:{name,updatedAt:today()}});toast(`Renamed to ${name}.`)}else render();
+}
+function removeDesigner(id){
+  if(state.pendingDel)finalizeDel();
+  const name=state.members[id]?.name||"",wasMe=state.me===id;
+  state.pendingDel={id,wasMe,timer:setTimeout(finalizeDel,7000)};
+  delete state.drafts[id];if(wasMe){state.me=null}state.sel=null;state.confirmDel=false;persist();
+  recompose();render();
+  toast(`Removed ${name}.`,{ms:7000,action:{label:"Undo",fn:()=>{const p=state.pendingDel;if(!p||p.id!==id)return;clearTimeout(p.timer);state.pendingDel=null;if(p.wasMe)state.me=id;state.sel=id;persist();recompose();render()}}});
+}
+function finalizeDel(){const p=state.pendingDel;if(!p)return;clearTimeout(p.timer);state.pendingDel=null;enqueue({op:"delete",id:p.id})}
+
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button,th[data-person]");if(!t||t.disabled)return;const act=t.dataset.act;
+  if(t.dataset.tab){if(state.tab!==t.dataset.tab){state.tab=t.dataset.tab;state.confirmDel=false;persist();renderNow();window.scrollTo({top:0})}return}
+  if(t.dataset.person){const id=t.dataset.person;if(!state.members[id])return;state.sel=id;state.tab="person";state.confirmDel=false;state.renaming=false;state.adding=false;state.efSnap=null;persist();renderNow();window.scrollTo({top:0});return}
+  if(t.dataset.pfw){state.pfw=t.dataset.pfw;state.efSnap=null;persist();render();return}
+  if(t.dataset.ef){state.efilter=t.dataset.ef;state.efSnap=null;persist();render();return}
   if(t.dataset.hm){state.hmMode=t.dataset.hm;persist();render();return}
-  if(t.dataset.clayer){state.coreLayer=t.dataset.clayer;const y=window.scrollY;render();window.scrollTo({top:y});return}
-  if(t.dataset.cfocus!==undefined){const id=t.dataset.cfocus;state.coreHidden=id?{...state.coreHidden,[id]:!state.coreHidden?.[id]}:{};const y=window.scrollY;render();window.scrollTo({top:y});return}
-  if(t.dataset.mview){state.mentorView=t.dataset.mview;persist();const y=window.scrollY;render();window.scrollTo({top:y});return}
-  if(act0==="confirm"){confirmDraft();return}
-  if(act0==="discard"){delete state.drafts[state.sel];state.saving="";const y=window.scrollY;render();window.scrollTo({top:y});return}
-  if(t.dataset.person){state.sel=t.dataset.person;state.tab="person";state.confirmDel=false;persist();render();window.scrollTo({top:0});return}
-  const act=t.dataset.act;
-  if(act==="add"){state.adding=true;render();return}
-  if(act==="cancel-add"){state.adding=false;render();return}
+  if(t.dataset.clayer){state.coreLayer=t.dataset.clayer;render();return}
+  if(t.dataset.cfocus!==undefined){const id=t.dataset.cfocus;state.coreHidden=id?{...state.coreHidden,[id]:!state.coreHidden?.[id]}:{};render();return}
+  if(t.dataset.mview){state.mentorView=t.dataset.mview;persist();render();return}
+  if(act==="confirm"){confirmDraft();return}
+  if(act==="discard"){delete state.drafts[state.sel];bump();render();return}
+  if(act==="retry"){api.errN=0;kick(true);refresh();return}
+  if(act==="add"){state.adding=true;state.addName="";state.addMe=!(state.me&&state.members[state.me]);render();setTimeout(()=>$("#newname")?.focus({preventScroll:true}),0);return}
+  if(act==="cancel-add"){state.adding=false;state.addName="";render();return}
+  if(act==="me"){state.me=state.sel;persist();render();toast("Got it. The map will open on your profile.");return}
+  if(act==="not-me"){state.me=null;persist();render();return}
+  if(act==="rename"){state.renaming=true;state.renameVal=state.members[state.sel]?.name||"";render();setTimeout(()=>{const el=$("#renamein");if(el){el.focus({preventScroll:true});el.select()}},0);return}
+  if(act==="rename-cancel"){state.renaming=false;render();return}
   if(act==="del"){state.confirmDel=true;render();return}
   if(act==="del-no"){state.confirmDel=false;render();return}
-  if(act==="del-yes"&&state.db){const id=state.sel;state.confirmDel=false;try{await state.db.doc("members/"+id).delete();state.sel=null;}catch(err){showBanner("Couldn't remove this designer. Check your connection and try again.")}render();return}
+  if(act==="del-yes"&&state.sel){removeDesigner(state.sel);return}
+  if(act==="start-core"){state.pfw="core";state.efilter="unrated";state.efSnap=null;persist();renderNow();$("#editor")?.scrollIntoView({block:"start"});window.scrollBy(0,-70);return}
   if(t.dataset.set&&state.sel&&state.db){
     const kind=t.dataset.set,sid=t.dataset.sid,raw=t.dataset.v,key={cur:"c",tgt:"t",rel:"r"}[kind];
-    const v=kind==="rel"?raw:+raw;const m=getM(state.sel);const branch="detailed";
-    const old=m[branch]?.[sid]?.[key];const nv=old===v?null:v;
-    stage(state.sel,{[branch]:{[sid]:{[key]:nv}}});
+    const v=kind==="rel"?raw:+raw,m=getM(state.sel),old=m.detailed?.[sid]?.[key];
+    stage(state.sel,{detailed:{[sid]:{[key]:old===v?null:v}}});
   }
 });
-document.addEventListener("change",e=>{
-  
-
+document.addEventListener("input",e=>{
+  if(e.target.id==="newname"){state.addName=e.target.value;validateAdd()}
+  if(e.target.id==="renamein"){state.renameVal=e.target.value;validateRename()}
 });
-document.addEventListener("submit",async e=>{
-  if(e.target.id==="keyform"){e.preventDefault();const k=$("#teamkey").value.trim();if(k){state.keyError="";connect(k)}return}
-  if(e.target.id!=="addform")return;e.preventDefault();
-  const name=$("#newname").value.trim().replace(/\s+/g," ");if(!name||!state.db)return;
-  let id=name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"designer";
-  while(state.members[id])id+="-2";
-  try{await state.db.doc("members/"+id).set({name,detailed:{},core:{},updatedAt:new Date().toISOString().slice(0,10)});state.sel=id;state.adding=false;persist();}
-  catch(err){showBanner(err?.code==="quota_exceeded"?"The team store is full. Remove someone before adding more.":"Couldn't add this designer. Check your connection and try again.")}
-  render();
+document.addEventListener("change",e=>{if(e.target.id==="addme")state.addMe=e.target.checked});
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape")return;
+  if(state.adding&&e.target.closest?.("#addform")){state.adding=false;render()}
+  if(state.renaming&&e.target.closest?.("#renameform")){state.renaming=false;render()}
+});
+document.addEventListener("submit",e=>{
+  e.preventDefault();
+  if(e.target.id==="keyform"){const k=$("#teamkey").value.trim();if(k&&!state.checkingKey){state.keyError="";connect(k,false)}return}
+  if(e.target.id==="addform"){addDesigner();return}
+  if(e.target.id==="renameform"){renameDesigner();return}
 });
 function showBanner(t){const b=$("#banner");b.textContent=t;b.hidden=false}
 
 // ---------- shared store: Google Sheets via Apps Script ----------
 // Paste the web app URL from Deploy > Manage deployments (ends in /exec).
 const API_URL="https://script.google.com/macros/s/AKfycbzCuLqUsREqBchwdp-xKVgUHdrqYurTOoRzKhsL7wNIudqRsV3aF3KeecTBVuTB72nEUQ/exec";
-const POLL_MS=20000;
-function sheetDb(url,key){
-  const listeners=new Set();let cache={},timer=null,last="",inflight=0,lastWrite=0,seededAt=0;
-  const emit=()=>{const snap={docs:Object.entries(cache).map(([id,d])=>({id,exists:true,data:()=>d}))};listeners.forEach(l=>l.next(snap))};
-  const keep=()=>{try{localStorage.setItem("uxr-map-cache",JSON.stringify({at:Date.now(),cache}))}catch(e){}};
-  function setDocs(docs){cache=Object.fromEntries(docs.map(d=>[d.id,d.data]));last=JSON.stringify(docs);keep()}
-  async function load(){
-    let r;try{r=await fetch(url+"?key="+encodeURIComponent(key)+"&t="+Date.now())}catch(e){throw {code:"unavailable"}}
-    const j=await r.json().catch(()=>({ok:false,error:"unavailable"}));
-    if(!j.ok)throw {code:j.error==="unauthorized"?"unauthorized":"unavailable"};return j.docs}
-  async function refresh(){
-    if(inflight)return;                       // never let a read race a save
-    const started=Date.now();setSync("sync");
-    try{const docs=await load();
-      if(inflight||started<lastWrite){setSync("ok");return}   // answer is older than our latest save: ignore it
-      const sig=JSON.stringify(docs);if(sig!==last){setDocs(docs);emit()}setSync("ok")}
-    catch(e){setSync("err");listeners.forEach(l=>l.err&&l.err(e))}}
-  async function post(body,apply){
-    inflight++;setSync("save");
+const POLL_MS=45000,GET_TIMEOUT=40000,POST_TIMEOUT=45000;
+const api={key:null,server:{},rev:null,sig:"",lastWrite:0,refreshing:false,timer:null,errN:0,working:false,retryTimer:null,backoff:0};
+async function fetchJSON(url,opt,ms){
+  const ac=new AbortController(),to=setTimeout(()=>ac.abort(),ms);
+  try{const r=await fetch(url,{...opt,signal:ac.signal});const j=await r.json().catch(()=>null);
+    if(!j)throw {code:"unavailable"};if(!j.ok)throw {code:j.error||"unavailable",message:j.message||""};return j}
+  catch(e){if(e&&e.code)throw e;throw {code:e&&e.name==="AbortError"?"timeout":"unavailable"}}
+  finally{clearTimeout(to)}
+}
+const apiGet=withRev=>fetchJSON(API_URL+"?key="+encodeURIComponent(api.key)+(withRev&&api.rev?"&rev="+encodeURIComponent(api.rev):"")+"&t="+Date.now(),{},GET_TIMEOUT);
+const apiPost=o=>fetchJSON(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:o.op,id:o.id,patch:o.patch,data:o.data,key:api.key})},POST_TIMEOUT);
+function setServer(docs,rev){api.server=Object.fromEntries(docs.map(d=>[d.id,d.data]));api.sig=JSON.stringify(docs);api.rev=rev??null;saveLocal()}
+function saveLocal(){try{localStorage.setItem("uxr-map-cache",JSON.stringify({at:Date.now(),rev:api.rev,cache:api.server}))}catch(e){}}
+function readLocal(){try{const x=JSON.parse(localStorage.getItem("uxr-map-cache")||"null");return x&&x.cache&&Object.keys(x.cache).length?x:null}catch(e){return null}}
+function saveOutbox(){try{localStorage.setItem("uxr-map-outbox",JSON.stringify(state.outbox.map(({sending,...o})=>o)))}catch(e){}}
+function applyOp(base,o){if(o.op==="set")base[o.id]=structuredClone(o.data);else if(o.op==="update"){if(base[o.id])deepMerge(base[o.id],structuredClone(o.patch))}else if(o.op==="delete")delete base[o.id]}
+// what you see = last copy from the sheet + changes still on their way + your unconfirmed edits
+function recompose(){
+  const base=structuredClone(api.server);for(const o of state.outbox)applyOp(base,o);if(state.pendingDel)delete base[state.pendingDel.id];
+  const next={};for(const id in base)if(base[id]&&base[id].name)next[id]=base[id];
+  for(const id in state.drafts){if(next[id])state.drafts[id].member=deepMerge(structuredClone(next[id]),structuredClone(state.drafts[id].patch));else delete state.drafts[id]}
+  state.members=next;state.ready=true;bump();
+}
+function refreshView(){recompose();if(!drag)render()}
+function enqueue(o){
+  const last=state.outbox[state.outbox.length-1];
+  if(o.op==="update"&&last&&!last.sending&&last.id===o.id&&last.op==="update")deepMerge(last.patch,o.patch);
+  else if(o.op==="update"&&last&&!last.sending&&last.id===o.id&&last.op==="set")deepMerge(last.data,o.patch);
+  else state.outbox.push(o);
+  saveOutbox();refreshView();kick();
+}
+async function kick(now){
+  if(now){clearTimeout(api.retryTimer);api.backoff=0}
+  if(api.working||!api.key||!state.outbox.length){renderSync();return}
+  api.working=true;renderSync();
+  while(state.outbox.length&&api.key){
+    const o=state.outbox[0];o.sending=true;
     try{
-      let r;try{r=await fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...body,key})})}catch(e){throw {code:"unavailable"}}
-      const j=await r.json().catch(()=>({ok:false,error:"unavailable"}));
-      if(!j.ok)throw {code:j.error==="unauthorized"?"unauthorized":j.error||"unavailable"};
-      lastWrite=Date.now();
-      if(Array.isArray(j.docs))setDocs(j.docs);else{apply();last="";keep()}
-      emit();setSync("ok");
-      if(!Array.isArray(j.docs))setTimeout(refresh,1500);   // older script without docs in the reply: confirm from the sheet
-    }catch(e){setSync("err");throw e}
-    finally{inflight--}
+      const j=await apiPost(o);
+      state.outbox.shift();saveOutbox();
+      if(Array.isArray(j.docs))setServer(j.docs,j.rev);else{applyOp(api.server,o);api.rev=null;api.sig="";saveLocal()}
+      api.lastWrite=Date.now();api.backoff=0;state.sync.err=false;state.sync.at=new Date();
+      refreshView();
+    }catch(e){
+      o.sending=false;
+      if(e.code==="unauthorized"){api.working=false;lockOut();return}
+      if(["not_found","bad_request","bad_id"].includes(e.code)){
+        state.outbox.shift();saveOutbox();
+        toast(e.code==="not_found"?"A change was dropped: that designer was removed by someone else.":"A change couldn't be saved and was dropped. Please redo it.");
+        refreshView();continue}
+      api.backoff=Math.min(api.backoff?api.backoff*2:3000,60000);
+      state.sync.err=true;state.sync.msg=e.code==="timeout"?"Google Sheets is slow to answer":e.code==="busy"?"The sheet is busy":"Can't reach the sheet";
+      api.working=false;renderSync();
+      api.retryTimer=setTimeout(()=>kick(),api.backoff);return;
+    }
   }
-  return {load,
-    seed(docsOrCache,isCache){if(isCache){cache=docsOrCache;last=""}else setDocs(docsOrCache);seededAt=Date.now()},
-    collection:()=>({onSnapshot(next,err){const l={next,err};listeners.add(l);
-      if(seededAt){next({docs:Object.entries(cache).map(([id,d])=>({id,exists:true,data:()=>d}))})}
-      if(Date.now()-seededAt>3000||!last)refresh();
-      if(!timer){timer=setInterval(()=>{if(!document.hidden)refresh()},POLL_MS);document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()})}
-      return()=>listeners.delete(l)}}),
-    doc:path=>{const id=path.split("/")[1];return{
-      update:patch=>post({action:"update",id,patch},()=>{if(cache[id])cache[id]=deepMerge(structuredClone(cache[id]),structuredClone(patch))}),
-      set:data=>post({action:"set",id,data},()=>{cache[id]=structuredClone(data)}),
-      delete:()=>post({action:"delete",id},()=>{delete cache[id]})}}};
+  api.working=false;renderSync();
 }
-// small status in the toolbar: syncing / saving / up to date / offline
-function setSync(s){const el=$("#sync");if(!el)return;state.syncAt=s==="ok"?new Date():state.syncAt;
-  el.dataset.s=s;el.textContent={sync:"Syncing…",save:"Saving…",err:"Offline · retrying",ok:"Up to date"}[s]||"";
-  if(s==="ok"&&state.syncAt)el.title="Last synced "+state.syncAt.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}
-function readLocal(){try{const x=JSON.parse(localStorage.getItem("uxr-map-cache")||"null");return x&&x.cache&&Object.keys(x.cache).length?x.cache:null}catch(e){return null}}
-async function connect(key,opts={}){
-  const db=sheetDb(API_URL,key);
-  const local=opts.fromBoot?readLocal():null;
-  if(local){db.seed(local,true)}                       // show the last known scores instantly, then refresh in the background
-  else{
-    setSync("sync");
-    try{db.seed(await db.load())}catch(e){
-      setSync("");
-      state.needKey=true;state.keyError=e.code==="unauthorized"?"That passcode didn't work. Check it with the map owner.":"Couldn't reach the score store. Check your connection and try again.";
-      if(e.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key");localStorage.removeItem("uxr-map-cache")}catch(_){}}
-      render();return}
-    setSync("ok");
-  }
+async function refresh(){
+  clearTimeout(api.timer);
+  if(!api.key)return;
+  if(api.refreshing||api.working||state.outbox.length){schedule();return}
+  api.refreshing=true;state.sync.phase="loading";renderSync();
+  const started=Date.now();
+  try{
+    const j=await apiGet(true);
+    if(!api.working&&!state.outbox.length&&started>=api.lastWrite){
+      if(Array.isArray(j.docs)){const sig=JSON.stringify(j.docs);if(sig!==api.sig){setServer(j.docs,j.rev);refreshView()}else if(j.rev)api.rev=j.rev}
+      else if(j.rev)api.rev=j.rev;
+    }
+    state.sync.err=false;state.sync.at=new Date();api.errN=0;
+  }catch(e){
+    if(e.code==="unauthorized"){api.refreshing=false;lockOut();return}
+    api.errN++;state.sync.err=true;state.sync.msg=e.code==="timeout"?"Google Sheets is slow to answer":"Can't reach the sheet";
+  }finally{api.refreshing=false;state.sync.phase="idle";renderSync();schedule()}
+}
+function schedule(){clearTimeout(api.timer);if(!api.key)return;const ms=api.errN?Math.min(POLL_MS*2**(api.errN-1),300000):POLL_MS;api.timer=setTimeout(()=>{if(document.hidden)schedule();else refresh()},ms)}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&api.key&&Date.now()-(state.sync.at?.getTime()||0)>15000){refresh();kick()}});
+window.addEventListener("online",()=>{if(api.key){kick(true);refresh()}});
+
+function renderSync(){
+  const el=$("#sync");if(!el)return;
+  if(!api.key||state.needKey){el.innerHTML="";el.removeAttribute("data-s");return}
+  const n=state.outbox.length,s=state.sync,tm=s.at?s.at.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"";
+  let cls="ok",txt=tm?`Up to date · ${tm}`:"Up to date",btn=false;
+  if(n&&s.err){cls="err";txt=`${n} ${n===1?"change":"changes"} waiting · ${s.msg}`;btn=true}
+  else if(n){cls="save";txt=`Saving ${n} ${n===1?"change":"changes"}…`}
+  else if(s.err){cls="err";txt=`Offline copy · ${s.msg}`;btn=true}
+  else if(s.phase==="loading")cls="sync";
+  el.dataset.s=cls;el.innerHTML=`<span>${esc(txt)}</span>${btn?' <button class="linkbtn" data-act="retry">Retry now</button>':""}`;
+  el.title=n?"Your changes are kept on this device until the sheet confirms them.":tm?"Last checked "+tm:"";
+}
+function lockOut(){
+  api.key=null;clearTimeout(api.timer);clearTimeout(api.retryTimer);
+  try{localStorage.removeItem("uxr-map-key")}catch(e){}
+  state.needKey=true;state.checkingKey=false;state.keyError="The team passcode has changed. Enter the new one.";state.db=null;render();
+}
+async function connect(key,fromBoot){
+  api.key=key;
+  const local=fromBoot?readLocal():null;
+  if(local){                                   // instant: show the copy saved on this device, then check the sheet in the background
+    api.server=local.cache;api.rev=local.rev||null;api.sig="";
+    state.needKey=false;state.db=true;recompose();render();refresh();kick();return}
+  state.checkingKey=!fromBoot;state.loadingFirst=fromBoot;if(fromBoot)state.needKey=false;render();
+  try{const j=await apiGet(false);setServer(j.docs,j.rev)}
+  catch(e){
+    api.key=null;state.loadingFirst=false;state.checkingKey=false;state.needKey=true;
+    state.keyError=e.code==="unauthorized"?"That passcode didn't work. Check it with the map owner.":e.code==="timeout"?"Google Sheets took too long to answer. Please try again; the first load after a quiet period can be slow.":"Couldn't reach the Google Sheet. Check your connection and try again.";
+    if(e.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key");localStorage.removeItem("uxr-map-cache")}catch(_){}}
+    render();return}
   try{localStorage.setItem("uxr-map-key",key)}catch(e){}
-  state.needKey=false;state.keyError="";state.db=db;
-  db.collection("members").onSnapshot(snap=>{
-    $("#banner").hidden=true;
-    const next={};snap.docs.forEach(d=>{const x=d.data();if(x&&x.name)next[d.id]=x});
-    for(const id in state.drafts){if(next[id])state.drafts[id].member=deepMerge(structuredClone(next[id]),structuredClone(state.drafts[id].patch));else delete state.drafts[id]}
-    state.members=next;state.ready=true;
-    if(drag)return;
-    const active=document.activeElement;if(active&&(active.id==="newname"||active.id==="teamkey"))return;
-    const y=window.scrollY;render();window.scrollTo({top:y});
-  },err=>{
-    if(err.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key");localStorage.removeItem("uxr-map-cache")}catch(_){}state.needKey=true;state.keyError="The team passcode has changed. Enter the new one.";state.db=null;render();return}
-  });
+  state.loadingFirst=false;state.checkingKey=false;state.needKey=false;state.keyError="";state.db=true;state.sync.at=new Date();
+  recompose();render();schedule();kick();
 }
-// warn before leaving with unsaved or still-saving changes
-window.addEventListener("beforeunload",e=>{if(Object.keys(state.drafts).length||state.saving==="Saving…"){e.preventDefault();e.returnValue=""}});
+// warn before leaving with unconfirmed edits or changes that haven't reached the sheet yet
+window.addEventListener("beforeunload",e=>{
+  if(state.pendingDel)finalizeDel();
+  if(Object.keys(state.drafts).length||state.outbox.length){e.preventDefault();e.returnValue=""}
+});
 render();
 (async()=>{
   if(!/^https:\/\/script\.google\.com\//.test(API_URL)){state.ready=true;showBanner("Setup needed: paste the Apps Script web app URL into API_URL in this file (see the README).");render();return}
   let key="";try{key=localStorage.getItem("uxr-map-key")||""}catch(e){}
   if(!key){state.needKey=true;render();return}
-  connect(key,{fromBoot:true});
+  connect(key,true);
 })();
 </script>
 
