@@ -1,9 +1,16 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>UXR Capability Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
+[hidden]{display:none!important}
+img{max-width:100%}
+html{color-scheme:light}
 /* Layout: sticky toolbar, three working views (Team map / Individual / Planning), content on a cool paper ground with one ultramarine accent and a 5-step proficiency ramp. */
 :root{
   --av-bg:88%; --av-fg:28%;
@@ -229,6 +236,9 @@ details summary{cursor:pointer;font-weight:600}
 @media (max-width:520px){.cb{grid-template-columns:1fr 46px}.cb .lbl{grid-column:1/-1}.cb .track{grid-column:1}.scale{display:none}}
 @media (prefers-reduced-motion:no-preference){.cb .fill{transition:width .35s ease}}
 </style>
+</head>
+<body>
+
 
 <header class="bar"><div class="wrap">
   <div class="brand"><span class="dot" aria-hidden="true"></span><h1>UXR Capability Map</h1></div>
@@ -307,7 +317,12 @@ function render(){
   state.fw=state.tab==="person"?state.pfw:"detailed";
   document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===state.tab));
   for(const t of ["team","person","plan"])$("#v-"+t).hidden=state.tab!==t;
-  if(!state.ready){const msg=`<div class="panel empty"><h2>Loading the team's ratings…</h2><p>Scores are kept in this page's shared store. Once it answers, the team map, individual profiles and planning views fill in here.</p></div>`;
+  if(state.needKey){["#v-team","#v-person","#v-plan"].forEach(s=>$(s).innerHTML="");
+    $("#v-"+state.tab).innerHTML=`<div class="panel gate"><h2>Enter the team passcode</h2><p class="muted">The UXR team's scores are protected with a shared passcode. Ask the map owner if you don't have it. You only need to enter it once on this device.</p>
+      <form id="keyform" class="addform"><input type="password" id="teamkey" aria-label="Team passcode" autocomplete="current-password" required><button class="btn" type="submit">Open the map</button></form>
+      ${state.keyError?`<p style="color:var(--crit);margin:10px 0 0">${esc(state.keyError)}</p>`:""}</div>`;
+    setTimeout(()=>$("#teamkey")?.focus(),0);renderSavebar();return}
+  if(!state.ready){const msg=`<div class="panel empty"><h2>Loading the team's ratings…</h2><p>Scores are kept in the team's Google Sheet. Once it answers, the team map, individual profiles and planning views fill in here.</p></div>`;
     ["#v-team","#v-person","#v-plan"].forEach(s=>$(s).innerHTML=msg);return}
   if(!roster().length){const msg=`<div class="panel empty"><h2>No designers yet</h2><p>Open <b>Individual mapping</b> and choose <b>Add designer</b> to start the map.</p></div>`;
     $("#v-team").innerHTML=msg;$("#v-plan").innerHTML=msg;renderPerson();return}
@@ -633,7 +648,7 @@ async function confirmDraft(){
   state.saving="Saving…";renderSavebar();
   try{await state.db.doc("members/"+id).update({...d.patch,updatedAt:new Date().toISOString().slice(0,10)});
     if(state.drafts[id]===d)delete state.drafts[id];state.saving="Saved";}
-  catch(e){state.saving=e?.code==="invalid_argument"?"You don't have permission to change scores here. Ask the page owner for Contributor access.":"Couldn't save. Check your connection and confirm again.";}
+  catch(e){state.saving=e?.code==="unauthorized"?"The team passcode was rejected. Reload the page and enter the current one.":"Couldn't save. Check your connection and confirm again.";}
   render();setTimeout(()=>{if(state.saving==="Saved"){state.saving="";renderSavebar()}},2500);
 }
 function deepMerge(a,b){for(const k in b){if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])){a[k]=a[k]||{};deepMerge(a[k],b[k])}else a[k]=b[k]}return a}
@@ -654,7 +669,7 @@ document.addEventListener("click",async e=>{
   if(act==="cancel-add"){state.adding=false;render();return}
   if(act==="del"){state.confirmDel=true;render();return}
   if(act==="del-no"){state.confirmDel=false;render();return}
-  if(act==="del-yes"&&state.db){const id=state.sel;state.confirmDel=false;try{await state.db.doc("members/"+id).delete();state.sel=null;}catch(err){showBanner("Couldn't remove this designer. You may not have edit access.")}render();return}
+  if(act==="del-yes"&&state.db){const id=state.sel;state.confirmDel=false;try{await state.db.doc("members/"+id).delete();state.sel=null;}catch(err){showBanner("Couldn't remove this designer. Check your connection and try again.")}render();return}
   if(t.dataset.set&&state.sel&&state.db){
     const kind=t.dataset.set,sid=t.dataset.sid,raw=t.dataset.v,key={cur:"c",tgt:"t",rel:"r"}[kind];
     const v=kind==="rel"?raw:+raw;const m=getM(state.sel);const branch="detailed";
@@ -667,31 +682,73 @@ document.addEventListener("change",e=>{
   if(e.target.id==="level"&&state.sel&&state.db){stage(state.sel,{level:e.target.value})}
 });
 document.addEventListener("submit",async e=>{
+  if(e.target.id==="keyform"){e.preventDefault();const k=$("#teamkey").value.trim();if(k){state.keyError="";connect(k)}return}
   if(e.target.id!=="addform")return;e.preventDefault();
   const name=$("#newname").value.trim().replace(/\s+/g," ");if(!name||!state.db)return;
   let id=name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"designer";
   while(state.members[id])id+="-2";
   try{await state.db.doc("members/"+id).set({name,level:"",detailed:{},core:{},updatedAt:new Date().toISOString().slice(0,10)});state.sel=id;state.adding=false;persist();}
-  catch(err){showBanner(err?.code==="quota_exceeded"?"The team store is full. Remove someone before adding more.":"Couldn't add this designer. You may not have edit access.")}
+  catch(err){showBanner(err?.code==="quota_exceeded"?"The team store is full. Remove someone before adding more.":"Couldn't add this designer. Check your connection and try again.")}
   render();
 });
 function showBanner(t){const b=$("#banner");b.textContent=t;b.hidden=false}
 
-render();
-(async()=>{
-  const db=await window.claude?.use?.("db");
-  if(!db){state.ready=true;showBanner("The shared score store isn't available in this view, so the map is empty. Open the page signed in to claude.ai to see and edit the team's ratings.");render();return}
-  state.db=db;
+// ---------- shared store: Google Sheets via Apps Script ----------
+// Paste the web app URL from Deploy > Manage deployments (ends in /exec).
+const API_URL="https://script.googleusercontent.com/a/macros/chaos.com/echo?user_content_key=AUkAhnRtJdTw25QjoBiWzIeXnuQX0u-hFm1r34GSGRpU9iVcYZPtMIuxN6U75YjK3_tB-74kvjGLwpfNy8T6HnhiUlhKWaK_BZo7AQbgE72P_wWsa56ZTXH0pvo0X4Ec9fkVASb-YQQvqfYfitZkf1yZoJeMkb01c-IijiwR1NxZfoZoCLGsKMJPh_Q1J3J8d1jsR1PVGAJqAYPfT3B-fMfIf94b03CLdFfT7IVOL1Q_R389shDcEtMZCQ0Cer7rd277uwTzQCLZcxhqyIQ3wpoCwMZFLj5cN4tF3Al2UXnj&lib=MvXTU6Lcx8_6IGE4LF2N6pA3t60eYVtDF";
+const POLL_MS=20000;
+function sheetDb(url,key){
+  const listeners=new Set();let cache={},timer=null,last="";
+  const emit=()=>{const snap={docs:Object.entries(cache).map(([id,d])=>({id,exists:true,data:()=>d}))};listeners.forEach(l=>l.next(snap))};
+  async function load(){
+    let r;try{r=await fetch(url+"?key="+encodeURIComponent(key)+"&t="+Date.now())}catch(e){throw {code:"unavailable"}}
+    const j=await r.json().catch(()=>({ok:false,error:"unavailable"}));
+    if(!j.ok)throw {code:j.error==="unauthorized"?"unauthorized":"unavailable"};return j.docs}
+  async function refresh(){try{const docs=await load();const sig=JSON.stringify(docs);if(sig===last)return;last=sig;cache=Object.fromEntries(docs.map(d=>[d.id,d.data]));emit()}catch(e){listeners.forEach(l=>l.err&&l.err(e))}}
+  async function post(body,apply){
+    let r;try{r=await fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...body,key})})}catch(e){throw {code:"unavailable"}}
+    const j=await r.json().catch(()=>({ok:false,error:"unavailable"}));
+    if(!j.ok)throw {code:j.error==="unauthorized"?"unauthorized":"unavailable"};
+    apply();last="";emit();setTimeout(refresh,800);
+  }
+  return {load,
+    collection:()=>({onSnapshot(next,err){const l={next,err};listeners.add(l);refresh();
+      if(!timer){timer=setInterval(()=>{if(!document.hidden)refresh()},POLL_MS);document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()})}
+      return()=>listeners.delete(l)}}),
+    doc:path=>{const id=path.split("/")[1];return{
+      update:patch=>post({action:"update",id,patch},()=>{if(cache[id])cache[id]=deepMerge(structuredClone(cache[id]),structuredClone(patch))}),
+      set:data=>post({action:"set",id,data},()=>{cache[id]=structuredClone(data)}),
+      delete:()=>post({action:"delete",id},()=>{delete cache[id]})}}};
+}
+async function connect(key){
+  const db=sheetDb(API_URL,key);
+  try{await db.load()}catch(e){
+    state.needKey=true;state.keyError=e.code==="unauthorized"?"That passcode didn't work. Check it with the map owner.":"Couldn't reach the score store. Check your connection and try again.";
+    if(e.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key")}catch(_){}}
+    render();return}
+  try{localStorage.setItem("uxr-map-key",key)}catch(e){}
+  state.needKey=false;state.keyError="";state.db=db;
   db.collection("members").onSnapshot(snap=>{
+    $("#banner").hidden=true;
     const next={};snap.docs.forEach(d=>{const x=d.data();if(x&&x.name)next[d.id]=x});
-    // keep local optimistic edits that haven't flushed yet
     for(const id in state.drafts){if(next[id])state.drafts[id].member=deepMerge(structuredClone(next[id]),structuredClone(state.drafts[id].patch));else delete state.drafts[id]}
     state.members=next;state.ready=true;
     if(drag)return;
-    const active=document.activeElement;if(active&&active.id==="newname")return;
+    const active=document.activeElement;if(active&&(active.id==="newname"||active.closest?.("#editor-skip")))return;
     const y=window.scrollY;render();window.scrollTo({top:y});
-  },err=>{state.ready=true;showBanner("Lost the connection to the shared scores. Reload the page to reconnect.");render()});
+  },err=>{
+    if(err.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key")}catch(_){}state.needKey=true;state.keyError="The team passcode has changed. Enter the new one.";state.db=null;render();return}
+    showBanner("Can't reach the score store right now. Retrying automatically.");
+  });
+}
+render();
+(async()=>{
+  if(!/^https:\/\/script\.google\.com\//.test(API_URL)){state.ready=true;showBanner("Setup needed: paste the Apps Script web app URL into API_URL in this file (see the README).");render();return}
+  let key="";try{key=localStorage.getItem("uxr-map-key")||""}catch(e){}
+  if(!key){state.needKey=true;render();return}
+  connect(key);
 })();
 </script>
 
-</body></html>
+</body>
+</html>
