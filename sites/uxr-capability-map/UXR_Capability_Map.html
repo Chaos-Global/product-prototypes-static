@@ -179,6 +179,8 @@ input[type=text],select{font:inherit;color:var(--ink);background:var(--surface);
 .savebar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -6px 20px rgb(0 0 0 / .08);padding-bottom:env(safe-area-inset-bottom,0px)}
 .sbin{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px;padding-block:12px}
 .sbtn{display:flex;gap:8px}
+.sb-err{color:var(--crit)}
+.btn[disabled]{opacity:.6;cursor:progress}
 .av{--hue:220;display:inline-grid;place-items:center;flex:none;width:28px;height:28px;border-radius:50%;font:600 10.5px var(--mono);background:hsl(var(--hue) 60% var(--av-bg));color:hsl(var(--hue) 55% var(--av-fg))}
 .av.lg{width:38px;height:38px;font-size:12.5px}
 .av.ext{background:var(--warn-soft);color:var(--warn);font:600 16px var(--body)}
@@ -225,6 +227,13 @@ input[type=text],select{font:inherit;color:var(--ink);background:var(--surface);
 .ctable thead th{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .chip.new{background:var(--accent-soft);color:var(--accent);font-size:10px;padding:2px 6px;vertical-align:1px}
 .chip.core{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line);font-size:10px;padding:2px 6px;vertical-align:1px}
+.sync{font:500 11.5px var(--body);color:var(--muted);display:inline-flex;align-items:center;gap:6px;margin-left:6px;align-self:center}
+.sync:empty{display:none}
+.sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.sync[data-s="sync"]::before,.sync[data-s="save"]::before{background:var(--warn);animation:pulse 1s ease-in-out infinite}
+.sync[data-s="err"]{color:var(--crit)}.sync[data-s="err"]::before{background:var(--crit)}
+@keyframes pulse{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.sync::before{animation:none!important}}
 .fwtabs{border-bottom:1px solid var(--line);padding-bottom:6px}
 .scalekey{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;font-size:12px}
 .scalekey div{padding:8px 10px;border-radius:6px;background:var(--sunk)}
@@ -241,7 +250,7 @@ details summary{cursor:pointer;font-weight:600}
 
 
 <header class="bar"><div class="wrap">
-  <div class="brand"><span class="dot" aria-hidden="true"></span><h1>UXR Capability Map</h1></div>
+  <div class="brand"><span class="dot" aria-hidden="true"></span><h1>UXR Capability Map</h1><span id="sync" class="sync" role="status" aria-live="polite"></span></div>
   <nav class="tabs" role="tablist">
     <button role="tab" data-tab="person" aria-selected="true" id="tab-person">Individual mapping</button>
     <button role="tab" data-tab="team" aria-selected="false" id="tab-team">Team mapping</button>
@@ -632,15 +641,16 @@ function renderSavebar(){
   const bar=$("#savebar"),d=state.tab==="person"&&state.sel&&state.drafts[state.sel];
   if(!d){bar.hidden=!state.saving||state.tab!=="person";bar.innerHTML=state.saving?`<div class="wrap sbin"><span>${esc(state.saving)}</span></div>`:"";return}
   const n=changeCount(d.patch),nm=first(state.members[state.sel]?.name||"");
-  bar.hidden=false;bar.innerHTML=`<div class="wrap sbin"><span><b>${n} unsaved ${n===1?"change":"changes"}</b> to ${esc(nm)}'s map</span>
-    <span class="sbtn"><button class="btn ghost" data-act="discard">Discard</button><button class="btn" data-act="confirm">Confirm changes</button></span></div>`;
+  bar.hidden=false;const st=state.saving,busy=st==="Saving…",bad=st.startsWith("Not saved");
+  bar.innerHTML=`<div class="wrap sbin"><span>${bad?`<b class="sb-err">${esc(st)}</b>`:busy?`<b>Saving ${n} ${n===1?"change":"changes"}…</b> Keep this page open.`:`<b>${n} unsaved ${n===1?"change":"changes"}</b> to ${esc(nm)}'s map`}</span>
+    <span class="sbtn"><button class="btn ghost" data-act="discard">Discard</button><button class="btn" data-act="confirm" ${busy?"disabled":""}>${busy?"Saving…":bad?"Try again":"Confirm changes"}</button></span></div>`;
 }
 async function confirmDraft(){
-  const id=state.sel,d=state.drafts[id];if(!d||!state.db)return;
+  const id=state.sel,d=state.drafts[id];if(!d||!state.db||state.saving==="Saving…")return;
   state.saving="Saving…";renderSavebar();
   try{await state.db.doc("members/"+id).update({...d.patch,updatedAt:new Date().toISOString().slice(0,10)});
     if(state.drafts[id]===d)delete state.drafts[id];state.saving="Saved";}
-  catch(e){state.saving=e?.code==="unauthorized"?"The team passcode was rejected. Reload the page and enter the current one.":"Couldn't save. Check your connection and confirm again.";}
+  catch(e){state.saving=e?.code==="unauthorized"?"Not saved: the team passcode was rejected. Reload the page and enter the current one.":e?.code==="not_found"?"Not saved: this designer was removed from the sheet. Reload the page.":"Not saved: couldn't reach the Google Sheet. Your changes are kept here, so confirm again in a moment.";}
   render();setTimeout(()=>{if(state.saving==="Saved"){state.saving="";renderSavebar()}},2500);
 }
 function deepMerge(a,b){for(const k in b){if(b[k]&&typeof b[k]==="object"&&!Array.isArray(b[k])){a[k]=a[k]||{};deepMerge(a[k],b[k])}else a[k]=b[k]}return a}
@@ -690,21 +700,39 @@ function showBanner(t){const b=$("#banner");b.textContent=t;b.hidden=false}
 const API_URL="https://script.google.com/macros/s/AKfycbzCuLqUsREqBchwdp-xKVgUHdrqYurTOoRzKhsL7wNIudqRsV3aF3KeecTBVuTB72nEUQ/exec";
 const POLL_MS=20000;
 function sheetDb(url,key){
-  const listeners=new Set();let cache={},timer=null,last="";
+  const listeners=new Set();let cache={},timer=null,last="",inflight=0,lastWrite=0,seededAt=0;
   const emit=()=>{const snap={docs:Object.entries(cache).map(([id,d])=>({id,exists:true,data:()=>d}))};listeners.forEach(l=>l.next(snap))};
+  const keep=()=>{try{localStorage.setItem("uxr-map-cache",JSON.stringify({at:Date.now(),cache}))}catch(e){}};
+  function setDocs(docs){cache=Object.fromEntries(docs.map(d=>[d.id,d.data]));last=JSON.stringify(docs);keep()}
   async function load(){
     let r;try{r=await fetch(url+"?key="+encodeURIComponent(key)+"&t="+Date.now())}catch(e){throw {code:"unavailable"}}
     const j=await r.json().catch(()=>({ok:false,error:"unavailable"}));
     if(!j.ok)throw {code:j.error==="unauthorized"?"unauthorized":"unavailable"};return j.docs}
-  async function refresh(){try{const docs=await load();const sig=JSON.stringify(docs);if(sig===last)return;last=sig;cache=Object.fromEntries(docs.map(d=>[d.id,d.data]));emit()}catch(e){listeners.forEach(l=>l.err&&l.err(e))}}
+  async function refresh(){
+    if(inflight)return;                       // never let a read race a save
+    const started=Date.now();setSync("sync");
+    try{const docs=await load();
+      if(inflight||started<lastWrite){setSync("ok");return}   // answer is older than our latest save: ignore it
+      const sig=JSON.stringify(docs);if(sig!==last){setDocs(docs);emit()}setSync("ok")}
+    catch(e){setSync("err");listeners.forEach(l=>l.err&&l.err(e))}}
   async function post(body,apply){
-    let r;try{r=await fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...body,key})})}catch(e){throw {code:"unavailable"}}
-    const j=await r.json().catch(()=>({ok:false,error:"unavailable"}));
-    if(!j.ok)throw {code:j.error==="unauthorized"?"unauthorized":"unavailable"};
-    apply();last="";emit();setTimeout(refresh,800);
+    inflight++;setSync("save");
+    try{
+      let r;try{r=await fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({...body,key})})}catch(e){throw {code:"unavailable"}}
+      const j=await r.json().catch(()=>({ok:false,error:"unavailable"}));
+      if(!j.ok)throw {code:j.error==="unauthorized"?"unauthorized":j.error||"unavailable"};
+      lastWrite=Date.now();
+      if(Array.isArray(j.docs))setDocs(j.docs);else{apply();last="";keep()}
+      emit();setSync("ok");
+      if(!Array.isArray(j.docs))setTimeout(refresh,1500);   // older script without docs in the reply: confirm from the sheet
+    }catch(e){setSync("err");throw e}
+    finally{inflight--}
   }
   return {load,
-    collection:()=>({onSnapshot(next,err){const l={next,err};listeners.add(l);refresh();
+    seed(docsOrCache,isCache){if(isCache){cache=docsOrCache;last=""}else setDocs(docsOrCache);seededAt=Date.now()},
+    collection:()=>({onSnapshot(next,err){const l={next,err};listeners.add(l);
+      if(seededAt){next({docs:Object.entries(cache).map(([id,d])=>({id,exists:true,data:()=>d}))})}
+      if(Date.now()-seededAt>3000||!last)refresh();
       if(!timer){timer=setInterval(()=>{if(!document.hidden)refresh()},POLL_MS);document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh()})}
       return()=>listeners.delete(l)}}),
     doc:path=>{const id=path.split("/")[1];return{
@@ -712,12 +740,24 @@ function sheetDb(url,key){
       set:data=>post({action:"set",id,data},()=>{cache[id]=structuredClone(data)}),
       delete:()=>post({action:"delete",id},()=>{delete cache[id]})}}};
 }
-async function connect(key){
+// small status in the toolbar: syncing / saving / up to date / offline
+function setSync(s){const el=$("#sync");if(!el)return;state.syncAt=s==="ok"?new Date():state.syncAt;
+  el.dataset.s=s;el.textContent={sync:"Syncing…",save:"Saving…",err:"Offline · retrying",ok:"Up to date"}[s]||"";
+  if(s==="ok"&&state.syncAt)el.title="Last synced "+state.syncAt.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"})}
+function readLocal(){try{const x=JSON.parse(localStorage.getItem("uxr-map-cache")||"null");return x&&x.cache&&Object.keys(x.cache).length?x.cache:null}catch(e){return null}}
+async function connect(key,opts={}){
   const db=sheetDb(API_URL,key);
-  try{await db.load()}catch(e){
-    state.needKey=true;state.keyError=e.code==="unauthorized"?"That passcode didn't work. Check it with the map owner.":"Couldn't reach the score store. Check your connection and try again.";
-    if(e.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key")}catch(_){}}
-    render();return}
+  const local=opts.fromBoot?readLocal():null;
+  if(local){db.seed(local,true)}                       // show the last known scores instantly, then refresh in the background
+  else{
+    setSync("sync");
+    try{db.seed(await db.load())}catch(e){
+      setSync("");
+      state.needKey=true;state.keyError=e.code==="unauthorized"?"That passcode didn't work. Check it with the map owner.":"Couldn't reach the score store. Check your connection and try again.";
+      if(e.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key");localStorage.removeItem("uxr-map-cache")}catch(_){}}
+      render();return}
+    setSync("ok");
+  }
   try{localStorage.setItem("uxr-map-key",key)}catch(e){}
   state.needKey=false;state.keyError="";state.db=db;
   db.collection("members").onSnapshot(snap=>{
@@ -726,19 +766,20 @@ async function connect(key){
     for(const id in state.drafts){if(next[id])state.drafts[id].member=deepMerge(structuredClone(next[id]),structuredClone(state.drafts[id].patch));else delete state.drafts[id]}
     state.members=next;state.ready=true;
     if(drag)return;
-    const active=document.activeElement;if(active&&(active.id==="newname"||active.closest?.("#editor-skip")))return;
+    const active=document.activeElement;if(active&&(active.id==="newname"||active.id==="teamkey"))return;
     const y=window.scrollY;render();window.scrollTo({top:y});
   },err=>{
-    if(err.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key")}catch(_){}state.needKey=true;state.keyError="The team passcode has changed. Enter the new one.";state.db=null;render();return}
-    showBanner("Can't reach the score store right now. Retrying automatically.");
+    if(err.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key");localStorage.removeItem("uxr-map-cache")}catch(_){}state.needKey=true;state.keyError="The team passcode has changed. Enter the new one.";state.db=null;render();return}
   });
 }
+// warn before leaving with unsaved or still-saving changes
+window.addEventListener("beforeunload",e=>{if(Object.keys(state.drafts).length||state.saving==="Saving…"){e.preventDefault();e.returnValue=""}});
 render();
 (async()=>{
   if(!/^https:\/\/script\.google\.com\//.test(API_URL)){state.ready=true;showBanner("Setup needed: paste the Apps Script web app URL into API_URL in this file (see the README).");render();return}
   let key="";try{key=localStorage.getItem("uxr-map-key")||""}catch(e){}
   if(!key){state.needKey=true;render();return}
-  connect(key);
+  connect(key,{fromBoot:true});
 })();
 </script>
 
