@@ -695,8 +695,8 @@ function showBanner(t){const b=$("#banner");b.textContent=t;b.hidden=false}
 
 // ---------- shared store: Google Sheets via Apps Script ----------
 // Paste the web app URL from Deploy > Manage deployments (ends in /exec).
-const API_URL="https://script.googleusercontent.com/a/macros/chaos.com/echo?user_content_key=AUkAhnRtJdTw25QjoBiWzIeXnuQX0u-hFm1r34GSGRpU9iVcYZPtMIuxN6U75YjK3_tB-74kvjGLwpfNy8T6HnhiUlhKWaK_BZo7AQbgE72P_wWsa56ZTXH0pvo0X4Ec9fkVASb-YQQvqfYfitZkf1yZoJeMkb01c-IijiwR1NxZfoZoCLGsKMJPh_Q1J3J8d1jsR1PVGAJqAYPfT3B-fMfIf94b03CLdFfT7IVOL1Q_R389shDcEtMZCQ0Cer7rd277uwTzQCLZcxhqyIQ3wpoCwMZFLj5cN4tF3Al2UXnj&lib=MvXTU6Lcx8_6IGE4LF2N6pA3t60eYVtDF";
-const POLL_MS=20000;
+const API_URL="https://script.google.com/macros/s/AKfycbzCuLqUsREqBchwdp-xKVgUHdrqYurTOoRzKhsL7wNIudqRsV3aF3KeecTBVuTB72nEUQ/exec";
+
 function sheetDb(url,key){
   const listeners=new Set();let cache={},timer=null,last="";
   const emit=()=>{const snap={docs:Object.entries(cache).map(([id,d])=>({id,exists:true,data:()=>d}))};listeners.forEach(l=>l.next(snap))};
