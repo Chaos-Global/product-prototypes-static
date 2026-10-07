@@ -259,7 +259,6 @@ details summary{cursor:pointer;font-weight:600}
 
 <script>
 const FW = {"cats": [{"id": "research", "name": "UX Research", "core": true, "group": "Core 8", "skills": [["research1", "Planning and scoping research"], ["research2", "Qualitative methods (interviews, usability testing)"], ["research3", "Quantitative methods (surveys, A/B testing)"], ["research4", "Synthesizing insights & creating personas"], ["research5", "Journey mapping & service blueprinting"], ["res6", "AI-assisted research & synthesis"], ["tools4", "Research tools (Maze, Lookback, Dovetail)"], ["tools5", "Product analytics (Hotjar, GA, Amplitude)"]]}, {"id": "ui", "name": "UI Design", "core": true, "group": "Core 8", "skills": [["ui1", "Layout and composition"], ["ui2", "Visual hierarchy and spacing"], ["ui3", "UI patterns and design systems"], ["ui4", "Branding and visual consistency"], ["ui5", "Figma proficiency"], ["ui6", "Data-dense UI for professional tools"]]}, {"id": "ai", "name": "AI Prototyping", "core": true, "group": "Core 8", "skills": [["ai1", "AI prototyping tools (Figma Make, v0, Lovable, Cursor)"], ["ai2", "Prompting & AI-assisted workflows"], ["ai3", "Code literacy (HTML/CSS, React basics)"], ["ai4", "Designing AI features (agents, trust, explainability)"]]}, {"id": "ixd", "name": "Interaction Design", "core": true, "group": "Core 8", "skills": [["ixd1", "Task flows & user flows"], ["ixd2", "Wireframing & prototyping (low to high fidelity)"], ["ixd3", "Microinteractions & transitions"], ["ixd4", "Accessibility (WCAG compliance)"], ["ixd5", "Desktop, plugin & cross-platform patterns"]]}, {"id": "fac", "name": "Facilitation", "core": true, "group": "Core 8", "skills": [["collab2", "Leading workshops & ideation sessions"], ["fac1", "Running design critiques & reviews"], ["fac2", "Customer co-creation sessions"], ["tools2", "Whiteboarding tools (Miro, FigJam)"]]}, {"id": "pres", "name": "Presenting", "core": true, "group": "Core 8", "skills": [["growth3", "Public speaking / presenting work"], ["pres1", "Research & design storytelling"], ["pres2", "Presenting to leadership"]]}, {"id": "writing", "name": "Writing", "core": true, "group": "Core 8", "skills": [["writing1", "UX writing / microcopy"], ["writing2", "Clear documentation of design decisions"], ["writing3", "Communicating with stakeholders"], ["wr1", "Usability & heuristic evaluation reports"]]}, {"id": "ia", "name": "Information Architecture", "core": true, "group": "Core 8", "skills": [["ia1", "Content organization and labeling"], ["ia2", "Navigation systems"], ["ia3", "Taxonomies and metadata"], ["ia4", "Card sorting & tree testing"]]}, {"id": "collab", "name": "Collaboration & Team", "core": false, "group": "Professional", "skills": [["collab1", "Cross-functional collaboration (PMs, Devs, etc.)"], ["collab3", "Giving and receiving feedback"], ["collab4", "Peer mentoring / supporting juniors"], ["collab5", "Stakeholder management"]]}, {"id": "strategy", "name": "Strategy & Business", "core": false, "group": "Professional", "skills": [["strategy1", "Product thinking"], ["strategy2", "Product management understanding"], ["strategy3", "Aligning UX with business goals"], ["strategy4", "Prioritization & scoping"], ["strategy5", "UX metrics and success criteria"], ["str1", "Domain knowledge: 3D, rendering & AEC workflows"], ["str2", "Competitive analysis"]]}, {"id": "delivery", "name": "Execution & Delivery", "core": false, "group": "Professional", "skills": [["delivery1", "Design handoff to development"], ["delivery2", "Agile teams / design sprints"], ["delivery3", "Jira / Confluence & project tools"], ["delivery4", "QA support and design QA"]]}, {"id": "growth", "name": "Growth & Leadership", "core": false, "group": "Professional", "skills": [["growth1", "Proactiveness in learning & growth"], ["growth2", "Leading initiatives / ownership"], ["growth4", "Coaching / people leadership"], ["growth5", "UX advocacy"]]}], "new": ["res6", "ui6", "ai1", "ai2", "ai3", "ai4", "ixd5", "fac1", "fac2", "pres1", "pres2", "wr1", "str1", "str2"]};
-const LEVELS=[["","Not set"],["P1","P1 · Intern / Entry"],["P2","P2 · Developing"],["P3","P3 · Proficiency"],["P4","P4 · Mastering"],["P5","P5 · Expert"],["P6","P6 · Professional (Advisory)"],["P7","P7 · Strategist"],["P8","P8 · Fellow"],["M1","M1 · Team Leader"],["M2","M2 · Manager"],["M3","M3/M4 · Manager / Sr. Manager"],["M5","M4/M5 · Director / Sr. Director"]];
 const SCALE=[[1,"Awareness","Aware of it, can't yet perform tasks"],[2,"Novice","Can discuss it and do simple tasks"],[3,"Intermediate","Applies it independently, occasionally"],[4,"Advanced","Coaches others; part of day-to-day work"],[5,"Expert","Consistent excellence across projects"]];
 const REL={h:["Focus","High relevance for the role and interest"],c:["Core","Core competency, not a focus in this role"],n:["N/A","Not relevant for role / no interest"]};
 
@@ -512,9 +511,7 @@ function renderPerson(){
   const mentorsFor=sid=>roster().filter(p=>p.id!==m.id&&cur(p,sid)!=null&&cur(p,sid)>=Math.max(4,(want(m,sid)||4))).sort((a,b)=>cur(b,sid)-cur(a,sid)).slice(0,3);
   h+=`<div class="panel"><div class="ph"><div><span class="eyebrow">Individual profile</span><h2>${esc(m.name)}</h2>
       <span class="muted">${ratedN} of ${sk.length} skills rated · average <span class="num">${f1(avg(mine.map(s=>cur(m,s.id))))}</span></span></div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label for="level" class="eyebrow">Career level</label>
-      <select id="level" data-act="level">${LEVELS.map(([v,l])=>`<option value="${v}" ${m.level===v?"selected":""}>${l}</option>`).join("")}</select>
-      ${state.confirmDel?`<span class="confirm"><span class="muted">Remove ${esc(first(m.name))} and all scores?</span><button class="btn danger" data-act="del-yes">Remove</button><button class="btn ghost" data-act="del-no">Keep</button></span>`:`<button class="btn ghost" data-act="del">Remove</button>`}</div></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">      ${state.confirmDel?`<span class="confirm"><span class="muted">Remove ${esc(first(m.name))} and all scores?</span><button class="btn danger" data-act="del-yes">Remove</button><button class="btn ghost" data-act="del-no">Keep</button></span>`:`<button class="btn ghost" data-act="del">Remove</button>`}</div></div>
     <div class="tabs fwtabs" role="tablist" aria-label="Skill framework" style="margin-top:14px">
       <button role="tab" data-pfw="detailed" aria-selected="${state.pfw==="detailed"}">Full skillset · ${FW.cats.reduce((n,c)=>n+c.skills.length,0)} skills</button>
       <button role="tab" data-pfw="core" aria-selected="${state.pfw==="core"}">Core 8 · ${CORE.reduce((n,c)=>n+c.skills.length,0)} skills</button></div>
@@ -611,8 +608,6 @@ function renderPlan(){
   const weakCats=cats().map(c=>({c,a:catAvg(c),d:c.skills.reduce((x,[id])=>x+stats[id].depth,0)/c.skills.length})).filter(x=>x.a!=null).sort((a,b)=>a.a-b.a).slice(0,3);
   // development: demand per skill
   const demand=sk.map(s=>({s,st:stats[s.id]})).filter(x=>x.st.learners.length>=2).sort((a,b)=>b.st.learners.length-a.st.learners.length||a.st.avg-b.st.avg).slice(0,10);
-  // levels
-  const lv={};ms.forEach(m=>{const k=m.level||"";(lv[k]=lv[k]||[]).push(m)});
   const noCov=risks.filter(s=>stats[s.id].depth===0),single=risks.filter(s=>stats[s.id].depth===1);
   let h=`<div class="hire"><div class="hire-head"><div><span class="eyebrow">Hiring signals</span><h2>${noCov.length?`${noCov.length} ${noCov.length===1?"skill has":"skills have"} no one at Advanced level`:single.length?`${single.length} skills depend on a single person`:"No coverage gaps"}</h2></div>
       <p class="muted">Skills where 0–1 designers rate 4 or higher. Hire for these, or fund training, before they block work.</p></div>
@@ -624,9 +619,6 @@ function renderPlan(){
   h+=`<div class="panel"><div class="phead"><h2>Development programs</h2><span class="muted">where 2+ people want to grow</span></div>
       ${demand.length?`<ul class="list">${demand.map(({s,st})=>{const coaches=st.holders.filter(h=>cur(h,s.id)>=4).sort((a,b)=>cur(b,s.id)-cur(a,s.id));return `<li><span class="t">${esc(s.name)}</span><span class="chip plain">${st.learners.length} learners</span>
         <span class="s">Learners: ${st.learners.map(m=>esc(first(m.name))).join(", ")} · ${coaches.length?"Coaches: "+coaches.slice(0,4).map(m=>esc(first(m.name))).join(", "):"No internal coach: external training"}</span></li>`}).join("")}</ul>`:`<p class="muted">Not enough growth targets yet. Ask the team to set targets in Individual mapping.</p>`}</div>`;
-  // levels
-  h+=`<div class="panel"><div class="phead"><h2>Career levels</h2><span class="muted">set in each profile · P-track individual contributors, M-track managers</span></div>
-    <ul class="list">${LEVELS.filter(([v])=>lv[v]).map(([v,l])=>`<li><span class="t">${v?esc(l):"Level not set"}</span><span class="num">${lv[v].length}</span><span class="s">${lv[v].map(m=>esc(m.name)).join(", ")}</span></li>`).join("")}</ul></div>`;
   $("#v-plan").innerHTML=h;
 }
 
@@ -679,7 +671,7 @@ document.addEventListener("click",async e=>{
 });
 document.addEventListener("change",e=>{
   
-  if(e.target.id==="level"&&state.sel&&state.db){stage(state.sel,{level:e.target.value})}
+
 });
 document.addEventListener("submit",async e=>{
   if(e.target.id==="keyform"){e.preventDefault();const k=$("#teamkey").value.trim();if(k){state.keyError="";connect(k)}return}
@@ -687,7 +679,7 @@ document.addEventListener("submit",async e=>{
   const name=$("#newname").value.trim().replace(/\s+/g," ");if(!name||!state.db)return;
   let id=name.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"designer";
   while(state.members[id])id+="-2";
-  try{await state.db.doc("members/"+id).set({name,level:"",detailed:{},core:{},updatedAt:new Date().toISOString().slice(0,10)});state.sel=id;state.adding=false;persist();}
+  try{await state.db.doc("members/"+id).set({name,detailed:{},core:{},updatedAt:new Date().toISOString().slice(0,10)});state.sel=id;state.adding=false;persist();}
   catch(err){showBanner(err?.code==="quota_exceeded"?"The team store is full. Remove someone before adding more.":"Couldn't add this designer. Check your connection and try again.")}
   render();
 });
@@ -696,7 +688,7 @@ function showBanner(t){const b=$("#banner");b.textContent=t;b.hidden=false}
 // ---------- shared store: Google Sheets via Apps Script ----------
 // Paste the web app URL from Deploy > Manage deployments (ends in /exec).
 const API_URL="https://script.google.com/macros/s/AKfycbzCuLqUsREqBchwdp-xKVgUHdrqYurTOoRzKhsL7wNIudqRsV3aF3KeecTBVuTB72nEUQ/exec";
-
+const POLL_MS=20000;
 function sheetDb(url,key){
   const listeners=new Set();let cache={},timer=null,last="";
   const emit=()=>{const snap={docs:Object.entries(cache).map(([id,d])=>({id,exists:true,data:()=>d}))};listeners.forEach(l=>l.next(snap))};
