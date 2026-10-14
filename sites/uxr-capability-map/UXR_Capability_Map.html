@@ -14,6 +14,7 @@ html{color-scheme:light}
 /* Layout: sticky toolbar, three working views (Team map / Individual / Planning), content on a cool paper ground with one ultramarine accent and a 5-step proficiency ramp. */
 :root{
   --av-bg:88%; --av-fg:28%;
+  --flag3:#FBD9A8; --flag2:#E8772A; --flag1:#C9283E; --flag3-ink:#5A3300; --flag2-ink:#FFFFFF; --flag1-ink:#FFFFFF;
   --p0:#2C46D8; --p1:#C9531B; --p2:#0F7F63; --p3:#B02C6C; --p4:#7348C4; --p5:#7D6400; --p6:#0B76A3; --p7:#C0303A; --p8:#3F7A16; --p9:#995019; --p10:#4D5870; --p11:#C23C93;
   --bg:#F2F3F7; --surface:#FFFFFF; --sunk:#E9EBF1; --ink:#151925; --muted:#454C5E; --line:#CBD0DC;
   --accent:#2C46D8; --accent-ink:#FFFFFF; --accent-soft:#E3E7FB;
@@ -27,6 +28,7 @@ html{color-scheme:light}
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --av-bg:26%; --av-fg:84%;
+  --flag3:#6B4A1F; --flag2:#C2560F; --flag1:#C0303F; --flag3-ink:#FFE3BD; --flag2-ink:#FFFFFF; --flag1-ink:#FFFFFF;
   --p0:#8D9DFF; --p1:#FF9A5C; --p2:#3FD0A6; --p3:#FF7EB6; --p4:#B79BFF; --p5:#E2C64A; --p6:#55C3F2; --p7:#FF7A80; --p8:#9AD660; --p9:#E0A06A; --p10:#AAB4CC; --p11:#F68AD6;
   --bg:#0E1119; --surface:#161A25; --sunk:#1D2230; --ink:#E7E9F0; --muted:#B0B7C8; --line:#363D52;
   --accent:#8193FF; --accent-ink:#0E1119; --accent-soft:#232B4D;
@@ -35,6 +37,7 @@ html{color-scheme:light}
   --t-team:#6B7389; --t-tgt:#F0A65A; color-scheme:dark}}
 :root[data-theme="dark"]{
   --av-bg:26%; --av-fg:84%;
+  --flag3:#6B4A1F; --flag2:#C2560F; --flag1:#C0303F; --flag3-ink:#FFE3BD; --flag2-ink:#FFFFFF; --flag1-ink:#FFFFFF;
   --p0:#8D9DFF; --p1:#FF9A5C; --p2:#3FD0A6; --p3:#FF7EB6; --p4:#B79BFF; --p5:#E2C64A; --p6:#55C3F2; --p7:#FF7A80; --p8:#9AD660; --p9:#E0A06A; --p10:#AAB4CC; --p11:#F68AD6;
   --bg:#0E1119; --surface:#161A25; --sunk:#1D2230; --ink:#E7E9F0; --muted:#B0B7C8; --line:#363D52;
   --accent:#8193FF; --accent-ink:#0E1119; --accent-soft:#232B4D;
@@ -266,9 +269,10 @@ body.has-savebar .toasts{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
 .loadbar i{position:absolute;top:0;bottom:0;width:35%;background:var(--accent);border-radius:2px;animation:slide 1.1s ease-in-out infinite}
 @media (prefers-reduced-motion:reduce){.netbar i,.loadbar i{animation:none;left:0;width:100%;opacity:.5}}
 .chip.gapc{background:var(--warn-soft);color:var(--warn);font-size:10.5px;padding:2px 7px;vertical-align:1px}
-.erow.gap{background:linear-gradient(90deg,var(--warn-soft),transparent 60%);box-shadow:inset 3px 0 0 var(--t-tgt);padding-left:10px;border-radius:4px}
-.hm td.c.gap{box-shadow:inset 0 0 0 2px var(--t-tgt)}
-.legend i.gap{box-shadow:inset 0 0 0 2px var(--t-tgt)}
+/* growth flags on the skill grid: 3 = light orange, 2 = dark orange, 1 = red */
+.hm td.c.f3,.legend i.f3{background:var(--flag3);color:var(--flag3-ink)}
+.hm td.c.f2,.legend i.f2{background:var(--flag2);color:var(--flag2-ink)}
+.hm td.c.f1,.legend i.f1{background:var(--flag1);color:var(--flag1-ink)}
 .gapn{color:var(--warn);font-weight:600;font-family:var(--mono);font-size:12px}
 .gaplist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:10px 24px}
 .gaplist li{display:grid;gap:5px;padding:10px 0;border-top:1px solid var(--line);min-width:0}
@@ -297,6 +301,13 @@ body.has-savebar .toasts{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
 .m2m b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
 .m2m .role{font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 .m2m .down{color:var(--accent);font-weight:700;font-size:15px;line-height:1;padding-left:8px}
+.rolebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.panel>.rolebar{margin-bottom:14px}
+#v-team>.rolebar{margin-bottom:-4px}
+.chip.tag{font-size:10.5px;padding:2px 7px;vertical-align:2px;font-weight:600}
+.tag-designer{background:var(--sunk);color:var(--ink)}
+.tag-researcher{background:var(--ok-soft);color:var(--ok)}
+.tag-lead{background:var(--accent-soft);color:var(--accent)}
 .fwtabs{border-bottom:1px solid var(--line);padding-bottom:6px}
 .scalekey{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;font-size:12px}
 .scalekey div{padding:8px 10px;border-radius:6px;background:var(--sunk)}
@@ -326,7 +337,7 @@ details summary{cursor:pointer;font-weight:600}
   <section class="view" id="v-person"></section>
   <section class="view" id="v-team" hidden></section>
   <section class="view" id="v-plan" hidden></section>
-  <p class="ver">UXR Capability Map · v7 · 14 Oct 2026 · scores stored in the team's Google Sheet</p>
+  <p class="ver">UXR Capability Map · v9.2 · 14 Oct 2026 · scores stored in the team's Google Sheet</p>
 </main>
 <div class="savebar" id="savebar" hidden></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
@@ -345,10 +356,10 @@ const allSkills=()=>skillCats().flatMap(c=>c.skills.map(([id,name])=>({id,name,c
 
 const state={mentorView:"mentee",mentorFocus:"",fw:"detailed",pfw:"detailed",tab:"person",drafts:{},members:{},sel:null,hmMode:"c",kbAxis:null,
   adding:false,addName:"",addMe:false,renaming:false,renameVal:"",confirmDel:false,efilter:"all",efSnap:null,me:null,outbox:[],pendingDel:null,ver:0,db:null,ready:false,loadingFirst:false,
-  sync:{phase:"idle",err:false,at:null,msg:""}};
-try{const s=JSON.parse(localStorage.getItem("uxr-map-ui")||"{}");Object.assign(state,{mentorView:s.mentorView||"mentee",pfw:s.pfw||"detailed",tab:s.tab||"person",sel:s.sel||null,hmMode:s.hmMode||"c",efilter:s.efilter||"all",me:s.me||null})}catch(e){}
+  sync:{phase:"idle",err:false,at:null,msg:""},roleF:"all"};
+try{const s=JSON.parse(localStorage.getItem("uxr-map-ui")||"{}");Object.assign(state,{mentorView:s.mentorView||"mentee",pfw:s.pfw||"detailed",tab:s.tab||"person",sel:s.sel||null,hmMode:s.hmMode||"c",efilter:s.efilter||"all",me:s.me||null,roleF:s.roleF||"all"})}catch(e){}
 try{state.outbox=(JSON.parse(localStorage.getItem("uxr-map-outbox")||"[]")||[]).filter(o=>o&&o.op&&o.id)}catch(e){state.outbox=[]}
-const persist=()=>{try{localStorage.setItem("uxr-map-ui",JSON.stringify({mentorView:state.mentorView,pfw:state.pfw,tab:state.tab,sel:state.sel,hmMode:state.hmMode,efilter:state.efilter,me:state.me}))}catch(e){}};
+const persist=()=>{try{localStorage.setItem("uxr-map-ui",JSON.stringify({mentorView:state.mentorView,pfw:state.pfw,tab:state.tab,sel:state.sel,hmMode:state.hmMode,efilter:state.efilter,me:state.me,roleF:state.roleF}))}catch(e){}};
 
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -360,9 +371,19 @@ const getM=id=>state.drafts[id]?.member??state.members[id];
 const changeCount=patch=>{let n=0;(function w(o){for(const k in o){if(o[k]&&typeof o[k]==="object")w(o[k]);else n++}})(patch);return n};
 // results that depend only on the team data are cached until the data changes
 const MEMO={ver:-1,fw:"",m:new Map()};
-function memo(k,fn){if(MEMO.ver!==state.ver||MEMO.fw!==state.fw){MEMO.ver=state.ver;MEMO.fw=state.fw;MEMO.m.clear()}if(!MEMO.m.has(k))MEMO.m.set(k,fn());return MEMO.m.get(k)}
+// Tags are set here, not in the prototype. Everyone not listed is a designer.
+const TAGS={"viktoria-tsurova":"researcher","michaella-zareva":"researcher","dilyana-stolarova":"lead","ivelina-stoyanova":"lead"};
+const TAG_LABEL={designer:"Designer",researcher:"Researcher",lead:"Team lead"};
+const roleOf=m=>TAGS[m.id]||"designer";
+const tagChip=m=>{const r=roleOf(m);return `<span class="chip tag tag-${r}">${TAG_LABEL[r]}</span>`};
+const roleCtx=()=>state.tab==="plan"?"all":(state.roleF||"all");   // Planning always looks at the whole team
+function memo(k,fn){const ctx=state.fw+"|"+roleCtx();if(MEMO.ver!==state.ver||MEMO.fw!==ctx){MEMO.ver=state.ver;MEMO.fw=ctx;MEMO.m.clear()}if(!MEMO.m.has(k))MEMO.m.set(k,fn());return MEMO.m.get(k)}
 const bump=()=>{state.ver++};
-const roster=()=>memo("roster",()=>Object.entries(state.members).map(([id,m])=>({id,...m})).sort((a,b)=>a.name.localeCompare(b.name)));
+const rosterAll=()=>memo("rosterAll",()=>Object.entries(state.members).map(([id,m])=>({id,...m})).sort((a,b)=>a.name.localeCompare(b.name)));
+const roster=()=>memo("roster",()=>{const f=roleCtx();return f==="all"?rosterAll():rosterAll().filter(m=>roleOf(m)===f)});
+function roleBar(){const all=rosterAll(),f=state.roleF||"all",n=r=>all.filter(m=>roleOf(m)===r).length;
+  const b=(k,l,c)=>`<button data-rolef="${k}" aria-pressed="${f===k}">${l} · ${c}</button>`;
+  return `<div class="rolebar" role="group" aria-label="Show"><span class="eyebrow">Show</span><div class="seg">${b("all","All",all.length)}${b("designer","Designers",n("designer"))}${b("researcher","Researchers",n("researcher"))}${b("lead","Team leads",n("lead"))}</div></div>`}
 const ALL_IDS=FW.cats.flatMap(c=>c.skills.map(s=>s[0]));
 const ratedAll=m=>ALL_IDS.reduce((n,id)=>n+(cur(m,id)!=null?1:0),0);
 const today=()=>new Date().toISOString().slice(0,10);
@@ -374,7 +395,7 @@ function cur(m,sid){const v=entry(m,sid).c;return v>=1&&v<=5?v:null}
 function tgt(m,sid){const v=entry(m,sid).t;return v>=1&&v<=5?v:null}
 function rel(m,sid){return entry(m,sid).r||null}
 // growth intent: explicit target above current, or (no target) a focus skill at 3 or below
-function want(m,sid){const c=cur(m,sid),t=tgt(m,sid);if(c==null)return null;if(t!=null)return t>c?t:null;if(rel(m,sid)==="h"&&c<=3)return 4;return null}
+function want(m,sid){const c=cur(m,sid),t=tgt(m,sid);if(c==null||rel(m,sid)==="n")return null;if(t!=null)return t>c?t:null;if(rel(m,sid)==="h"&&c<=3)return 4;return null}
 function effT(m,sid){const c=cur(m,sid);return tgt(m,sid)??want(m,sid)??c}
 function rated(m){return roster().length&&allSkills().filter(s=>cur(m,s.id)!=null).length}
 
@@ -410,7 +431,7 @@ function focusKey(el){
   if(d.set)return `[data-set="${d.set}"][data-sid="${d.sid}"][data-v="${d.v}"]`;
   if(el.id)return "#"+CSS.escape(el.id);
   if(d.axis&&el.classList.contains("handle"))return `.radar .handle[data-axis="${d.axis}"]`;
-  for(const k of ["act","ef","pfw","person","hm","clayer","cfocus","cvis","mview"])if(d[k]!==undefined)return `[data-${k}="${CSS.escape(d[k])}"]`;
+  for(const k of ["act","ef","pfw","person","hm","clayer","cfocus","cvis","mview","rolef","role"])if(d[k]!==undefined)return `[data-${k}="${CSS.escape(d[k])}"]`;
   return null}
 function stableRender(fn){
   const view=$("#v-"+state.tab);const H=72;
@@ -434,13 +455,11 @@ function renderNow(){
   for(const t of ["team","person","plan"])$("#v-"+t).hidden=state.tab!==t;
   renderSync();
   if(state.needKey){["#v-team","#v-person","#v-plan"].forEach(s=>$(s).innerHTML="");
-    const waiting=state.outbox.length;
-    $("#v-"+state.tab).innerHTML=`<div class="panel gate"><h2>Enter the team passcode</h2><p class="muted">The UXR team's scores are protected with a shared passcode. Ask the map owner if you don't have it. You only need to enter it once on this device.</p>
-      <form id="keyform" class="addform"><input type="password" id="teamkey" aria-label="Team passcode" autocomplete="current-password" required><button class="btn" type="submit" ${state.checkingKey?"disabled":""}>${state.checkingKey?"Checking…":"Open the map"}</button></form>
-      ${state.checkingKey?`<div class="loadbar" aria-hidden="true"><i></i></div><p class="muted" style="margin:6px 0 0;font-size:12.5px">Checking the passcode and loading the team's scores. This can take up to 30 seconds.</p>`:""}
-      ${state.keyError?`<p class="ferr">${esc(state.keyError)}</p>`:""}
-      ${waiting?`<p class="muted" style="margin:8px 0 0">${waiting} ${waiting===1?"change is":"changes are"} saved on this device and will sync once you're in.</p>`:""}</div>`;
-    if(!state.checkingKey)setTimeout(()=>$("#teamkey")?.focus({preventScroll:true}),0);renderSavebar();return}
+    // no passcode screen: explain what's wrong and offer a retry
+    $("#v-"+state.tab).innerHTML=`<div class="panel gate"><h2>Couldn't load the team's scores</h2>
+      <p class="muted">${esc(state.keyError||"The Google Sheet didn't let the page in. If a PASSCODE is set in the script's Script properties, remove it and redeploy, then try again.")}</p>
+      <div style="margin-top:12px"><button class="btn" data-act="reload">Try again</button></div></div>`;
+    renderSavebar();return}
   if(state.loadingFirst||!state.ready){const msg=`<div class="panel empty"><h2>Loading the team's scores…</h2><p>Reading the team's Google Sheet. The first load after a quiet period can take up to 30 seconds; after that the map opens instantly on this device.</p><div class="loadbar" aria-hidden="true"><i></i></div><div class="skel"><i></i><i></i><i></i></div></div>`;
     ["#v-team","#v-person","#v-plan"].forEach(s=>$(s).innerHTML=msg);renderSavebar();return}
   if(!roster().length){const msg=`<div class="panel empty"><h2>No designers yet</h2><p>Open <b>Individual mapping</b> and choose <b>Add designer</b> to start the map.</p></div>`;
@@ -489,6 +508,7 @@ function hlCore(id){const root=$(".core-ov");if(!root)return;
 document.addEventListener("pointerover",e=>{const el=e.target.closest?.(".core-ov .p,.core-ov [data-cfocus]");if(el)hlCore(el.dataset.id??el.dataset.cfocus)});
 document.addEventListener("pointerout",e=>{const el=e.target.closest?.(".core-ov .p,.core-ov [data-cfocus]");if(el&&!el.contains(e.relatedTarget))hlCore("")});
 function renderTeam(){
+  let h0=roleBar();
   const ms=roster(),sk=allSkills(),stats=Object.fromEntries(sk.map(s=>[s.id,skillStats(s.id)]));
   const ratedN=ms.filter(m=>sk.some(s=>cur(m,s.id)!=null)).length;
   const teamAvg=avg(sk.map(s=>stats[s.id].avg).filter(x=>x!=null));
@@ -532,7 +552,7 @@ function renderTeam(){
   h+=`<div class="panel"><div class="phead"><h2>Team skill map</h2>
     <div class="seg" role="group" aria-label="Map shows">${modes.map(([k,l])=>`<button data-hm="${k}" aria-pressed="${state.hmMode===k}">${l}</button>`).join("")}</div></div>
     <div class="legend" style="margin-bottom:10px">${state.hmMode==="g"?`<span><i class="gp"></i>+1 wanted</span><span><i class="gp2"></i>+2 or more wanted</span><span>Targets left empty are inferred as 4 for Focus skills rated 3 or lower</span>`
-      :SCALE.map(([v,l])=>`<span><i class="v${v}"></i>${v} ${l}</span>`).join("")+(state.fw==="detailed"?`<span><i class="v3 rn"></i>Marked N/A for role</span>`:"")+(state.hmMode==="c"?`<span><i class="v3 gap"></i>Gap: wants to grow</span>`:"")}</div>
+      :SCALE.filter(([v])=>state.hmMode!=="c"||v>=4).map(([v,l])=>`<span><i class="v${v}"></i>${v} ${l}</span>`).join("")+(state.fw==="detailed"?`<span><i class="v3 rn"></i>Marked N/A for role</span>`:"")+(state.hmMode==="c"?`<span><i class="f3"></i>Growth area · 3</span><span><i class="f2"></i>Growth area · 2</span><span><i class="f1"></i>Needs attention · 1</span>`:"")}</div>
     <div class="hm-wrap"><table class="hm"><thead><tr><th class="sk">Skill</th>${ms.map(m=>`<th class="person" data-person="${m.id}" title="${esc(m.name)}"><span>${esc(initials(m.name))}</span></th>`).join("")}
       <th class="agg">Avg</th><th class="agg">4+</th><th class="st" style="text-align:left">Signal</th></tr></thead><tbody>`;
   for(const c of sc){
@@ -540,12 +560,12 @@ function renderTeam(){
     for(const [sid,name] of c.skills){const st=stats[sid];
       h+=`<tr data-anchor="hm-${sid}"><th class="sk" scope="row">${esc(name)}</th>${ms.map(m=>{const cv=cur(m,sid),r=rel(m,sid);let v,cls,tt;
         if(state.hmMode==="g"){const w=want(m,sid);v=w&&cv?w-cv:null;cls=v==null?"v0":v>=2?"gp2":"gp";tt=v?`wants +${v}`:"";v=v?"+"+v:"";}
-        else{v=state.hmMode==="t"?(tgt(m,sid)??null):cv;const gp=state.hmMode==="c"&&want(m,sid);cls=heatCls(v)+(r==="n"&&state.hmMode==="c"?" rn":"")+(gp?" gap":"");tt=(v??"")+(gp?` → wants ${want(m,sid)}`:"");v=v??"·"}
+        else{v=state.hmMode==="t"?(tgt(m,sid)??null):cv;const gp=state.hmMode==="c"&&want(m,sid),fl=state.hmMode==="c"&&cv!=null&&cv<=3&&r!=="n"?" f"+cv:"";cls=heatCls(v)+(r==="n"&&state.hmMode==="c"?" rn":"")+fl;tt=(v??"")+(gp?` → wants ${want(m,sid)}`:"");v=v??"·"}
         return `<td class="c ${cls}" title="${esc(m.name)} · ${esc(name)}${tt!==""?": "+tt:""}${r?" · "+REL[r][0]:""}">${v}</td>`}).join("")}
         <td class="agg">${f1(state.hmMode==="t"?st.avgT:st.avg)}</td><td class="agg">${st.depth}</td><td class="st">${st.status?`<span class="chip ${st.status.k}">${st.status.l}</span>`:""}</td></tr>`}
   }
   h+=`</tbody></table></div><p class="muted" style="margin:10px 0 0;font-size:12px">Select a person's initials to open their profile.${state.hmMode==="t"?" Empty cells mean no target set yet.":""}</p></div>`;
-  $("#v-team").innerHTML=h;
+  $("#v-team").innerHTML=h0+h;
 }
 
 // radar chart
@@ -623,14 +643,14 @@ function pick(kind,sid,val,opts,label){return `<span class="pick ${kind}" data-l
 function pendingIds(){return new Set(state.outbox.map(o=>o.id))}
 function renderPerson(){
   const ms=roster();
-  if(state.sel&&!state.members[state.sel])state.sel=null;
-  if(!state.sel&&state.me&&state.members[state.me])state.sel=state.me;
+  if(state.sel&&!ms.some(p=>p.id===state.sel))state.sel=null;
+  if(!state.sel&&state.me&&ms.some(p=>p.id===state.me))state.sel=state.me;
   if(!state.sel&&ms.length)state.sel=ms[0].id;
   const m=state.sel?{id:state.sel,...getM(state.sel)}:null;
   const sk=allSkills(),fullN=ALL_IDS.length,pend=pendingIds();
   // --- people
-  let h=`<div class="panel" data-anchor="people"><div class="phead"><h2>Designers</h2><span class="muted">${state.me&&state.members[state.me]?"Select a designer to view or update their map.":"Select your name to rate yourself. The map will open on your profile next time."}</span></div><div class="people">`;
-  h+=ms.map(p=>{const n=ratedAll(p),pc=Math.round(n/fullN*100);return `<button class="pchip" data-person="${p.id}" aria-pressed="${p.id===state.sel}" title="${n} of ${fullN} skills rated">${av(p)}<span>${esc(p.name)}</span>${p.id===state.me?'<span class="chip you">You</span>':""}${state.drafts[p.id]?'<span class="chip warn">Unsaved</span>':pend.has(p.id)?'<span class="chip plain">Syncing</span>':""}<span class="prog" aria-hidden="true"><i style="width:${pc}%"></i></span></button>`}).join("");
+  let h=`<div class="panel" data-anchor="people">${roleBar()}<div class="phead"><h2>${{researcher:"Researchers",designer:"Designers",lead:"Team leads"}[state.roleF]||"Team"}</h2><span class="muted">${state.me&&state.members[state.me]?"Select a designer to view or update their map.":"Select your name to rate yourself. The map will open on your profile next time."}</span></div><div class="people">`;
+  h+=ms.map(p=>{const n=ratedAll(p),pc=Math.round(n/fullN*100);return `<button class="pchip" data-person="${p.id}" aria-pressed="${p.id===state.sel}" title="${n} of ${fullN} skills rated">${av(p)}<span>${esc(p.name)}</span>${tagChip(p)}${p.id===state.me?'<span class="chip you">You</span>':""}${state.drafts[p.id]?'<span class="chip warn">Unsaved</span>':pend.has(p.id)?'<span class="chip plain">Syncing</span>':""}<span class="prog" aria-hidden="true"><i style="width:${pc}%"></i></span></button>`}).join("");
   if(state.adding){
     h+=`<form class="addform addbox" id="addform" novalidate>
       <label class="eyebrow" for="newname">New designer</label>
@@ -649,7 +669,7 @@ function renderPerson(){
   const mtr=computeMentoring(),myGoals=mtr.goals.filter(g=>g.mentee.id===m.id),iMentor=mtr.goals.filter(g=>g.mentor?.id===m.id);
   const mentorsFor=sid=>roster().filter(p=>p.id!==m.id&&cur(p,sid)!=null&&cur(p,sid)>=Math.max(4,(want(m,sid)||4))).sort((a,b)=>cur(b,sid)-cur(a,sid)).slice(0,3);
   const title=state.renaming?`<form id="renameform" class="addform" novalidate><input type="text" id="renamein" value="${esc(state.renameVal)}" maxlength="60" aria-label="Designer name" autocomplete="off"><button class="btn" type="submit" id="renamesubmit">Save name</button><button class="btn ghost" type="button" data-act="rename-cancel">Cancel</button><p class="ferr" id="renameerr" hidden></p></form>`
-    :`<h2>${esc(m.name)} ${isMe?'<span class="chip you">You</span>':""}</h2>`;
+    :`<h2>${esc(m.name)} ${tagChip(m)} ${isMe?'<span class="chip you">You</span>':""}</h2>`;
   h+=`<div class="panel" data-anchor="profile"><div class="ph"><div class="ptitle"><span class="eyebrow">Individual profile${pend.has(m.id)?' · syncing to the sheet':""}</span>${title}
       <span class="muted">${nAll} of ${fullN} skills rated${mine.length?` · average <span class="num">${f1(avg(mine.map(s=>cur(m,s.id))))}</span>`:""}</span></div>
       <div class="pactions">
@@ -759,19 +779,21 @@ function renderPlan(){
   const sk=allSkills(),ms=roster(),stats=Object.fromEntries(sk.map(s=>[s.id,skillStats(s.id)]));
   // hiring: team mostly at 1–2, or several novices and hardly anyone advanced
   // upskill: the team is already intermediate (avg 3+) but not yet strong; training closes the gap
-  const sig=sk.map(s=>{const st=stats[s.id],v=ms.map(m=>cur(m,s.id)).filter(x=>x!=null);return {s,st,n:v.length,nov:v.filter(x=>x<=2).length}}).filter(x=>x.n>=3);
-  const hire=sig.filter(x=>x.st.avg<=2.5||(x.nov>=3&&x.st.depth<=2)).sort((a,b)=>a.st.avg-b.st.avg||b.nov-a.nov);
+  const sig=sk.map(s=>{const st=stats[s.id],v=ms.filter(m=>rel(m,s.id)!=="n").map(m=>cur(m,s.id)).filter(x=>x!=null);return {s,st,n:v.length,nov:v.filter(x=>x<=2).length}}).filter(x=>x.n>=3);
+  // why hire: team mostly 1–2 · several novices · or the skill is weak and nobody wants to grow in it
+  sig.forEach(x=>{x.why=x.st.avg<=2.5?"Team mostly 1–2":(x.nov>=3&&x.st.depth<=2)?`${x.nov} novices`:(!x.st.learners.length&&(x.st.avg<3||x.st.depth<=1))?"No one wants to grow":null});
+  const hire=sig.filter(x=>x.why).sort((a,b)=>a.st.avg-b.st.avg||b.nov-a.nov);
   const hireIds=new Set(hire.map(x=>x.s.id));
   const up=sig.filter(x=>!hireIds.has(x.s.id)&&x.st.avg>=3&&x.st.avg<3.8).sort((a,b)=>b.st.learners.length-a.st.learners.length||a.st.avg-b.st.avg);
   const weakCats=cats().map(c=>({c,a:catAvg(c)})).filter(x=>x.a!=null).sort((a,b)=>a.a-b.a).slice(0,3);
   const demand=sk.map(s=>({s,st:stats[s.id]})).filter(x=>x.st.learners.length>=2).sort((a,b)=>b.st.learners.length-a.st.learners.length||a.st.avg-b.st.avg).slice(0,10);
-  const hcard=(x,kind)=>`<div class="hcard ${kind}"><span class="chip ${kind==="hire"?"crit":"warn"}">${kind==="hire"?(x.st.avg<=2.5?"Team mostly 1–2":`${x.nov} novices`):`${x.st.learners.length} want to grow`}</span><b>${esc(x.s.name)}</b>
+  const hcard=(x,kind)=>`<div class="hcard ${kind}"><span class="chip ${kind==="hire"?"crit":"warn"}">${kind==="hire"?x.why:`${x.st.learners.length} want to grow`}</span><b>${esc(x.s.name)}</b>
       <span class="muted">${esc(x.s.cat.name)} · team avg ${f1(x.st.avg)} · ${x.st.depth} at Advanced+${x.nov&&kind!=="hire"?` · ${x.nov} novice${x.nov>1?"s":""}`:""}</span></div>`;
-  let h=`<div class="hire"><div class="hire-head"><div><span class="eyebrow">Hiring & upskill signals</span><h2>${hire.length} to hire for · ${up.length} to upskill</h2></div>
-      <p class="muted">Hire where the team is mostly at Awareness or Novice (1–2), or several people are novices. Upskill where the team is already Intermediate (3+) and training gets people to Advanced.</p></div>
+  let h=`<div class="hire"><div class="hire-head"><div><span class="eyebrow">Hiring & upskill signals</span><h2>${up.length} to upskill · ${hire.length} to hire for</h2></div>
+      <p class="muted">Upskill where the team is already Intermediate (3+) and training gets people to Advanced. Hire where the team is mostly at Awareness or Novice (1–2), several people are novices, or a weak skill has no one who wants to grow in it. Skills marked N/A for a role don't count.</p></div>
     <div class="sig-cols">
-      <div><h3 class="sig-h hire-h">Hire · ${hire.length}</h3>${hire.length?`<div class="hire-grid">${hire.map(x=>hcard(x,"hire")).join("")}</div>`:`<p class="muted">No skill needs hiring right now.</p>`}</div>
       <div><h3 class="sig-h up-h">Upskill · ${up.length}</h3>${up.length?`<div class="hire-grid">${up.slice(0,8).map(x=>hcard(x,"up")).join("")}</div>${up.length>8?`<p class="muted" style="margin:8px 0 0;font-size:12.5px">+${up.length-8} more: ${up.slice(8).map(x=>esc(x.s.name)).join(", ")}</p>`:""}`:`<p class="muted">No upskill signals.</p>`}</div>
+      <div><h3 class="sig-h hire-h">Hire · ${hire.length}</h3>${hire.length?`<div class="hire-grid">${hire.map(x=>hcard(x,"hire")).join("")}</div>`:`<p class="muted">No skill needs hiring right now.</p>`}</div>
     </div>
     <p class="hire-weak"><b>Weakest areas:</b> ${weakCats.map(x=>`${esc(x.c.name)} <span class="num">${f1(x.a)}</span>`).join(" · ")}</p></div>`;
   h+=mentoringPanel();
@@ -830,6 +852,7 @@ function addDesigner(){
   const taken=x=>state.members[x]||api.server[x]||state.outbox.some(o=>o.id===x);while(taken(id))id=base+"-"+i++;
   enqueue({op:"set",id,data:{name,detailed:{},updatedAt:today()}});
   if(state.addMe)state.me=id;
+  if(state.roleF!=="all"&&state.roleF!=="designer")state.roleF="all";   // new people are designers until tagged in the code
   state.sel=id;state.adding=false;state.addName="";state.confirmDel=false;state.renaming=false;state.pfw="core";state.efilter="unrated";state.efSnap=null;persist();
   render();window.scrollTo({top:0});
   toast(`Added ${name}. Start with the Core 8, then confirm.`);
@@ -854,6 +877,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.tab){if(state.tab!==t.dataset.tab){state.tab=t.dataset.tab;state.confirmDel=false;persist();renderNow();window.scrollTo({top:0})}return}
   if(t.dataset.person){const id=t.dataset.person;if(!state.members[id])return;state.sel=id;state.tab="person";state.confirmDel=false;state.renaming=false;state.adding=false;state.efSnap=null;persist();renderNow();window.scrollTo({top:0});return}
   if(t.dataset.pfw){state.pfw=t.dataset.pfw;state.efSnap=null;persist();render();return}
+  if(t.dataset.rolef){state.roleF=t.dataset.rolef;state.efSnap=null;state.coreHidden={};persist();render();return}
   if(t.dataset.ef){state.efilter=t.dataset.ef;state.efSnap=null;persist();render();return}
   if(t.dataset.hm){state.hmMode=t.dataset.hm;persist();render();return}
   if(t.dataset.clayer){state.coreLayer=t.dataset.clayer;render();return}
@@ -862,6 +886,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.mview){state.mentorView=t.dataset.mview;persist();render();return}
   if(act==="confirm"){confirmDraft();return}
   if(act==="discard"){delete state.drafts[state.sel];bump();render();return}
+  if(act==="reload"){location.reload();return}
   if(act==="retry"){api.errN=0;kick(true);refresh();return}
   if(act==="add"){state.adding=true;state.addName="";state.addMe=!(state.me&&state.members[state.me]);render();setTimeout(()=>$("#newname")?.focus({preventScroll:true}),0);return}
   if(act==="cancel-add"){state.adding=false;state.addName="";render();return}
@@ -1007,7 +1032,7 @@ function renderNetbar(){
 function lockOut(){
   const wasOpen=api.key==="open";api.key=null;clearTimeout(api.timer);clearTimeout(api.retryTimer);
   try{localStorage.removeItem("uxr-map-key")}catch(e){}
-  state.needKey=true;state.checkingKey=false;state.keyError=wasOpen?"":"The team passcode has changed. Enter the new one.";state.db=null;render();
+  state.needKey=true;state.checkingKey=false;state.keyError="";state.db=null;render();
 }
 async function connect(key,fromBoot){
   api.key=key;
@@ -1019,7 +1044,7 @@ async function connect(key,fromBoot){
   try{const j=await apiGet(false);setServer(j.docs,j.rev)}
   catch(e){
     api.key=null;state.loadingFirst=false;state.checkingKey=false;state.needKey=true;
-    state.keyError=e.code==="unauthorized"?(key==="open"?"":"That passcode didn't work. Check it with the map owner."):e.code==="timeout"?"Google Sheets took too long to answer. Please try again; the first load after a quiet period can be slow.":"Couldn't reach the Google Sheet. Check your connection and try again.";
+    state.keyError=e.code==="unauthorized"?"":e.code==="timeout"?"Google Sheets took too long to answer. Please try again; the first load after a quiet period can be slow.":"Couldn't reach the Google Sheet. Check your connection and try again.";
     if(e.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key");localStorage.removeItem("uxr-map-cache")}catch(_){}}
     render();renderNetbar();return}
   try{localStorage.setItem("uxr-map-key",key)}catch(e){}
