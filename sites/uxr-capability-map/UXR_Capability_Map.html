@@ -87,7 +87,7 @@ section.view{display:grid;gap:20px;margin-top:20px}
 
 /* category bars */
 .catbars{display:grid;gap:10px}
-.cb{display:grid;grid-template-columns:minmax(120px,210px) 1fr 70px;gap:12px;align-items:center}
+.cb{display:grid;grid-template-columns:minmax(120px,210px) 1fr 104px;gap:12px;align-items:center}
 .cb .track{position:relative;height:12px;background:var(--sunk);border-radius:3px}
 .cb .fill{position:absolute;inset:0 auto 0 0;background:var(--h4);border-radius:3px}
 .cb .tgt{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--t-tgt);border-radius:2px}
@@ -195,12 +195,12 @@ input[type=text],select{font:inherit;color:var(--ink);background:var(--surface);
 .gnum{white-space:nowrap;color:var(--muted)}
 .mfoot{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:4px;font-size:13px}
 .mfoot p{margin:0}
-.hire{border:2px solid var(--crit);border-radius:var(--r);background:var(--crit-soft);padding:18px;display:grid;gap:14px}
+.hire{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:18px;display:grid;gap:14px}
 .hire-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;align-items:end}
 .hire-head p{margin:0;max-width:52ch}
 .hire h2{font-size:21px;color:var(--ink)}
 .hire-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:10px}
-.hcard{background:var(--surface);border-radius:8px;padding:12px;display:grid;gap:6px;align-content:start;border:1px solid var(--line)}
+.hcard{background:var(--bg);border-radius:8px;padding:12px;display:grid;gap:6px;align-content:start;border:1px solid var(--line)}
 .hcard .chip{justify-self:start}
 .hcard .muted{font-size:12px}
 .hire-weak{margin:0;font-size:13px}
@@ -258,6 +258,45 @@ body.has-savebar .toasts{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
 .skel i:nth-child(2){width:80%}.skel i:nth-child(3){width:60%}
 .ver{margin:28px 0 0;font:11px var(--mono);color:var(--muted);text-align:center}
 .btn[disabled]{opacity:.55;cursor:not-allowed}
+.netbar{position:absolute;left:0;right:0;bottom:-1px;height:3px;overflow:hidden;background:color-mix(in srgb,var(--accent) 18%,transparent)}
+.netbar i{position:absolute;top:0;bottom:0;left:0;width:35%;background:var(--accent);border-radius:0 2px 2px 0;animation:slide 1.1s ease-in-out infinite}
+.netbar.det i{animation:none;transition:width .4s ease}
+@keyframes slide{0%{left:-35%}100%{left:100%}}
+.loadbar{position:relative;height:4px;border-radius:2px;overflow:hidden;background:var(--sunk);margin-top:14px}
+.loadbar i{position:absolute;top:0;bottom:0;width:35%;background:var(--accent);border-radius:2px;animation:slide 1.1s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.netbar i,.loadbar i{animation:none;left:0;width:100%;opacity:.5}}
+.chip.gapc{background:var(--warn-soft);color:var(--warn);font-size:10.5px;padding:2px 7px;vertical-align:1px}
+.erow.gap{background:linear-gradient(90deg,var(--warn-soft),transparent 60%);box-shadow:inset 3px 0 0 var(--t-tgt);padding-left:10px;border-radius:4px}
+.hm td.c.gap{box-shadow:inset 0 0 0 2px var(--t-tgt)}
+.legend i.gap{box-shadow:inset 0 0 0 2px var(--t-tgt)}
+.gapn{color:var(--warn);font-weight:600;font-family:var(--mono);font-size:12px}
+.gaplist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:10px 24px}
+.gaplist li{display:grid;gap:5px;padding:10px 0;border-top:1px solid var(--line);min-width:0}
+.gl1{display:flex;justify-content:space-between;gap:10px;align-items:baseline;min-width:0}
+.gl1 .muted{font-size:12px;white-space:nowrap}
+.gl2{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-size:12px}
+.gbar{height:8px;border-radius:2px;background:var(--sunk);overflow:hidden}
+.gbar i{display:block;height:100%;background:var(--t-tgt);border-radius:2px}
+.plall{display:flex;gap:14px;align-items:center;font-size:13px;margin-top:-4px}
+.plall .linkbtn[disabled]{color:var(--muted);text-decoration:none;cursor:default}
+.rec{display:grid;gap:6px;padding-top:10px;border-top:1px solid var(--line)}
+.rec-who{display:flex;align-items:center;gap:8px;min-width:0}
+.rec-who b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec .goals li{border-top:0;padding-top:2px;display:grid;gap:1px}
+.rec .goals li .gnum{font-size:12px}
+.rec .goals li .gnum .muted{font-family:var(--body)}
+.pair .pn{min-width:0;flex:1}.pair .pn b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sig-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:18px}
+.sig-h{font-size:14px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.sig-h::before{content:"";width:10px;height:10px;border-radius:2px}
+.hire-h::before{background:var(--crit)}.up-h::before{background:var(--warn)}
+.hcard.up{border-color:color-mix(in srgb,var(--warn) 35%,var(--line))}
+.hcard.hire{border-color:color-mix(in srgb,var(--crit) 35%,var(--line))}
+.m2m{display:grid;gap:2px}
+.m2m .who{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px}
+.m2m b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.m2m .role{font:500 10.5px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.m2m .down{color:var(--accent);font-weight:700;font-size:15px;line-height:1;padding-left:8px}
 .fwtabs{border-bottom:1px solid var(--line);padding-bottom:6px}
 .scalekey{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;font-size:12px}
 .scalekey div{padding:8px 10px;border-radius:6px;background:var(--sunk)}
@@ -280,20 +319,20 @@ details summary{cursor:pointer;font-weight:600}
     <button role="tab" data-tab="team" aria-selected="false" id="tab-team">Team mapping</button>
     <button role="tab" data-tab="plan" aria-selected="false" id="tab-plan">Planning</button>
   </nav>
-</div></header>
+</div><div class="netbar" id="netbar" hidden role="progressbar" aria-label="Syncing with the Google Sheet"><i></i></div></header>
 
 <main class="wrap">
   <div id="banner" class="banner" hidden></div>
   <section class="view" id="v-person"></section>
   <section class="view" id="v-team" hidden></section>
   <section class="view" id="v-plan" hidden></section>
-  <p class="ver">UXR Capability Map · v5 · 8 Oct 2026 · scores stored in the team's Google Sheet</p>
+  <p class="ver">UXR Capability Map · v7 · 14 Oct 2026 · scores stored in the team's Google Sheet</p>
 </main>
 <div class="savebar" id="savebar" hidden></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script>
-const FW = {"cats": [{"id": "research", "name": "UX Research", "core": true, "group": "Core 8", "skills": [["research1", "Planning and scoping research"], ["research2", "Qualitative methods (interviews, usability testing)"], ["research3", "Quantitative methods (surveys, A/B testing)"], ["research4", "Synthesizing insights & creating personas"], ["research5", "Journey mapping & service blueprinting"], ["res6", "AI-assisted research & synthesis"], ["tools4", "Research tools (Maze, Lookback, Dovetail)"], ["tools5", "Product analytics (Hotjar, GA, Amplitude)"]]}, {"id": "ui", "name": "UI Design", "core": true, "group": "Core 8", "skills": [["ui1", "Layout and composition"], ["ui2", "Visual hierarchy and spacing"], ["ui3", "UI patterns and design systems"], ["ui4", "Branding and visual consistency"], ["ui5", "Figma proficiency"], ["ui6", "Data-dense UI for professional tools"]]}, {"id": "ai", "name": "AI Prototyping", "core": true, "group": "Core 8", "skills": [["ai1", "AI prototyping tools (Figma Make, v0, Lovable, Cursor)"], ["ai2", "Prompting & AI-assisted workflows"], ["ai3", "Code literacy (HTML/CSS, React basics)"], ["ai4", "Designing AI features (agents, trust, explainability)"]]}, {"id": "ixd", "name": "Interaction Design", "core": true, "group": "Core 8", "skills": [["ixd1", "Task flows & user flows"], ["ixd2", "Wireframing & prototyping (low to high fidelity)"], ["ixd3", "Microinteractions & transitions"], ["ixd4", "Accessibility (WCAG compliance)"], ["ixd5", "Desktop, plugin & cross-platform patterns"]]}, {"id": "fac", "name": "Facilitation", "core": true, "group": "Core 8", "skills": [["collab2", "Leading workshops & ideation sessions"], ["fac1", "Running design critiques & reviews"], ["fac2", "Customer co-creation sessions"], ["tools2", "Whiteboarding tools (Miro, FigJam)"]]}, {"id": "pres", "name": "Presenting", "core": true, "group": "Core 8", "skills": [["growth3", "Public speaking / presenting work"], ["pres1", "Research & design storytelling"], ["pres2", "Presenting to leadership"]]}, {"id": "writing", "name": "Writing", "core": true, "group": "Core 8", "skills": [["writing1", "UX writing / microcopy"], ["writing2", "Clear documentation of design decisions"], ["writing3", "Communicating with stakeholders"], ["wr1", "Usability & heuristic evaluation reports"]]}, {"id": "ia", "name": "Information Architecture", "core": true, "group": "Core 8", "skills": [["ia1", "Content organization and labeling"], ["ia2", "Navigation systems"], ["ia3", "Taxonomies and metadata"], ["ia4", "Card sorting & tree testing"]]}, {"id": "collab", "name": "Collaboration & Team", "core": false, "group": "Professional", "skills": [["collab1", "Cross-functional collaboration (PMs, Devs, etc.)"], ["collab3", "Giving and receiving feedback"], ["collab4", "Peer mentoring / supporting juniors"], ["collab5", "Stakeholder management"]]}, {"id": "strategy", "name": "Strategy & Business", "core": false, "group": "Professional", "skills": [["strategy1", "Product thinking"], ["strategy2", "Product management understanding"], ["strategy3", "Aligning UX with business goals"], ["strategy4", "Prioritization & scoping"], ["strategy5", "UX metrics and success criteria"], ["str1", "Domain knowledge: 3D, rendering & AEC workflows"], ["str2", "Competitive analysis"]]}, {"id": "delivery", "name": "Execution & Delivery", "core": false, "group": "Professional", "skills": [["delivery1", "Design handoff to development"], ["delivery2", "Agile teams / design sprints"], ["delivery3", "Jira / Confluence & project tools"], ["delivery4", "QA support and design QA"]]}, {"id": "growth", "name": "Growth & Leadership", "core": false, "group": "Professional", "skills": [["growth1", "Proactiveness in learning & growth"], ["growth2", "Leading initiatives / ownership"], ["growth4", "Coaching / people leadership"], ["growth5", "UX advocacy"]]}], "new": ["res6", "ui6", "ai1", "ai2", "ai3", "ai4", "ixd5", "fac1", "fac2", "pres1", "pres2", "wr1", "str1", "str2"]};
+const FW = {"cats": [{"id": "research", "name": "UX Research", "core": true, "group": "Core 8", "skills": [["research1", "Planning and scoping research"], ["research2", "Qualitative methods (interviews, usability testing)"], ["research3", "Quantitative methods (surveys, A/B testing)"], ["research4", "Synthesizing insights & creating personas"], ["research5", "Journey mapping & service blueprinting"], ["res6", "AI-assisted research & synthesis"], ["res7", "AI research tools (Marvin)"], ["tools4", "Research tools (Maze, Lookback, Dovetail)"], ["tools5", "Product analytics (Hotjar, GA, Amplitude)"]]}, {"id": "ui", "name": "UI Design", "core": true, "group": "Core 8", "skills": [["ui1", "Layout and composition"], ["ui2", "Visual hierarchy and spacing"], ["ui3", "UI patterns and design systems"], ["ui4", "Branding and visual consistency"], ["ui5", "Figma proficiency"], ["ui6", "Data-dense UI for professional tools"]]}, {"id": "ai", "name": "AI Prototyping", "core": true, "group": "Core 8", "skills": [["ai1", "AI prototyping tools (Claude Design, Figma Make, Cursor)"], ["ai2", "Prompting & AI-assisted workflows"], ["ai3", "Code literacy (HTML/CSS, React basics)"], ["ai4", "Designing AI features (agents, trust, explainability)"], ["ai5", "Agentic design workflows"]]}, {"id": "ixd", "name": "Interaction Design", "core": true, "group": "Core 8", "skills": [["ixd1", "Task flows & user flows"], ["ixd2", "Wireframing & prototyping (low to high fidelity)"], ["ixd3", "Microinteractions & transitions"], ["ixd4", "Accessibility (WCAG compliance)"], ["ixd5", "Desktop, plugin & cross-platform patterns"]]}, {"id": "fac", "name": "Facilitation", "core": true, "group": "Core 8", "skills": [["collab2", "Leading workshops & ideation sessions"], ["fac1", "Running design critiques & reviews"], ["fac2", "Customer co-creation sessions"], ["tools2", "Whiteboarding tools (Miro, FigJam)"]]}, {"id": "pres", "name": "Presenting", "core": true, "group": "Core 8", "skills": [["growth3", "Public speaking / presenting work"], ["pres1", "Research & design storytelling"], ["pres2", "Presenting to leadership"]]}, {"id": "writing", "name": "Writing", "core": true, "group": "Core 8", "skills": [["writing1", "UX writing / microcopy"], ["writing2", "Clear documentation of design decisions"], ["writing3", "Communicating with stakeholders"], ["wr1", "Usability & heuristic evaluation reports"]]}, {"id": "ia", "name": "Information Architecture", "core": true, "group": "Core 8", "skills": [["ia1", "Content organization and labeling"], ["ia2", "Navigation systems"], ["ia3", "Taxonomies and metadata"], ["ia4", "Card sorting & tree testing"]]}, {"id": "collab", "name": "Collaboration & Team", "core": false, "group": "Professional", "skills": [["collab1", "Cross-functional collaboration (PMs, Devs, etc.)"], ["collab3", "Giving and receiving feedback"], ["collab4", "Peer mentoring / supporting juniors"], ["collab5", "Stakeholder management"]]}, {"id": "strategy", "name": "Strategy & Business", "core": false, "group": "Professional", "skills": [["strategy1", "Product thinking"], ["strategy2", "Product management understanding"], ["strategy3", "Aligning UX with business goals"], ["strategy4", "Prioritization & scoping"], ["strategy5", "UX metrics and success criteria"], ["str1", "Domain knowledge: 3D, rendering & AEC workflows"], ["str2", "Competitive analysis"]]}, {"id": "delivery", "name": "Execution & Delivery", "core": false, "group": "Professional", "skills": [["delivery1", "Design handoff to development"], ["delivery2", "Agile teams / design sprints"], ["delivery3", "Jira / Confluence & project tools"], ["delivery4", "QA support and design QA"]]}, {"id": "growth", "name": "Growth & Leadership", "core": false, "group": "Professional", "skills": [["growth1", "Proactiveness in learning & growth"], ["growth2", "Leading initiatives / ownership"], ["growth4", "Coaching / people leadership"], ["growth5", "UX advocacy"]]}], "new": ["res6", "ui6", "ai1", "ai2", "ai3", "ai4", "ixd5", "fac1", "fac2", "pres1", "pres2", "wr1", "str1", "str2", "res7", "ai5"]};
 const SCALE=[[1,"Awareness","Aware of it, can't yet perform tasks"],[2,"Novice","Can discuss it and do simple tasks"],[3,"Intermediate","Applies it independently, occasionally"],[4,"Advanced","Coaches others; part of day-to-day work"],[5,"Expert","Consistent excellence across projects"]];
 const REL={h:["Focus","High relevance for the role and interest"],c:["Core","Core competency, not a focus in this role"],n:["N/A","Not relevant for role / no interest"]};
 
@@ -371,7 +410,7 @@ function focusKey(el){
   if(d.set)return `[data-set="${d.set}"][data-sid="${d.sid}"][data-v="${d.v}"]`;
   if(el.id)return "#"+CSS.escape(el.id);
   if(d.axis&&el.classList.contains("handle"))return `.radar .handle[data-axis="${d.axis}"]`;
-  for(const k of ["act","ef","pfw","person","hm","clayer","cfocus","mview"])if(d[k]!==undefined)return `[data-${k}="${CSS.escape(d[k])}"]`;
+  for(const k of ["act","ef","pfw","person","hm","clayer","cfocus","cvis","mview"])if(d[k]!==undefined)return `[data-${k}="${CSS.escape(d[k])}"]`;
   return null}
 function stableRender(fn){
   const view=$("#v-"+state.tab);const H=72;
@@ -398,10 +437,11 @@ function renderNow(){
     const waiting=state.outbox.length;
     $("#v-"+state.tab).innerHTML=`<div class="panel gate"><h2>Enter the team passcode</h2><p class="muted">The UXR team's scores are protected with a shared passcode. Ask the map owner if you don't have it. You only need to enter it once on this device.</p>
       <form id="keyform" class="addform"><input type="password" id="teamkey" aria-label="Team passcode" autocomplete="current-password" required><button class="btn" type="submit" ${state.checkingKey?"disabled":""}>${state.checkingKey?"Checking…":"Open the map"}</button></form>
+      ${state.checkingKey?`<div class="loadbar" aria-hidden="true"><i></i></div><p class="muted" style="margin:6px 0 0;font-size:12.5px">Checking the passcode and loading the team's scores. This can take up to 30 seconds.</p>`:""}
       ${state.keyError?`<p class="ferr">${esc(state.keyError)}</p>`:""}
       ${waiting?`<p class="muted" style="margin:8px 0 0">${waiting} ${waiting===1?"change is":"changes are"} saved on this device and will sync once you're in.</p>`:""}</div>`;
     if(!state.checkingKey)setTimeout(()=>$("#teamkey")?.focus({preventScroll:true}),0);renderSavebar();return}
-  if(state.loadingFirst||!state.ready){const msg=`<div class="panel empty"><h2>Loading the team's scores…</h2><p>Reading the team's Google Sheet. The first load after a quiet period can take up to 30 seconds; after that the map opens instantly on this device.</p><div class="skel"><i></i><i></i><i></i></div></div>`;
+  if(state.loadingFirst||!state.ready){const msg=`<div class="panel empty"><h2>Loading the team's scores…</h2><p>Reading the team's Google Sheet. The first load after a quiet period can take up to 30 seconds; after that the map opens instantly on this device.</p><div class="loadbar" aria-hidden="true"><i></i></div><div class="skel"><i></i><i></i><i></i></div></div>`;
     ["#v-team","#v-person","#v-plan"].forEach(s=>$(s).innerHTML=msg);renderSavebar();return}
   if(!roster().length){const msg=`<div class="panel empty"><h2>No designers yet</h2><p>Open <b>Individual mapping</b> and choose <b>Add designer</b> to start the map.</p></div>`;
     $("#v-team").innerHTML=msg;$("#v-plan").innerHTML=msg;renderPerson();renderSavebar();return}
@@ -438,7 +478,8 @@ function teamCorePanel(){
     <div class="seg" role="group" aria-label="Show"><button data-clayer="c" aria-pressed="${layer==="c"}">Today</button><button data-clayer="t" aria-pressed="${layer==="t"}">Target</button></div></div>
     <div class="core-ov"><div class="ovwrap">${s}</div>
       <div class="ovside"><div class="plegend" role="group" aria-label="Designers">${ms.map(m=>`<button data-cfocus="${m.id}" aria-pressed="${!hidden[m.id]}" class="${hidden[m.id]?"off":""}" style="--pc:var(--p${m.ci})" title="${hidden[m.id]?"Add to map":"Remove from map"}"><i></i>${esc(m.name)}</button>`).join("")}
-        ${Object.values(hidden).some(Boolean)?`<button data-cfocus="" class="pl-all">Show everyone</button>`:""}</div>
+</div>
+        <div class="plall"><span class="muted">${vis.length} of ${ms.length} shown</span><button class="linkbtn" data-cvis="all" ${vis.length===ms.length?"disabled":""}>Select all</button><button class="linkbtn" data-cvis="none" ${vis.length===0?"disabled":""}>Dismiss all</button></div>
         <table class="ctable"><thead><tr><th>Skill</th><th>Avg</th><th>Target</th><th>Range</th><th>People</th></tr></thead><tbody>${rows}</tbody></table>
         ${missing.length?`<p class="muted" style="font-size:12px;margin:0">Not rated yet: ${missing.map(m=>esc(first(m.name))).join(", ")}</p>`:""}</div></div></div>`;
 }
@@ -468,8 +509,15 @@ function renderTeam(){
     <div class="legend"><span><i style="background:var(--h4)"></i>Team average today</span><span><i style="background:var(--t-tgt)"></i>Where the team wants to be</span></div></div>
     <div class="catbars">${cats().map(c=>{const a=catAvg(c),t=catAvgT(c);return `<div class="cb"><span class="lbl" title="${esc(c.name)}">${esc(c.name)}${c.core?' <span class="chip core">Core</span>':""}</span>
       <div class="track" role="img" aria-label="${esc(c.name)}: ${f1(a)} now, ${f1(t)} target"><div class="fill" style="width:${a?((a-0)/5*100):0}%"></div>${t?`<div class="tgt" style="left:calc(${t/5*100}% - 1.5px)"></div>`:""}</div>
-      <span class="num">${f1(a)} <span class="muted">→ ${f1(t)}</span></span></div>`}).join("")}</div>
+      <span class="num">${f1(a)} <span class="muted">→ ${f1(t)}</span>${a!=null&&t!=null&&t-a>=.05?` <span class="gapn">+${(t-a).toFixed(1)}</span>`:""}</span></div>`}).join("")}</div>
     <div class="scale" aria-hidden="true"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div></div>`;
+  // biggest gaps: average distance between where people are and where they want to be
+  const gaps=allSkills().map(s=>{const ppl=ms.filter(m=>want(m,s.id)&&cur(m,s.id)!=null);const g=ppl.reduce((n,m)=>n+want(m,s.id)-cur(m,s.id),0);return {s,ppl,g,st:stats[s.id]}}).filter(x=>x.g>0).sort((a,b)=>b.g-a.g||b.ppl.length-a.ppl.length).slice(0,8);
+  const gmax=gaps[0]?.g||1;
+  h+=`<div class="panel gaps-panel"><div class="phead"><div><h2>Biggest gaps</h2><p class="muted lead">Skills where the team most wants to grow: total levels between where people are today and their targets.</p></div></div>
+    ${gaps.length?`<ul class="gaplist">${gaps.map(x=>`<li><div class="gl1"><b>${esc(x.s.name)}</b><span class="muted">${esc(x.s.cat.name)}</span></div>
+      <div class="gbar" aria-hidden="true"><i style="width:${Math.round(x.g/gmax*100)}%"></i></div>
+      <div class="gl2"><span class="gapn">+${x.g} levels</span><span class="muted">${x.ppl.length} ${x.ppl.length===1?"person":"people"}: ${x.ppl.slice(0,4).map(m=>esc(first(m.name))).join(", ")}${x.ppl.length>4?" +"+(x.ppl.length-4):""} · team avg ${f1(x.st.avg)}</span></div></li>`).join("")}</ul>`:`<p class="muted">No gaps yet. Designers set targets in Individual mapping.</p>`}</div>`;
   // strengths & growth
   const li=(s,kind)=>{const st=stats[s.id];return `<li><span class="t">${esc(s.name)}</span><span class="chip ${st.status.k}">${st.status.l}</span>
     <span class="s">${state.fw==="core"?"":esc(s.cat.name)+" · "}avg <span class="num">${f1(st.avg)}</span> · ${st.depth} at Advanced+ · ${st.learners.length} want to grow${kind==="ok"&&st.holders.length?" · go-to: "+st.holders.slice(0,4).map(m=>esc(first(m.name))).join(", "):""}</span></li>`};
@@ -484,7 +532,7 @@ function renderTeam(){
   h+=`<div class="panel"><div class="phead"><h2>Team skill map</h2>
     <div class="seg" role="group" aria-label="Map shows">${modes.map(([k,l])=>`<button data-hm="${k}" aria-pressed="${state.hmMode===k}">${l}</button>`).join("")}</div></div>
     <div class="legend" style="margin-bottom:10px">${state.hmMode==="g"?`<span><i class="gp"></i>+1 wanted</span><span><i class="gp2"></i>+2 or more wanted</span><span>Targets left empty are inferred as 4 for Focus skills rated 3 or lower</span>`
-      :SCALE.map(([v,l])=>`<span><i class="v${v}"></i>${v} ${l}</span>`).join("")+(state.fw==="detailed"?`<span><i class="v3 rn"></i>Marked N/A for role</span>`:"")}</div>
+      :SCALE.map(([v,l])=>`<span><i class="v${v}"></i>${v} ${l}</span>`).join("")+(state.fw==="detailed"?`<span><i class="v3 rn"></i>Marked N/A for role</span>`:"")+(state.hmMode==="c"?`<span><i class="v3 gap"></i>Gap: wants to grow</span>`:"")}</div>
     <div class="hm-wrap"><table class="hm"><thead><tr><th class="sk">Skill</th>${ms.map(m=>`<th class="person" data-person="${m.id}" title="${esc(m.name)}"><span>${esc(initials(m.name))}</span></th>`).join("")}
       <th class="agg">Avg</th><th class="agg">4+</th><th class="st" style="text-align:left">Signal</th></tr></thead><tbody>`;
   for(const c of sc){
@@ -492,7 +540,7 @@ function renderTeam(){
     for(const [sid,name] of c.skills){const st=stats[sid];
       h+=`<tr data-anchor="hm-${sid}"><th class="sk" scope="row">${esc(name)}</th>${ms.map(m=>{const cv=cur(m,sid),r=rel(m,sid);let v,cls,tt;
         if(state.hmMode==="g"){const w=want(m,sid);v=w&&cv?w-cv:null;cls=v==null?"v0":v>=2?"gp2":"gp";tt=v?`wants +${v}`:"";v=v?"+"+v:"";}
-        else{v=state.hmMode==="t"?(tgt(m,sid)??null):cv;cls=heatCls(v)+(r==="n"&&state.hmMode==="c"?" rn":"");tt=v??"";v=v??"·"}
+        else{v=state.hmMode==="t"?(tgt(m,sid)??null):cv;const gp=state.hmMode==="c"&&want(m,sid);cls=heatCls(v)+(r==="n"&&state.hmMode==="c"?" rn":"")+(gp?" gap":"");tt=(v??"")+(gp?` → wants ${want(m,sid)}`:"");v=v??"·"}
         return `<td class="c ${cls}" title="${esc(m.name)} · ${esc(name)}${tt!==""?": "+tt:""}${r?" · "+REL[r][0]:""}">${v}</td>`}).join("")}
         <td class="agg">${f1(state.hmMode==="t"?st.avgT:st.avg)}</td><td class="agg">${st.depth}</td><td class="st">${st.status?`<span class="chip ${st.status.k}">${st.status.l}</span>`:""}</td></tr>`}
   }
@@ -625,15 +673,16 @@ function renderPerson(){
       <div class="legend" style="justify-content:center"><span><i style="background:var(--h4)"></i>${esc(first(m.name))} today</span><span><i style="background:var(--t-tgt)"></i>Target</span><span><i style="background:var(--t-team)"></i>Team average</span></div></div>
       <div style="display:grid;gap:16px;align-content:start;min-width:0">
         <div><h3 style="margin-bottom:8px">Strengths</h3>${strengths.length?`<ul class="list">${strengths.map(s=>`<li><span class="t">${esc(s.name)}</span><span class="num">${cur(m,s.id)} ${meter(cur(m,s.id))}</span><span class="s">Team avg ${f1(stats[s.id].avg)}${stats[s.id].depth<=2?" · one of only "+stats[s.id].depth+" at Advanced+, a go-to person":""}</span></li>`).join("")}</ul>`:`<p class="muted">Skills rated 4 or 5 show up here.</p>`}</div>
-        <div><h3 style="margin-bottom:8px">Growth plan</h3>${grow.length?`<ul class="list">${grow.map(s=>{const mt=mentorsFor(s.id);return `<li><span class="t">${esc(s.name)}</span><span class="num">${cur(m,s.id)} → ${want(m,s.id)}${tgt(m,s.id)==null?'<span class="muted">*</span>':""}</span><span class="s">${(()=>{const g=myGoals.find(x=>x.skill.id===s.id);if(g&&g.mentor)return `Mentor: <b>${esc(g.mentor.name)}</b> (${cur(g.mentor,s.id)})${g.alts.length?" · backup "+g.alts.map(a=>esc(first(a.name))).join(", "):""}`;if(g)return "No one on the team is at 4+ yet: external training";return mt.length?"Could learn from: "+mt.map(p=>`${esc(first(p.name))} (${cur(p,s.id)})`).join(", "):"No one on the team is above this level yet: external training"})()}</span></li>`}).join("")}</ul>${grow.some(s=>tgt(m,s.id)==null)?`<p class="muted" style="font-size:12px;margin:8px 0 0">* Target not set; inferred as 4 because it's a Focus skill.</p>`:""}`:`<p class="muted">Set a target above your current level, or mark skills as Focus, to build a growth plan.</p>`}</div>
-        ${iMentor.length?`<div><h3 style="margin-bottom:8px">${esc(first(m.name))} mentors</h3><ul class="list">${iMentor.map(g=>`<li><span class="t">${esc(g.mentee.name)}</span><span class="num">${g.from} → ${g.to}</span><span class="s">${esc(g.skill.name)}</span></li>`).join("")}</ul></div>`:""}
+        <div><h3 style="margin-bottom:8px">Gaps to close${grow.length?` <span class="chip gapc">${mine.filter(s=>want(m,s.id)).length}</span>`:""}</h3>${grow.length?`<ul class="list">${grow.map(s=>{const mt=mentorsFor(s.id);return `<li><span class="t">${esc(s.name)}</span><span class="num">${cur(m,s.id)} → ${want(m,s.id)}${tgt(m,s.id)==null?'<span class="muted">*</span>':""}</span><span class="s">${(()=>{const g=myGoals.find(x=>x.skill.id===s.id);if(g&&g.mentor)return `Possible mentor: <b>${esc(g.mentor.name)}</b> (${cur(g.mentor,s.id)})${g.alts.length?" · backup "+g.alts.map(a=>esc(first(a.name))).join(", "):""}`;if(g)return "No one on the team is at 4+ yet: external training";return mt.length?"Could learn from: "+mt.map(p=>`${esc(first(p.name))} (${cur(p,s.id)})`).join(", "):"No one on the team is above this level yet: external training"})()}</span></li>`}).join("")}</ul>${grow.some(s=>tgt(m,s.id)==null)?`<p class="muted" style="font-size:12px;margin:8px 0 0">* Target not set; inferred as 4 because it's a Focus skill.</p>`:""}`:`<p class="muted">Set a target above your current level, or mark skills as Focus, to build a growth plan.</p>`}</div>
+        ${iMentor.length?`<div><h3 style="margin-bottom:8px">Could mentor</h3><ul class="list">${iMentor.map(g=>`<li><span class="t">${esc(g.mentee.name)}</span><span class="num">${g.from} → ${g.to}</span><span class="s">${esc(g.skill.name)}</span></li>`).join("")}</ul></div>`:""}
       </div></div></div>`;
   // --- editor
-  const unratedIds=sk.filter(s=>cur(m,s.id)==null).map(s=>s.id),newN=sk.filter(s=>NEW.has(s.id)).length;
+  const unratedIds=sk.filter(s=>cur(m,s.id)==null).map(s=>s.id),newN=sk.filter(s=>NEW.has(s.id)).length,gapIds=sk.filter(s=>want(m,s.id)).map(s=>s.id);
   if(state.efilter==="unrated"&&(!state.efSnap||state.efSnap.who!==m.id+state.pfw))state.efSnap={who:m.id+state.pfw,ids:new Set(unratedIds)};
-  const show=sid=>state.efilter==="unrated"?state.efSnap.ids.has(sid):state.efilter==="new"?NEW.has(sid):true;
+  if(state.efilter==="gaps"&&(!state.efSnap||state.efSnap.who!=="g"+m.id+state.pfw))state.efSnap={who:"g"+m.id+state.pfw,ids:new Set(gapIds)};
+  const show=sid=>state.efilter==="unrated"||state.efilter==="gaps"?state.efSnap.ids.has(sid):state.efilter==="new"?NEW.has(sid):true;
   h+=`<div class="panel" data-anchor="editor" id="editor"><div class="phead"><div><span class="eyebrow">Self-assessment</span><h2>Rate ${esc(first(m.name))}'s skills</h2></div>
-    <div class="seg" role="group" aria-label="Show skills"><button data-ef="all" aria-pressed="${state.efilter==="all"}">All · ${sk.length}</button><button data-ef="unrated" aria-pressed="${state.efilter==="unrated"}">Not rated · ${unratedIds.length}</button>${newN?`<button data-ef="new" aria-pressed="${state.efilter==="new"}">New · ${newN}</button>`:""}</div></div>
+    <div class="seg" role="group" aria-label="Show skills"><button data-ef="all" aria-pressed="${state.efilter==="all"}">All · ${sk.length}</button><button data-ef="unrated" aria-pressed="${state.efilter==="unrated"}">Not rated · ${unratedIds.length}</button><button data-ef="gaps" aria-pressed="${state.efilter==="gaps"}">Gaps · ${gapIds.length}</button>${newN?`<button data-ef="new" aria-pressed="${state.efilter==="new"}">New · ${newN}</button>`:""}</div></div>
     <details style="margin-bottom:16px"><summary>Rating guide</summary><div class="scalekey" style="margin-top:10px">${SCALE.map(([v,l,d])=>`<div><b>${v}</b><strong>${l}</strong><br><span class="muted">${d}</span></div>`).join("")}</div>
     <p class="muted" style="font-size:12px">Ask yourself how easily you can explain the methods and benefits, and how recently you used the skill (past month, quarter, previous role). Tap a selected value again to clear it. Relevance: <b>Focus</b> = high relevance and interest, <b>Core</b> = core competency but not a focus, <b>N/A</b> = not relevant or no interest.</p></details>
     <div class="editor">`;
@@ -645,9 +694,10 @@ function renderPerson(){
       <div class="erow ehdr" aria-hidden="true"><span>Skill</span><span class="lab">Current</span><span class="lab">Target</span><span class="lab">Relevance</span></div>`;
     for(const [sid,name] of rows){
       const e=entry(m,sid);
-      h+=`<div class="erow ${cur(m,sid)==null?"todo":""}" data-anchor="row-${sid}"><span class="nm">${esc(name)}${NEW.has(sid)?' <span class="chip new">New</span>':""}</span>${pick("cur",sid,e.c,SCALE.map(([v,l])=>[v,l]),"Now")}${pick("tgt",sid,e.t,SCALE.map(([v,l])=>[v,l]),"Target")}${pick("rel",sid,e.r,Object.entries(REL).map(([k,[l,d]])=>[k,d]),"Relevance")}</div>`}
+      const gw=want(m,sid),gap=gw&&cur(m,sid)!=null?gw-cur(m,sid):0;
+      h+=`<div class="erow ${cur(m,sid)==null?"todo":""} ${gap?"gap":""}" data-anchor="row-${sid}"><span class="nm">${esc(name)}${NEW.has(sid)?' <span class="chip new">New</span>':""}${gap?` <span class="chip gapc" title="${tgt(m,sid)==null?"Focus skill rated 3 or lower; target assumed 4":"Target "+gw}">Gap +${gap}</span>`:""}</span>${pick("cur",sid,e.c,SCALE.map(([v,l])=>[v,l]),"Now")}${pick("tgt",sid,e.t,SCALE.map(([v,l])=>[v,l]),"Target")}${pick("rel",sid,e.r,Object.entries(REL).map(([k,[l,d]])=>[k,d]),"Relevance")}</div>`}
     h+=`</div>`}
-  if(!shown)h+=`<p class="muted empty">${state.efilter==="unrated"?"Every skill in this view is rated.":"Nothing to show."} <button class="linkbtn" data-ef="all">Show all skills</button></p>`;
+  if(!shown)h+=`<p class="muted empty">${state.efilter==="unrated"?"Every skill in this view is rated.":state.efilter==="gaps"?"No gaps: no skill has a target above its current level.":"Nothing to show."} <button class="linkbtn" data-ef="all">Show all skills</button></p>`;
   h+=`</div></div>`;
   $("#v-person").innerHTML=h;
   validateAdd();
@@ -693,38 +743,36 @@ function track(g){
   return s+"</span>";
 }
 function mentoringPanel(){
-  const {pairs,goals,noGoals}=computeMentoring();
-  const ext=goals.filter(g=>!g.mentor);
-  const goalLine=(g,who)=>`<li><span>${who?`<b>${esc(who)}</b> · `:""}${esc(g.skill.name)}</span><span class="num gnum">${g.from} → ${g.to}</span></li>`;
-  let body;
-  if(state.mentorView==="mentor"){
-    const by={};pairs.filter(p=>p.mentor).forEach(p=>(by[p.mentor.id]=by[p.mentor.id]||{m:p.mentor,g:[]}).g.push(...p.goals));
-    body=Object.values(by).sort((a,b)=>a.m.name.localeCompare(b.m.name)).map(({m,g})=>`<article class="mcard"><header class="pair">${av(m)}<b>${esc(m.name)}</b><span class="muted">mentors</span></header>
-      <ul class="goals">${g.map(x=>goalLine(x,first(x.mentee.name))).join("")}</ul></article>`).join("");
-  }else{
-    body=pairs.filter(p=>p.mentor).map(p=>`<article class="mcard"><header class="pair">${av(p.mentee)}<b>${esc(first(p.mentee.name))}</b><span class="arrow" aria-label="learns from">→</span>${av(p.mentor)}<b>${esc(first(p.mentor.name))}</b></header>
-      <ul class="goals">${p.goals.map(g=>goalLine(g)).join("")}</ul></article>`).join("");
-  }
+  const {pairs}=computeMentoring();
+  const list=pairs.filter(p=>p.mentor).sort((a,b)=>a.mentor.name.localeCompare(b.mentor.name)||a.mentee.name.localeCompare(b.mentee.name));
+  const body=list.map(p=>`<article class="mcard">
+      <div class="m2m"><div class="who">${av(p.mentor)}<b>${esc(p.mentor.name)}</b><span class="role">Mentor</span></div>
+        <div class="down" aria-hidden="true">↓</div>
+        <div class="who">${av(p.mentee)}<b>${esc(p.mentee.name)}</b><span class="role">Mentee</span></div></div>
+      <ul class="goals">${p.goals.map(g=>`<li><span>${esc(g.skill.name)}</span><span class="num gnum" title="${esc(first(p.mentee.name))}: ${g.from} today, target ${g.to}. ${esc(first(p.mentor.name))} is at ${cur(p.mentor,g.skill.id)}.">${g.from} → ${g.to}</span></li>`).join("")}</ul></article>`).join("");
   return `<div class="panel" id="mentoring">
-    <div class="phead"><div><h2>Mentoring pairs</h2><p class="muted lead">Each designer is paired with a teammate who is already at their target level. No one mentors more than ${MAX_LOAD} people.</p></div>
-      <div class="seg" role="group" aria-label="Group by"><button data-mview="mentee" aria-pressed="${state.mentorView!=="mentor"}">By mentee</button><button data-mview="mentor" aria-pressed="${state.mentorView==="mentor"}">By mentor</button></div></div>
-    ${body?`<div class="mgrid">${body}</div>`:`<p class="muted">No pairs yet. Designers need growth targets in Individual mapping.</p>`}
-    ${ext.length||noGoals.length?`<div class="mfoot">${ext.length?`<p><b>External training needed:</b> ${ext.map(g=>`${esc(first(g.mentee.name))} (${esc(g.skill.name)})`).join(", ")}</p>`:""}${noGoals.length?`<p class="muted">No growth goals yet: ${noGoals.map(m=>esc(first(m.name))).join(", ")}</p>`:""}</div>`:""}
+    <div class="phead"><div><h2>Mentoring opportunities</h2><p class="muted lead">Who could mentor whom, and on which skills. Each mentor is already at or above the mentee's target level; numbers show the mentee's level today → their target.</p></div></div>
+    ${body?`<div class="mgrid">${body}</div>`:`<p class="muted">No mentoring opportunities yet. Designers need growth targets in Individual mapping.</p>`}
   </div>`;
 }
 function renderPlan(){
   const sk=allSkills(),ms=roster(),stats=Object.fromEntries(sk.map(s=>[s.id,skillStats(s.id)]));
-  // hiring: coverage risks + weakest areas
-  const risks=sk.filter(s=>stats[s.id].n&&stats[s.id].depth<=1).sort((a,b)=>stats[a.id].depth-stats[b.id].depth||stats[b.id].focus-stats[a.id].focus||stats[a.id].avg-stats[b.id].avg);
-  const weakCats=cats().map(c=>({c,a:catAvg(c),d:c.skills.reduce((x,[id])=>x+stats[id].depth,0)/c.skills.length})).filter(x=>x.a!=null).sort((a,b)=>a.a-b.a).slice(0,3);
-  // development: demand per skill
+  // hiring: team mostly at 1–2, or several novices and hardly anyone advanced
+  // upskill: the team is already intermediate (avg 3+) but not yet strong; training closes the gap
+  const sig=sk.map(s=>{const st=stats[s.id],v=ms.map(m=>cur(m,s.id)).filter(x=>x!=null);return {s,st,n:v.length,nov:v.filter(x=>x<=2).length}}).filter(x=>x.n>=3);
+  const hire=sig.filter(x=>x.st.avg<=2.5||(x.nov>=3&&x.st.depth<=2)).sort((a,b)=>a.st.avg-b.st.avg||b.nov-a.nov);
+  const hireIds=new Set(hire.map(x=>x.s.id));
+  const up=sig.filter(x=>!hireIds.has(x.s.id)&&x.st.avg>=3&&x.st.avg<3.8).sort((a,b)=>b.st.learners.length-a.st.learners.length||a.st.avg-b.st.avg);
+  const weakCats=cats().map(c=>({c,a:catAvg(c)})).filter(x=>x.a!=null).sort((a,b)=>a.a-b.a).slice(0,3);
   const demand=sk.map(s=>({s,st:stats[s.id]})).filter(x=>x.st.learners.length>=2).sort((a,b)=>b.st.learners.length-a.st.learners.length||a.st.avg-b.st.avg).slice(0,10);
-  const noCov=risks.filter(s=>stats[s.id].depth===0),single=risks.filter(s=>stats[s.id].depth===1);
-  let h=`<div class="hire"><div class="hire-head"><div><span class="eyebrow">Hiring signals</span><h2>${noCov.length?`${noCov.length} ${noCov.length===1?"skill has":"skills have"} no one at Advanced level`:single.length?`${single.length} skills depend on a single person`:"No coverage gaps"}</h2></div>
-      <p class="muted">Skills where 0–1 designers rate 4 or higher. Hire for these, or fund training, before they block work.</p></div>
-    ${risks.length?`<div class="hire-grid">${risks.slice(0,8).map(s=>{const st=stats[s.id];return `<div class="hcard ${st.depth?"single":"none"}">
-      <span class="chip ${st.depth?"warn":"crit"}">${st.depth?"Single expert":"No coverage"}</span><b>${esc(s.name)}</b>
-      <span class="muted">${esc(s.cat.name)} · team avg ${f1(st.avg)}${st.depth?` · only ${esc(first(st.holders[0].name))}`:""}</span></div>`}).join("")}</div>`:""}
+  const hcard=(x,kind)=>`<div class="hcard ${kind}"><span class="chip ${kind==="hire"?"crit":"warn"}">${kind==="hire"?(x.st.avg<=2.5?"Team mostly 1–2":`${x.nov} novices`):`${x.st.learners.length} want to grow`}</span><b>${esc(x.s.name)}</b>
+      <span class="muted">${esc(x.s.cat.name)} · team avg ${f1(x.st.avg)} · ${x.st.depth} at Advanced+${x.nov&&kind!=="hire"?` · ${x.nov} novice${x.nov>1?"s":""}`:""}</span></div>`;
+  let h=`<div class="hire"><div class="hire-head"><div><span class="eyebrow">Hiring & upskill signals</span><h2>${hire.length} to hire for · ${up.length} to upskill</h2></div>
+      <p class="muted">Hire where the team is mostly at Awareness or Novice (1–2), or several people are novices. Upskill where the team is already Intermediate (3+) and training gets people to Advanced.</p></div>
+    <div class="sig-cols">
+      <div><h3 class="sig-h hire-h">Hire · ${hire.length}</h3>${hire.length?`<div class="hire-grid">${hire.map(x=>hcard(x,"hire")).join("")}</div>`:`<p class="muted">No skill needs hiring right now.</p>`}</div>
+      <div><h3 class="sig-h up-h">Upskill · ${up.length}</h3>${up.length?`<div class="hire-grid">${up.slice(0,8).map(x=>hcard(x,"up")).join("")}</div>${up.length>8?`<p class="muted" style="margin:8px 0 0;font-size:12.5px">+${up.length-8} more: ${up.slice(8).map(x=>esc(x.s.name)).join(", ")}</p>`:""}`:`<p class="muted">No upskill signals.</p>`}</div>
+    </div>
     <p class="hire-weak"><b>Weakest areas:</b> ${weakCats.map(x=>`${esc(x.c.name)} <span class="num">${f1(x.a)}</span>`).join(" · ")}</p></div>`;
   h+=mentoringPanel();
   h+=`<div class="panel"><div class="phead"><h2>Development programs</h2><span class="muted">where 2+ people want to grow</span></div>
@@ -809,6 +857,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.ef){state.efilter=t.dataset.ef;state.efSnap=null;persist();render();return}
   if(t.dataset.hm){state.hmMode=t.dataset.hm;persist();render();return}
   if(t.dataset.clayer){state.coreLayer=t.dataset.clayer;render();return}
+  if(t.dataset.cvis){state.coreHidden=t.dataset.cvis==="all"?{}:Object.fromEntries(roster().map(m=>[m.id,true]));render();return}
   if(t.dataset.cfocus!==undefined){const id=t.dataset.cfocus;state.coreHidden=id?{...state.coreHidden,[id]:!state.coreHidden?.[id]}:{};render();return}
   if(t.dataset.mview){state.mentorView=t.dataset.mview;persist();render();return}
   if(act==="confirm"){confirmDraft();return}
@@ -879,13 +928,13 @@ function enqueue(o){
   const last=state.outbox[state.outbox.length-1];
   if(o.op==="update"&&last&&!last.sending&&last.id===o.id&&last.op==="update")deepMerge(last.patch,o.patch);
   else if(o.op==="update"&&last&&!last.sending&&last.id===o.id&&last.op==="set")deepMerge(last.data,o.patch);
-  else state.outbox.push(o);
+  else{state.outbox.push(o);if(api.working&&api.batch)api.batch.total++}
   saveOutbox();refreshView();kick();
 }
 async function kick(now){
   if(now){clearTimeout(api.retryTimer);api.backoff=0}
   if(api.working||!api.key||!state.outbox.length){renderSync();return}
-  api.working=true;renderSync();
+  api.working=true;api.batch={total:state.outbox.length,done:0};renderSync();
   while(state.outbox.length&&api.key){
     const o=state.outbox[0];o.sending=true;
     try{
@@ -893,6 +942,7 @@ async function kick(now){
       state.outbox.shift();saveOutbox();
       if(Array.isArray(j.docs))setServer(j.docs,j.rev);else{applyOp(api.server,o);api.rev=null;api.sig="";saveLocal()}
       api.lastWrite=Date.now();api.backoff=0;state.sync.err=false;state.sync.at=new Date();
+      api.batch.done++;renderNetbar();
       refreshView();
     }catch(e){
       o.sending=false;
@@ -907,7 +957,7 @@ async function kick(now){
       api.retryTimer=setTimeout(()=>kick(),api.backoff);return;
     }
   }
-  api.working=false;renderSync();
+  api.working=false;api.batch=null;renderSync();
 }
 async function refresh(){
   clearTimeout(api.timer);
@@ -942,11 +992,22 @@ function renderSync(){
   else if(s.phase==="loading")cls="sync";
   el.dataset.s=cls;el.innerHTML=`<span>${esc(txt)}</span>${btn?' <button class="linkbtn" data-act="retry">Retry now</button>':""}`;
   el.title=n?"Your changes are kept on this device until the sheet confirms them.":tm?"Last checked "+tm:"";
+  renderNetbar();
+}
+// thin bar under the header: sliding while reading, filling up while saving
+function renderNetbar(){
+  const bar=$("#netbar");if(!bar)return;
+  const saving=api.working&&api.batch&&api.batch.total>0,busy=saving||api.refreshing||state.checkingKey||state.loadingFirst;
+  bar.hidden=!busy;if(!busy)return;
+  bar.classList.toggle("det",!!saving);
+  const i=bar.firstChild;
+  if(saving){const pc=Math.max(8,Math.round((api.batch.done+.35)/api.batch.total*100));i.style.width=pc+"%";bar.setAttribute("aria-valuenow",pc);bar.title=`Saving ${Math.min(api.batch.done+1,api.batch.total)} of ${api.batch.total}`}
+  else{i.style.width="";bar.removeAttribute("aria-valuenow");bar.title="Loading from the Google Sheet"}
 }
 function lockOut(){
-  api.key=null;clearTimeout(api.timer);clearTimeout(api.retryTimer);
+  const wasOpen=api.key==="open";api.key=null;clearTimeout(api.timer);clearTimeout(api.retryTimer);
   try{localStorage.removeItem("uxr-map-key")}catch(e){}
-  state.needKey=true;state.checkingKey=false;state.keyError="The team passcode has changed. Enter the new one.";state.db=null;render();
+  state.needKey=true;state.checkingKey=false;state.keyError=wasOpen?"":"The team passcode has changed. Enter the new one.";state.db=null;render();
 }
 async function connect(key,fromBoot){
   api.key=key;
@@ -954,16 +1015,16 @@ async function connect(key,fromBoot){
   if(local){                                   // instant: show the copy saved on this device, then check the sheet in the background
     api.server=local.cache;api.rev=local.rev||null;api.sig="";
     state.needKey=false;state.db=true;recompose();render();refresh();kick();return}
-  state.checkingKey=!fromBoot;state.loadingFirst=fromBoot;if(fromBoot)state.needKey=false;render();
+  state.checkingKey=!fromBoot;state.loadingFirst=fromBoot;if(fromBoot)state.needKey=false;render();renderNetbar();
   try{const j=await apiGet(false);setServer(j.docs,j.rev)}
   catch(e){
     api.key=null;state.loadingFirst=false;state.checkingKey=false;state.needKey=true;
-    state.keyError=e.code==="unauthorized"?"That passcode didn't work. Check it with the map owner.":e.code==="timeout"?"Google Sheets took too long to answer. Please try again; the first load after a quiet period can be slow.":"Couldn't reach the Google Sheet. Check your connection and try again.";
+    state.keyError=e.code==="unauthorized"?(key==="open"?"":"That passcode didn't work. Check it with the map owner."):e.code==="timeout"?"Google Sheets took too long to answer. Please try again; the first load after a quiet period can be slow.":"Couldn't reach the Google Sheet. Check your connection and try again.";
     if(e.code==="unauthorized"){try{localStorage.removeItem("uxr-map-key");localStorage.removeItem("uxr-map-cache")}catch(_){}}
-    render();return}
+    render();renderNetbar();return}
   try{localStorage.setItem("uxr-map-key",key)}catch(e){}
   state.loadingFirst=false;state.checkingKey=false;state.needKey=false;state.keyError="";state.db=true;state.sync.at=new Date();
-  recompose();render();schedule();kick();
+  recompose();render();renderNetbar();schedule();kick();
 }
 // warn before leaving with unconfirmed edits or changes that haven't reached the sheet yet
 window.addEventListener("beforeunload",e=>{
@@ -974,8 +1035,7 @@ render();
 (async()=>{
   if(!/^https:\/\/script\.google\.com\//.test(API_URL)){state.ready=true;showBanner("Setup needed: paste the Apps Script web app URL into API_URL in this file (see the README).");render();return}
   let key="";try{key=localStorage.getItem("uxr-map-key")||""}catch(e){}
-  if(!key){state.needKey=true;render();return}
-  connect(key,true);
+  connect(key||"open",true);   // no passcode needed; the sheet only asks for one if PASSCODE is set
 })();
 </script>
 
