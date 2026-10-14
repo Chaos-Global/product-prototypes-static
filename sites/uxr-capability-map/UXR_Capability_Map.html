@@ -899,7 +899,7 @@ function showBanner(t){const b=$("#banner");b.textContent=t;b.hidden=false}
 
 // ---------- shared store: Google Sheets via Apps Script ----------
 // Paste the web app URL from Deploy > Manage deployments (ends in /exec).
-const API_URL="https://script.google.com/macros/s/AKfycbzCuLqUsREqBchwdp-xKVgUHdrqYurTOoRzKhsL7wNIudqRsV3aF3KeecTBVuTB72nEUQ/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbx2246wLGmiyOTWjsrFovrB8kURv-thK_-Q0GWLnHaEf5LMD-TYqIqHllawYHIP3W4Rrg/exec";
 const POLL_MS=45000,GET_TIMEOUT=40000,POST_TIMEOUT=45000;
 const api={key:null,server:{},rev:null,sig:"",lastWrite:0,refreshing:false,timer:null,errN:0,working:false,retryTimer:null,backoff:0};
 async function fetchJSON(url,opt,ms){
