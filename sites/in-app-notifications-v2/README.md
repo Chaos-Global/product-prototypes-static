@@ -1,74 +1,32 @@
-# Notification center (Chaos · Eris)
+# Notification center · in context — design reference
 
-Production version of the notification center design. React 18, no other runtime dependencies, no design-canvas code.
+This is a design mockup created in a visual design tool, exported as a
+standalone page. Treat it as a REFERENCE MOCKUP, not production code:
+the markup and inline styles carry the design's precise values — colors,
+font sizes, spacing, radii, shadows, layout — which an implementation
+should replicate faithfully in its own components and styling system
+rather than copy wholesale.
 
-## Why the canvas export broke
+## Contents
 
-The `.dc.html` artboards only run inside the Claude design canvas, which supplies their runtime:
+- `Main.dc.html` — the artboard (a Design Component: an `<x-dc>`
+  template + a small logic class). The values to replicate live in its
+  inline `style="…"` attributes and the `<helmet><style>` block.
+- `ds/eris/components/bundle.css` — referenced resource
+- `ds/eris/components/bundle.js` — referenced resource
+- `Empty.dc.html` — referenced resource
+- `assets/` — files uploaded to the design (images, fonts, media)
+- `support.js`, `vendor/react*.js` — the runtime that renders the
+  component in a browser; not part of the design.
 
-| In the canvas export | What happens in an app | Here |
-|---|---|---|
-| `{{hole}}`, `<sc-if>`, `<sc-for>`, `<dc-import>`, `class Component extends DCLogic` | Not HTML or React — renders as raw text, nothing is clickable | Plain React state and JSX |
-| `<x-import component-from-global-scope="Eris.…">` | Needs `window.Eris` loaded first; otherwise empty | Local equivalents styled with Eris tokens (icons and product marks copied from the Eris bundle) |
-| `/_blob/…` image URLs | Canvas-only storage — 404 in your app | Real files in `src/assets/`, imported |
-| `./support.js`, `ds/eris/...` paths | Don't exist in your app | Not used |
-| Global `:root` tokens and `.er-*` overrides | Leak into and fight the host app | Everything scoped under `.nc-root`, resets use `:where()` (zero specificity) |
-| Menu position divided by the canvas zoom factor | Wrong position outside the canvas | Positioned from real DOM rects; flips up near the bottom |
+## Uploaded files
 
-## Files
+Images, fonts and media uploaded to the design are written once each under
+`assets/` — 7 in this export — and the exported files refer to them there. A
+reference a script puts together while the page runs (for example
+`"/_blob/" + id`) is not rewritten and does not load from this folder.
 
-```
-src/NotificationCenter.jsx   components + useNotifications hook
-src/NotificationCenter.css   styles, light default, dark via data-theme="dark"
-src/erisMarks.js             Chaos outline icons + product marks (from Eris)
-src/sampleNotifications.js   sample feed — shape reference (copy marked PLACEHOLDER needs sign-off)
-src/assets/                  GIF, poster frame, thumbnails
-demo/                        standalone demo (npm run build:demo → demo/dist/index.html)
-```
+## Viewing
 
-## Use
-
-Drop-in (bell + panel anchored under it, no scrim):
-
-```jsx
-import { NotificationCenter } from './NotificationCenter';
-import './NotificationCenter.css';
-
-<NotificationCenter
-  items={notifications}
-  emptyImages={[a, b, c]}
-  onEvent={(type, payload) => track(type, payload)}      // read, read-all, dismiss, restore, snooze, unsnooze, expand, collapse, primary, preference
-  onOpenItem={(item, target) => openUrl(item.link?.href)} // primary | link | read-more | survey
-  theme="light"                                           // or "dark"
-/>
-```
-
-Custom placement (e.g. the bell in an existing toolbar, the panel in a side dock):
-
-```jsx
-const state = useNotifications(items, { onEvent });
-<NotificationBell count={state.unreadCount} expanded={open} onClick={toggle} controls="nc-panel" />
-{open && <NotificationPanel state={state} onClose={close} style={{ height: '100%' }} />}
-```
-
-`NotificationPanel` fills the height its container gives it (min 320 px) and is 384 px wide.
-
-## Item types
-
-`action` (pinned, deadline meter, primary + remind; Clear all keeps it until resolved), `feature` (animated media card, expandable steps), `update` (compact row with thumbnail, expandable checklist), `news` (compact row), `survey` (footer row). See `sampleNotifications.js` for every field.
-
-## Behaviour
-
-- Remind me later: 1 hour / tomorrow 9:00 / next Monday 9:00 (licensing: first two only). Snoozed tab lists them with Unsnooze.
-- Dismiss and Clear all show a 5 s Undo snackbar.
-- Expanding an item marks it read; the unread dot is a button that marks read.
-- Keyboard: Escape closes the menu → settings → panel (focus returns to the bell); arrow keys move through the menu; hover-only actions are visible on keyboard focus and on touch devices.
-- Motion: GIF has pause/play; the poster frame is used when paused, when "Play animations" is off, and under `prefers-reduced-motion`.
-- Settings toggles change the list immediately; "Licensing and account" is locked on. `preview` and `holdWhileRendering` are reported via `onEvent` — wire them to your arrival toast / render state.
-- Snooze, dismiss and read state are in memory. Persist them from `onEvent` (or seed `unread` from your backend) so they survive a restart.
-
-## Integration notes
-
-- Inter is expected from the host app (as in Eris). If missing, the stack falls back to system UI fonts.
-- If your app already ships Eris React components, `Button`, `IconButton`, `Toggle`, `Icon`, `ProductLogo` in the JSX map 1:1 to `Eris.Button`, `Eris.IconButton`, `Eris.Toggle`, `Eris.Icon`, `Eris.ProductLogo`.
-- Assets are imported as modules (works with Vite, webpack 5, esbuild, Parcel). In Enscape's embedded web UI, make sure `.gif`/`.jpg` are handled by the bundler's asset loader.
+Serve the folder (e.g. `python3 -m http.server`) and open `Main.dc.html`;
+some browsers block the scripts over file://.
