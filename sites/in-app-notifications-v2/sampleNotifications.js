@@ -18,10 +18,12 @@ export const SAMPLE_NOTIFICATIONS = [
     body: 'Required by January 28, 2025 to keep uninterrupted access to your licenses.',
     time: '1 min ago',
     merged: 1,                      // duplicates collapsed server-side or client-side
+    due: 'Jan 28, 2025',            // shown as "Due Jan 28, 2025 · 14 days left"; full body is the card's tooltip
     deadline: { daysLeft: 14 },     // 4–30 days: amber; 0–3 days: red
     primaryLabel: 'Update licensing',
+    primaryShortLabel: 'Update',    // the compact card uses the short label
     doneTitle: 'Licensing updated',
-    doneBody: 'Your licenses are up to date. Nothing else to do.',
+    doneBody: 'Your licenses are up to date.',
     unread: true,
   },
   {
@@ -30,19 +32,18 @@ export const SAMPLE_NOTIFICATIONS = [
     category: 'releases',
     eyebrow: 'New integration',
     title: 'Chaos Veras and Enscape: integration v2',
-    body: 'Send any Enscape view to Veras and explore lighting and material options without leaving your project.', // PLACEHOLDER
+    body: 'Veras now works inside Enscape, with node workflows and the new Astra model.',
     time: 'Just now',
     products: ['enscape'],
-    chip: 'Integration v2',
     media: {
       src: verasGif,
       poster: verasPoster,          // shown when paused, when animations are off, and for reduced motion
       alt: 'An Enscape view turned into Veras daylight, golden hour and dusk options',
     },
-    details: [                      // PLACEHOLDER
-      { title: 'Start from your Enscape view.', text: 'Geometry and camera stay locked.' },
-      { title: 'Describe or paint the change.', text: 'Lighting, materials, mood.' },
-      { title: 'Compare options in Gallery.', text: 'Every result is saved.' },
+    details: [                      // with `icon` → feature highlights; without → numbered steps
+      { icon: 'viewport', title: 'Work right in the Enscape viewport', text: 'Generate from the view you’re already in.' },
+      { icon: 'nodes', title: 'Build with nodes in Veras', text: 'Chain steps on a canvas and reuse them.' },
+      { icon: 'sparkles', title: 'Astra model now available', text: 'Pick it from the model list in Veras.' }, // confirm wording
     ],
     link: { label: 'Full release notes', href: '#veras-enscape-v2' },
     unread: true,
