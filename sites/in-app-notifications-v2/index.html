@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notification center — demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="./main.css">
+<style>
+  html, body, #root { height: 100%; margin: 0; }
+  body { background: #f6f6f6; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+  .demo-app { position: relative; height: 100%; overflow: hidden; }
+  .demo-top { position: relative; z-index: 2; height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px 0 14px; background: #fff; border-bottom: 1px solid #dbdbdb; }
+  .demo-left, .demo-right { display: flex; align-items: center; gap: 10px; }
+  .demo-right { gap: 6px; }
+  .demo-sep { width: 1px; height: 18px; background: #dbdbdb; }
+  .demo-title { font-size: 13px; font-weight: 600; color: #1c1c1c; }
+  .demo-res { font: 400 11px ui-monospace, SFMono-Regular, Menlo, monospace; color: #525252; }
+  .demo-avatar { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; background: #1681bd; color: #fff; font: 600 10px Inter, sans-serif; }
+  .demo-viewport { position: absolute; inset: 44px 0 0 0; width: 100%; height: calc(100% - 44px); object-fit: cover; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="./main.js"></script>
+</body>
+</html>
