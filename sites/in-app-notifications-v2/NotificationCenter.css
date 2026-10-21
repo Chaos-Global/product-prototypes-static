@@ -216,23 +216,25 @@
 @media (hover: none) { .nc-hover-acts, .nc-row .nc-hover-acts { opacity: 1; max-width: none; } }
 
 /* ---------- Licensing / action card ---------- */
-.nc-action { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 6px; background: var(--nc-warn-bg); border: 1px solid var(--nc-warn-line); }
-.nc-action-top { display: flex; gap: 10px; align-items: flex-start; }
-.nc-action-ic { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 6px; background: var(--nc-warn-ic); color: var(--nc-warn-text); }
-.nc-action-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.nc-indent { padding-left: 38px; }
-.nc-meter { display: flex; align-items: center; gap: 10px; }
-.nc-meter-bar { flex: 1; display: flex; gap: 3px; }
-.nc-meter-bar i { display: block; flex: 1; height: 4px; border-radius: 2px; background: var(--nc-seg-off); }
-.nc-meter-bar i.is-on { background: var(--nc-warn); }
-.nc-meter-label { font: 600 11px var(--nc-mono); white-space: nowrap; color: var(--nc-warn-text); }
-.nc-action-btns { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+/* Same footprint as .nc-done: one row, 28px icon, title + one line, actions on the right */
+.nc-action {
+  position: relative; overflow: hidden; display: flex; gap: 10px; align-items: center; height: 64px; padding: 0 12px;
+  border-radius: 6px; background: var(--nc-warn-bg); border: 1px solid var(--nc-warn-line);
+}
+.nc-action-ic { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 999px; background: var(--nc-warn); color: #1c1c1c; }
+.nc-action-ic .nc-svg { stroke-width: 1.75; }
+.nc-action .nc-h { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nc-action-sub { margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nc-action-days { font-weight: 600; color: var(--nc-warn-text); }
+.nc-action-track { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: rgba(243, 184, 48, .18); }
+.nc-action-track > span { display: block; height: 100%; background: var(--nc-warn); }
 .nc-action.is-urgent { background: var(--nc-danger-bg); border-color: var(--nc-danger-line); }
-.nc-action.is-urgent .nc-action-ic { background: var(--nc-danger-ic); color: var(--nc-danger); }
-.nc-action.is-urgent .nc-meter-bar i.is-on { background: var(--nc-danger); }
-.nc-action.is-urgent .nc-meter-label { color: var(--nc-danger-text); }
+.nc-action.is-urgent .nc-action-ic { background: var(--nc-danger); color: #fff; }
+.nc-action.is-urgent .nc-action-days { color: var(--nc-danger-text); }
+.nc-action.is-urgent .nc-action-track { background: rgba(231, 69, 73, .15); }
+.nc-action.is-urgent .nc-action-track > span { background: var(--nc-danger); }
 
-.nc-done { display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 6px; background: var(--nc-ok-bg); border: 1px solid var(--nc-ok-line); animation: nc-rise .24s ease-out both; }
+.nc-done { display: flex; gap: 10px; align-items: center; height: 64px; padding: 0 12px; border-radius: 6px; background: var(--nc-ok-bg); border: 1px solid var(--nc-ok-line); animation: nc-rise .24s ease-out both; }
 .nc-done-ic { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 999px; background: var(--nc-ok); color: #fff; }
 
 /* ---------- Feature card (GIF) ---------- */
@@ -259,6 +261,11 @@
 .nc-steps li { display: flex; gap: 10px; align-items: flex-start; }
 .nc-step-n { flex: none; width: 18px; height: 18px; border-radius: 999px; background: var(--nc-accent-soft); color: var(--nc-link); font: 700 10px/18px var(--nc-font); text-align: center; }
 .nc-steps b, .nc-checks b { font-weight: 600; color: var(--nc-fg-1); }
+.nc-highlights { gap: 10px; }
+.nc-highlights b { display: block; }
+.nc-hl-ic { display: grid; place-items: center; flex: none; width: 22px; height: 22px; border-radius: 6px; background: var(--nc-accent-soft); color: var(--nc-link); }
+.nc-hl-ic .nc-svg { stroke-width: 1.75; }
+.nc-details .nc-highlights + .nc-link { margin-left: 32px; }
 .nc-details .nc-link { margin-left: 28px; }
 
 /* ---------- Compact rows ---------- */
