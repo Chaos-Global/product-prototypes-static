@@ -33,9 +33,13 @@ const LUCIDE = {
   clock: <><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 14" /></>,
   settings: <><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" /><circle cx="12" cy="12" r="3" /></>,
   warning: <><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></>,
+  update: <><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></>,
   megaphone: <><path d="m3 11 18-5v12L3 14v-3z" /><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" /></>,
   gift: <><rect x="3" y="8" width="18" height="4" rx="1" /><path d="M12 8v13" /><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7" /><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5" /></>,
   external: <><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></>,
+  viewport: <><path d="M14 4.1 12 6" /><path d="m5.1 8-2.9-.8" /><path d="m6 12-1.9 2" /><path d="M7.2 2.2 8 5.1" /><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z" /></>,
+  nodes: <><rect width="8" height="8" x="3" y="3" rx="2" /><path d="M7 11v4a2 2 0 0 0 2 2h4" /><rect width="8" height="8" x="13" y="13" rx="2" /></>,
+  sparkles: <><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /></>,
   checkAll: <><path d="M18 6 7 17l-5-5" /><path d="m22 10-7.5 7.5L13 16" /></>,
 };
 export function Glyph({ name, size = 14 }) {
@@ -349,39 +353,39 @@ export function NotificationPanel({ state, onClose, onOpenItem, emptyImages = []
           <span className="nc-done-ic"><Icon name="checkmark" size={12} /></span>
           <div className="nc-row-main">
             <p className="nc-h" id={`nc-t-${item.id}`}>{item.doneTitle || 'Done'}</p>
-            {item.doneBody && <p className="nc-text">{item.doneBody}</p>}
+            {item.doneBody && <p className="nc-text nc-action-sub">{item.doneBody}</p>}
           </div>
           {dismissButton(item, true)}
         </div>
       );
     }
+    // Same footprint as the confirmation card: icon · two lines · actions, with a thin time-left bar on the bottom edge.
     const days = item.deadline ? Math.max(0, Math.min(30, item.deadline.daysLeft)) : null;
     const urgent = days !== null && days <= 3;
-    const filled = days === null ? 0 : days === 0 ? 0 : Math.max(1, Math.min(10, Math.ceil(days / 3)));
+    const daysLabel = days === null ? null : days === 0 ? 'due today' : days === 1 ? '1 day left' : `${days} days left`;
     return (
-      <article className={'nc-action' + (urgent ? ' is-urgent' : '')} key={item.id} aria-labelledby={`nc-t-${item.id}`}>
-        <div className="nc-action-top">
-          <span className="nc-action-ic"><Glyph name="warning" /></span>
-          <div className="nc-action-main">
-            <h4 className="nc-h" id={`nc-t-${item.id}`}>{item.title}</h4>
-            <p className="nc-text">{item.body}</p>
-            <p className="nc-meta" style={{ marginTop: 2 }}>{item.time}{item.merged ? ` · ${item.merged} earlier ${item.merged === 1 ? 'reminder' : 'reminders'} merged` : ''}</p>
-          </div>
-          {unreadDot(item)}
+      <article className={'nc-action' + (urgent ? ' is-urgent' : '')} key={item.id} aria-labelledby={`nc-t-${item.id}`}
+        aria-describedby={`nc-b-${item.id}`} title={item.body}>
+        <span className="nc-action-ic"><Glyph name={item.icon || 'update'} /></span>
+        <div className="nc-row-main">
+          <h4 className="nc-h" id={`nc-t-${item.id}`}>{item.title}</h4>
+          <p className="nc-text nc-action-sub" id={`nc-b-${item.id}`}>
+            {item.due ? `Due ${item.due}` : item.body}
+            {daysLabel && <> · <span className="nc-action-days">{daysLabel}</span></>}
+          </p>
         </div>
+        <Button size="xs" variant="primary" onClick={() => { actions.resolve(item.id); if (onOpenItem) onOpenItem(item, 'primary'); }}>
+          {item.primaryShortLabel || item.primaryLabel || 'Open'}
+        </Button>
+        <IconButton small label="Remind me later" aria-haspopup="menu" aria-expanded={menu && menu.id === item.id ? true : false}
+          onClick={(e) => (menu && menu.id === item.id ? closeMenu(false) : openMenu(item, e))}>
+          <Glyph name="clock" />
+        </IconButton>
         {days !== null && (
-          <div className="nc-meter nc-indent">
-            <div className="nc-meter-bar" aria-hidden="true">
-              {Array.from({ length: 10 }, (_, i) => <i key={i} className={i < filled ? 'is-on' : ''} />)}
-            </div>
-            <span className="nc-meter-label">{days === 0 ? 'Due today' : days === 1 ? '1 day left' : `${days} days left`}</span>
-          </div>
+          <span className="nc-action-track" role="progressbar" aria-label="Time left" aria-valuemin={0} aria-valuemax={30} aria-valuenow={days}>
+            <span style={{ width: `${Math.max(3, Math.round((days / 30) * 100))}%` }} />
+          </span>
         )}
-        <div className="nc-action-btns nc-indent">
-          <Button variant="primary" onClick={() => { actions.resolve(item.id); if (onOpenItem) onOpenItem(item, 'primary'); }}>{item.primaryLabel || 'Open'}</Button>
-          <Button variant="tertiary" icon="chevron-down" aria-haspopup="menu" aria-expanded={menu && menu.id === item.id ? true : false}
-            onClick={(e) => (menu && menu.id === item.id ? closeMenu(false) : openMenu(item, e))}>Remind me later</Button>
-        </div>
       </article>
     );
   };
@@ -422,11 +426,24 @@ export function NotificationPanel({ state, onClose, onOpenItem, emptyImages = []
           <p className="nc-text">{item.body}</p>
           {isOpen && item.details && (
             <div className="nc-details" id={`nc-d-${item.id}`}>
-              <ol className="nc-steps">
-                {item.details.map((d, i) => (
-                  <li key={i}><span className="nc-step-n" aria-hidden="true">{i + 1}</span><span className="nc-text"><b>{d.title}</b> {d.text}</span></li>
-                ))}
-              </ol>
+              {item.details.some((d) => d.icon) ? (
+                // Feature highlights: icon tile, bold one-line title, one short line below
+                <ul className="nc-steps nc-highlights">
+                  {item.details.map((d, i) => (
+                    <li key={i}>
+                      <span className="nc-hl-ic" aria-hidden="true"><Glyph name={d.icon} size={12} /></span>
+                      <span className="nc-text"><b>{d.title}</b>{d.text}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                // Sequential steps: numbered
+                <ol className="nc-steps">
+                  {item.details.map((d, i) => (
+                    <li key={i}><span className="nc-step-n" aria-hidden="true">{i + 1}</span><span className="nc-text"><b>{d.title}</b> {d.text}</span></li>
+                  ))}
+                </ol>
+              )}
               {item.link && <a className="nc-link" href={item.link.href} onClick={() => open(item, 'link')}>{item.link.label} <Icon name="arrow-right" size={10} /></a>}
             </div>
           )}
