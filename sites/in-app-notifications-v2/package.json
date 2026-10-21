@@ -1,0 +1,12 @@
+{
+  "name": "chaos-notification-center",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Notification center for Chaos products (Eris Design System), React 18, no other runtime dependencies.",
+  "main": "src/NotificationCenter.jsx",
+  "peerDependencies": { "react": ">=18", "react-dom": ">=18" },
+  "devDependencies": { "esbuild": "0.23.1", "react": "18.3.1", "react-dom": "18.3.1" },
+  "scripts": {
+    "build:demo": "esbuild demo/main.jsx --bundle --outdir=demo/dist --loader:.gif=file --loader:.jpg=file --jsx=automatic --minify --define:process.env.NODE_ENV=\\\"production\\\" && cp demo/index.html demo/dist/index.html"
+  }
+}
