@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>All caught up</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/eris/components/bundle.css">
+<script src="ds/eris/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 100%; min-height: 260px; box-sizing: border-box; padding: 36px 16px 28px; display: flex; flex-direction: column; align-items: center; text-align: center; background: #FFFFFF; color: #1C1C1C; font-family: 'Inter', ui-sans-serif, system-ui, sans-serif">
+  <div aria-hidden="true" style="position: relative; width: 200px; height: 104px; margin-bottom: 14px">
+    <img src="./assets/6cd45a27cae9f571febfe6a6e8a721bd.jpg" alt="" style="position: absolute; left: 0; top: 12px; width: 112px; height: 70px; object-fit: cover; border-radius: 6px; box-shadow: 0 10px 24px -10px rgba(0,0,0,.4), 0 0 0 3px #FFFFFF; transform: rotate(-8deg); animation: ncCardL .5s .05s cubic-bezier(.2,.8,.2,1) both">
+    <img src="./assets/2171d335a27bc6cae56de5ebea91e1cd.jpg" alt="" style="position: absolute; right: 0; top: 12px; width: 112px; height: 70px; object-fit: cover; border-radius: 6px; box-shadow: 0 10px 24px -10px rgba(0,0,0,.4), 0 0 0 3px #FFFFFF; transform: rotate(8deg); animation: ncCardR .5s .15s cubic-bezier(.2,.8,.2,1) both">
+    <img src="./assets/0b609ae8614d76969ec365c5809780f2.jpg" alt="" style="position: absolute; left: 44px; top: 2px; z-index: 1; width: 112px; height: 70px; object-fit: cover; border-radius: 6px; box-shadow: 0 10px 24px -10px rgba(0,0,0,.4), 0 0 0 3px #FFFFFF; animation: ncPop .5s .1s cubic-bezier(.2,.8,.2,1) both">
+    <span style="position: absolute; z-index: 2; left: 50%; bottom: 0; margin-left: -16px; width: 32px; height: 32px; border-radius: 999px; background: #77B22A; color: #FFFFFF; display: grid; place-items: center; box-shadow: 0 0 0 4px #FFFFFF, 0 6px 16px rgba(77,139,26,.35); animation: ncPop .4s .3s cubic-bezier(.2,.8,.2,1) both">
+      <x-import component-from-global-scope="Eris.Icon" name="checkmark" size="{{s14}}"></x-import>
+    </span>
+  </div>
+  <p style="margin: 0; font-size: 14px; font-weight: 600; color: #1C1C1C">{{title}}</p>
+  <p style="margin: 4px 0 0; max-width: 260px; font-size: 12px; line-height: 1.45; color: #525252">{{body}}</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"title":{"editor":null,"default":"You’re all caught up"},"body":{"editor":null,"default":"Releases, licensing and account updates will appear here."},"$preview":{"width":384,"height":280}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      s14: 14,
+      title: this.props.title || 'You’re all caught up',
+      body: this.props.body || 'Releases, licensing and account updates will appear here.'
+    };
+  }
+}
+</script>
+</body>
+</html>
