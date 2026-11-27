@@ -2,7 +2,7 @@
   const s = document.currentScript;
   // In the design canvas the script has no src of its own, so fall back to the
   // prototype folder that sits next to MyChaos.dc.html.
-  P.assetBase = s && s.src ? new URL('../', s.src).href : 'mychaos-prototype/assets/';
+  P.assetBase = ''; // flat GitHub Pages deploy: every file sits next to the page
 })(window.Proto = window.Proto || {});
 (function (P) {
   const SVG_NS = 'http://www.w3.org/2000/svg';
