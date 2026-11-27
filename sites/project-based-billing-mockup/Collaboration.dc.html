@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Collaboration</title>
-<script src="./_runtime/react.js"></script>
-<script src="./_runtime/react-dom.js"></script>
-<script src="./_runtime/support.js"></script>
-<link rel="stylesheet" href="ds/eris/colors_and_type.css">
-<link rel="stylesheet" href="ds/eris/components/eris/fig-tokens.css">
-<script src="ds/eris/_ds_bundle.js"></script>
-<script src="shared/credit-model.js"></script>
-<script src="shared/tour.js"></script>
+<script src="react.js"></script>
+<script src="react-dom.js"></script>
+<script src="support.js"></script>
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="fig-tokens.css">
+<script src="_ds_bundle.js"></script>
+<script src="credit-model.js"></script>
+<script src="tour.js"></script>
 </head>
 <body>
 <x-dc>
@@ -32,7 +32,7 @@
 <sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
 <div style="position:absolute;left:0;top:0;transform-origin:0 0;transform:scale({{ fitScale }});width:1918px;height:4000px;background:linear-gradient(to right,#FCFCFC 0 328px,#DCDCDC 328px 330px,#F2F2F2 330px)"></div>
 <div onClick="{{ cc.closeAll }}" style="position:absolute;left:0;top:0;transform-origin:0 0;transform:scale({{ fitScale }});width:1918px;height:1053px;overflow:hidden;font-family:Inter,sans-serif;color:#1a1a1a">
-      <img src="assets/cloud-project.png" style="display:block;width:1918px;height:1053px" draggable="false">
+      <img src="cloud-project.png" style="display:block;width:1918px;height:1053px" draggable="false">
 
       <div style="position:absolute;left:1570px;top:14px;width:150px;height:38px;background:#fff"></div>
       <div aria-hidden="true" style="position:absolute;left:1736px;top:21px;width:24px;height:24px;border-radius:12px;background:#E7E7E7;display:flex;align-items:center;justify-content:center;font:400 13px Inter;color:#333333">{{ cc.youInitials }}</div>
@@ -233,13 +233,13 @@
 <p style="margin: 0">Enter a valid project ID.</p></x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1055},&quot;scenario&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Team budget&quot;,&quot;Budget used up&quot;,&quot;No budget yet&quot;],&quot;default&quot;:&quot;Team budget&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;release&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Full&quot;,&quot;MVP&quot;],&quot;default&quot;:&quot;Full&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 // Project and team names, budgets and the feature-to-release map come from
-// shared/credit-model.js, shared with the Veras and My Chaos artboards.
+// credit-model.js, shared with the Veras and My Chaos artboards.
 // Each scenario shows one of the shared projects.
 const SCENARIO_PROJECT = { 'Team budget': 'elm', 'Budget used up': 'civic', 'No budget yet': 'oak' };
 const fmt = n => n.toLocaleString('en-US');
 const stop = e => e && e.stopPropagation && e.stopPropagation();
 const M = () => window.CreditModel;
-// The guided walkthroughs (shared/tour.js) set the project, members and open panels for each step.
+// The guided walkthroughs (tour.js) set the project, members and open panels for each step.
 const BOARD = 'Collaboration.dc.html';
 const T = () => window.ChaosTour;
 const initials = s => s.split(/[\s.@+_-]+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
