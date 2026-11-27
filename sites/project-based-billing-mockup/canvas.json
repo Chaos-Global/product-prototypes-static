@@ -1,0 +1,79 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1920,
+      "h": 1055,
+      "title": "Veras",
+      "page": "veras",
+      "is_interactive": true
+    },
+    {
+      "file": "Collaboration.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1920,
+      "h": 1055,
+      "title": "Collaboration",
+      "page": "collaboration",
+      "is_interactive": true
+    },
+    {
+      "file": "MyChaos.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1000,
+      "title": "My Chaos",
+      "expand": "fill",
+      "page": "mychaos",
+      "is_interactive": true
+    },
+    {
+      "file": "Tutorial.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1600,
+      "title": "Tutorial · use cases",
+      "expand": "fill",
+      "page": "tutorial",
+      "is_interactive": true
+    },
+    {
+      "file": "Email.dc.html",
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "title": "Email",
+      "expand": "fill",
+      "page": "tutorial",
+      "is_interactive": true
+    }
+  ],
+  "launch": {
+    "view": "focused",
+    "file": "Tutorial.dc.html"
+  },
+  "pages": [
+    {
+      "id": "tutorial",
+      "name": "Tutorial"
+    },
+    {
+      "id": "veras",
+      "name": "Veras"
+    },
+    {
+      "id": "collaboration",
+      "name": "Collaboration"
+    },
+    {
+      "id": "mychaos",
+      "name": "My Chaos"
+    }
+  ]
+}
