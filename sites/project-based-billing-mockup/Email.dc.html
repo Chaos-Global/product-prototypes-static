@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email notification</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="ds/eris/colors_and_type.css">
+<script src="shared/tour.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+html,body{margin:0;background:#EEF0F2}
+body{font-family:Inter,Roboto,system-ui,sans-serif;color:#1C1C1C}
+a{color:#1681BD}a:hover{color:#085982}
+</style>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100vh;background:#EEF0F2;color:#1C1C1C;font-family:Inter,Roboto,system-ui,sans-serif;display:flex;flex-direction:column">
+  <header style="min-height:56px;background:#FFFFFF;border-bottom:1px solid #DBDBDB;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;padding:8px 24px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;gap:10px;font:600 16px/1 Inter,Roboto,system-ui,sans-serif;color:#1C1C1C"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="#1681BD" stroke-width="1.6" aria-hidden="true"><rect x="2" y="4.5" width="18" height="13" rx="2"></rect><path d="m3 6 8 6 8-6"></path></svg>Mail</div>
+    <div style="font:400 13px/1.4 Inter,Roboto,system-ui,sans-serif;color:#525252">{{ to.name }} · {{ to.email }}</div>
+  </header>
+  <div style="flex:1;display:flex;flex-wrap:wrap;align-items:stretch">
+    <nav aria-label="Inbox" style="flex:1 1 260px;max-width:340px;background:#FFFFFF;border-right:1px solid #DBDBDB;box-sizing:border-box">
+      <div style="padding:18px 20px 10px;font:600 13px/1.4 Inter,Roboto,system-ui,sans-serif;color:#525252">Inbox</div>
+      <sc-for list="{{ inbox }}" as="m" hint-placeholder-count="1">
+        <div style="padding:12px 20px 12px 17px;border-left:3px solid {{ m.bar }};background:{{ m.bg }};display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;justify-content:space-between;gap:12px"><span style="font:600 13px/1.4 Inter,Roboto,system-ui,sans-serif;color:#1C1C1C">Chaos</span><span style="font:400 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#525252">{{ m.time }}</span></div>
+          <div style="font:500 13px/1.4 Inter,Roboto,system-ui,sans-serif;color:#1C1C1C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.subject }}</div>
+          <div style="font:400 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#525252;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.preview }}</div>
+        </div>
+      </sc-for>
+    </nav>
+    <main style="flex:999 1 560px;min-width:0;padding:24px 24px 160px;box-sizing:border-box">
+      <article style="max-width:780px;margin:0 auto;background:#FFFFFF;border:1px solid #DBDBDB;border-radius:8px;overflow:hidden">
+        <div style="padding:22px 28px 18px;border-bottom:1px solid #EEEEEE;display:flex;flex-direction:column;gap:14px">
+          <h1 style="margin:0;font:600 21px/1.35 Inter,Roboto,system-ui,sans-serif;color:#1C1C1C">{{ m.subject }}</h1>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <span aria-hidden="true" style="width:36px;height:36px;border-radius:18px;background:#E1161C;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font:700 15px/1 Poppins,Inter,system-ui,sans-serif">C</span>
+            <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px">
+              <span style="font:600 14px/1.4 Inter,Roboto,system-ui,sans-serif;color:#1C1C1C">Chaos <span style="font-weight:400;color:#525252">&lt;no-reply@chaos.com&gt;</span></span>
+              <span style="font:400 13px/1.4 Inter,Roboto,system-ui,sans-serif;color:#525252">To: {{ to.name }}</span>
+            </div>
+            <span style="font:400 13px/1.4 Inter,Roboto,system-ui,sans-serif;color:#525252">Today, {{ m.time }}</span>
+          </div>
+        </div>
+        <div style="padding:32px 24px 40px;background:#F6F6F6">
+          <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border-radius:8px;padding:32px 32px 28px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+            <img src="mychaos-prototype/assets/images/mychaosgroup-logo.svg" alt="Chaos" style="height:28px;width:auto;align-self:flex-start">
+            <h2 style="margin:4px 0 0;font:700 24px/1.3 Poppins,Inter,system-ui,sans-serif;color:#1C1C1C">{{ m.heading }}</h2>
+            <sc-for list="{{ m.paras }}" as="p" hint-placeholder-count="2">
+              <p style="margin:0;font:400 15px/1.6 Inter,Roboto,system-ui,sans-serif;color:#3B3B3B;text-wrap:pretty">{{ p.text }}</p>
+            </sc-for>
+            <div style="display:flex;flex-direction:column;gap:10px;padding:16px 18px;background:#F6F6F6;border-radius:6px">
+              <sc-for list="{{ m.details }}" as="d" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px">
+                  <span style="font:500 13px/1.5 Inter,Roboto,system-ui,sans-serif;color:#525252">{{ d.k }}</span>
+                  <span style="font:500 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#1C1C1C">{{ d.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <a href="{{ m.ctaHref }}" onClick="{{ m.ctaClick }}" style="align-self:flex-start;height:44px;box-sizing:border-box;padding:0 22px;border-radius:22px;background:#0B9EDD;color:#FFFFFF;display:flex;align-items:center;font:600 14px/1 Inter,Roboto,system-ui,sans-serif;text-decoration:none">{{ m.cta }}</a>
+            <p style="margin:8px 0 0;padding-top:16px;border-top:1px solid #EEEEEE;font:400 12px/1.55 Inter,Roboto,system-ui,sans-serif;color:#525252">{{ m.footer }}</p>
+          </div>
+        </div>
+      </article>
+    </main>
+  </div>
+</div>
+<sc-if value="{{ tour.on }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:2147483000;font-family:Inter,Roboto,system-ui,sans-serif;text-align:left">
+<sc-if value="{{ tour.open }}" hint-placeholder-val="{{ true }}">
+<section aria-label="Tutorial step" style="width:420px;max-width:calc(100vw - 48px);box-sizing:border-box;background:#272727;color:#FFFFFF;border:1px solid #3B3B3B;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.35);padding:16px 18px 16px 20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="min-width:0;font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tour.useCase }}</span>
+<div style="display:flex;align-items:center;gap:2px;flex:none">
+<span style="font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB;white-space:nowrap;margin-right:4px">{{ tour.stepLabel }}</span>
+<button type="button" aria-label="Minimize tutorial" onClick="{{ tour.toggle }}" style="width:32px;height:32px;border:0;border-radius:16px;background:transparent;color:#DBDBDB;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 5.5 7 9.5 11 5.5"></path></svg></button>
+<a href="Tutorial.dc.html" onClick="{{ tour.exit }}" aria-label="Exit tutorial" style="width:32px;height:32px;border-radius:16px;color:#DBDBDB;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l10 10M12 2 2 12"></path></svg></a>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="padding:2px 8px;border-radius:999px;background:{{ tour.roleBg }};color:#FFFFFF;font:600 11px/1.6 Inter,Roboto,system-ui,sans-serif;letter-spacing:0.02em">{{ tour.role }}</span><span style="font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB">in {{ tour.app }}</span></div>
+<h2 style="margin:0;font:600 17px/1.35 Inter,Roboto,system-ui,sans-serif;color:#FFFFFF">{{ tour.title }}</h2>
+<p style="margin:0;font:400 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#DBDBDB;text-wrap:pretty">{{ tour.text }}</p>
+<sc-if value="{{ tour.done }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font:600 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#8DDFFF">{{ tour.doneText }}</p></sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<div aria-hidden="true" style="flex:1;min-width:0;display:flex;gap:4px;align-items:center">
+<sc-for list="{{ tour.dots }}" as="d" hint-placeholder-count="6"><span style="flex:1;height:4px;border-radius:2px;background:{{ d.bg }}"></span></sc-for>
+</div>
+<a href="{{ tour.prevHref }}" onClick="{{ tour.prev }}" aria-label="{{ tour.prevLabel }}" title="{{ tour.prevLabel }}" style="flex:none;width:44px;height:44px;box-sizing:border-box;border-radius:22px;border:1px solid #525252;color:#FFFFFF;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"></path></svg></a>
+<a href="{{ tour.nextHref }}" onClick="{{ tour.next }}" style="flex:none;height:44px;box-sizing:border-box;padding:0 16px 0 18px;border-radius:22px;background:#0B9EDD;color:#FFFFFF;display:flex;align-items:center;gap:8px;font:600 14px/1 Inter,Roboto,system-ui,sans-serif;text-decoration:none;box-shadow:{{ tour.nextRing }}">{{ tour.nextLabel }}<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></a>
+</div>
+<span style="font:400 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB">{{ tour.nextHint }}</span>
+</section>
+</sc-if>
+<sc-if value="{{ tour.closed }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ tour.toggle }}" aria-label="Show tutorial step" style="height:44px;display:flex;align-items:center;gap:10px;padding:0 18px;border:1px solid #3B3B3B;border-radius:22px;background:#272727;color:#FFFFFF;box-shadow:0 8px 24px rgba(0,0,0,0.3);font:600 13px/1 Inter,Roboto,system-ui,sans-serif;cursor:pointer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.5 7 4.5 11 8.5"></path></svg>{{ tour.shortLabel }}</button>
+</sc-if>
+</div>
+</sc-if>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900},"message":{"editor":"enum","options":["Credit request","Budget granted","Project Owner added","Credit access given","Added to department team"],"default":"Credit request","tsType":"string"}}'>
+// The emails come from shared/tour.js. Outside a walkthrough, the Message tweak picks one.
+const BOARD = 'Email.dc.html';
+const IMAGES = ['mychaos-prototype/assets/images/mychaosgroup-logo.svg'];
+const T = () => window.ChaosTour;
+
+class Component extends DCLogic {
+  timers = {};
+  componentDidMount() {
+    if (!T()) this.timers.tour = setInterval(() => { if (T()) { clearInterval(this.timers.tour); this.forceUpdate(); } }, 50);
+  }
+  componentWillUnmount() { Object.values(this.timers).forEach((t) => clearInterval(t)); }
+  renderVals() {
+    const t = T();
+    if (!t) return { ready: false, to: {}, inbox: [], m: { paras: [], details: [] }, tour: { on: false } };
+    const E = t.EMAILS;
+    const step = t.stepFor(BOARD);
+    const card = t.card(BOARD, { apply: () => this.forceUpdate(), refresh: () => this.forceUpdate() });
+    let id = step && step.email;
+    if (!id || !E[id]) id = Object.keys(E).find((k) => E[k].label === this.props.message) || 'request';
+    const msg = E[id];
+    // In a walkthrough the inbox holds what this person has received so far in it.
+    const ids = step
+      ? step.useCase.steps.slice(0, step.index + 1).map((s) => s.email).filter((k) => k && E[k] && E[k].to === msg.to)
+      : Object.keys(E).filter((k) => E[k].to === msg.to);
+    const inbox = ids.reverse().map((k) => ({ ...E[k], bg: k === id ? '#E6F5FC' : '#FFFFFF', bar: k === id ? '#0B9EDD' : 'transparent' }));
+    return {
+      ready: true,
+      to: t.PEOPLE[msg.to],
+      inbox,
+      m: {
+        ...msg,
+        paras: msg.paras.map((text) => ({ text })),
+        details: msg.details.map(([k, v]) => ({ k, v })),
+        ctaHref: card.on ? card.nextHref : msg.ctaBoard,
+        ctaClick: card.on ? card.next : undefined,
+      },
+      tour: card,
+    };
+  }
+}
+</script>
+</body>
+</html>
