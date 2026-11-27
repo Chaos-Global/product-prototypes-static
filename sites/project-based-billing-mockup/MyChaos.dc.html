@@ -4,22 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Chaos</title>
-<script src="./_runtime/react.js"></script>
-<script src="./_runtime/react-dom.js"></script>
-<script src="./_runtime/support.js"></script>
-<script src="shared/credit-model.js"></script>
-<script src="shared/tour.js"></script>
-<script src="mychaos-prototype/assets/js/data.js"></script>
-<script src="mychaos-prototype/assets/js/store.js"></script>
+<script src="react.js"></script>
+<script src="react-dom.js"></script>
+<script src="support.js"></script>
+<script src="credit-model.js"></script>
+<script src="tour.js"></script>
+<script src="data.js"></script>
+<script src="store.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="mychaos-prototype/assets/css/globals.css">
-<link rel="stylesheet" href="mychaos-prototype/assets/css/mychaos.css">
-<link rel="stylesheet" href="mychaos-prototype/assets/css/prototype.css">
+<link rel="stylesheet" href="globals.css">
+<link rel="stylesheet" href="mychaos.css">
+<link rel="stylesheet" href="prototype.css">
 <style>.mc-tip{transform:translateX(-50%)}
 /* Eris DropdownField and DropdownMenu (ds/eris), in the Eris light theme: neutral-0 field, neutral-200 border, accent-500 focus, checkmark on the selected option. */
 .eris-select{position:relative;display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;min-width:260px;height:32px;padding:0 6px 0 10px;background:#FFFFFF;border:1px solid #DBDBDB;border-radius:4px;font:400 13px/1.4 Inter,Roboto,system-ui,sans-serif;color:#1C1C1C;cursor:pointer;transition:border-color .12s,background-color .12s,box-shadow .12s}
@@ -115,7 +115,7 @@ html,body,#root{overflow-x:clip;max-width:100%}
       <div class="sub-menu-background {{ v.routeId }}"></div>
     </div>
   </div>
-  <a class="logo" href="#" onClick="{{ v.goCredits }}"><img src="mychaos-prototype/assets/images/mychaosgroup-logo.svg" alt="Chaos Group"></a>
+  <a class="logo" href="#" onClick="{{ v.goCredits }}"><img src="mychaosgroup-logo.svg" alt="Chaos Group"></a>
   <div class="side-menu"><div class="mui-grid-container account-info" title="{{ v.admin.title }}"><div class="name">{{ v.admin.initials }}</div></div></div>
 </header>
 <div id="page-content" class="{{ v.contentCls }}">
@@ -155,9 +155,9 @@ html,body,#root{overflow-x:clip;max-width:100%}
               <sc-for list="{{ v.cr.named.rows }}" as="r" hint-placeholder-count="1">
                 <div class="row entry-row">
                   <div class="cell col-product">
-                    <sc-if value="{{ r.isVeras }}" hint-placeholder-val="{{ true }}"><img src="mychaos-prototype/assets/images/product-icons/veras.svg" alt="" class="product-icon"></sc-if>
-                    <sc-if value="{{ r.isVray }}" hint-placeholder-val="{{ false }}"><img src="mychaos-prototype/assets/images/product-icons/vray.svg" alt="" class="product-icon"></sc-if>
-                    <sc-if value="{{ r.isCredits }}" hint-placeholder-val="{{ false }}"><img src="mychaos-prototype/assets/images/product-icons/chaoscredits.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isVeras }}" hint-placeholder-val="{{ true }}"><img src="veras.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isVray }}" hint-placeholder-val="{{ false }}"><img src="vray.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isCredits }}" hint-placeholder-val="{{ false }}"><img src="chaoscredits.svg" alt="" class="product-icon"></sc-if>
                     <div class="product-text"><span class="product-name">{{ r.productName }}</span><span class="product-subtitle">{{ r.subtitle }}<sc-if value="{{ r.unassigned }}" hint-placeholder-val="{{ false }}"><span class="unassigned-badge"><span class="dot"></span>{{ r.unassigned }} unassigned</span></sc-if></span></div>
                   </div>
                   <div class="cell col-remaining"><span class="remaining-value">{{ r.balance }}</span><span class="remaining-total"> / {{ r.total }}</span></div>
@@ -190,9 +190,9 @@ html,body,#root{overflow-x:clip;max-width:100%}
                 <div class="row entry-row">
                   <div class="cell col-rank"><span class="rank-usage" onMouseEnter="{{ r.tipIn }}" onMouseLeave="{{ v.tipOut }}"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="7" fill="none" stroke="#ededed" stroke-width="3"></circle><circle cx="9" cy="9" r="7" fill="none" stroke="{{ r.ringColor }}" stroke-width="3" stroke-dasharray="{{ r.dash }}" transform="rotate(-90 9 9)"></circle></svg></span></div>
                   <div class="cell col-product">
-                    <sc-if value="{{ r.isVeras }}" hint-placeholder-val="{{ false }}"><img src="mychaos-prototype/assets/images/product-icons/veras.svg" alt="" class="product-icon"></sc-if>
-                    <sc-if value="{{ r.isVray }}" hint-placeholder-val="{{ true }}"><img src="mychaos-prototype/assets/images/product-icons/vray.svg" alt="" class="product-icon"></sc-if>
-                    <sc-if value="{{ r.isCredits }}" hint-placeholder-val="{{ false }}"><img src="mychaos-prototype/assets/images/product-icons/chaoscredits.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isVeras }}" hint-placeholder-val="{{ false }}"><img src="veras.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isVray }}" hint-placeholder-val="{{ true }}"><img src="vray.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isCredits }}" hint-placeholder-val="{{ false }}"><img src="chaoscredits.svg" alt="" class="product-icon"></sc-if>
                     <div class="product-text"><span class="product-name">{{ r.productName }}</span><span class="product-subtitle">{{ r.subtitle }}</span></div>
                   </div>
                   <div class="cell col-remaining"><span class="remaining-value">{{ r.balance }}</span><span class="remaining-total"> / {{ r.total }}</span></div>
@@ -688,14 +688,14 @@ html,body,#root{overflow-x:clip;max-width:100%}
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000},&quot;release&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Full&quot;,&quot;MVP&quot;],&quot;default&quot;:&quot;Full&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 // Images used in the page. Listing them here lets the canvas serve them.
 const PROTOTYPE_IMAGES = [
-  'mychaos-prototype/assets/images/mychaosgroup-logo.svg',
-  'mychaos-prototype/assets/images/product-icons/chaoscredits.svg',
-  'mychaos-prototype/assets/images/product-icons/veras.svg',
-  'mychaos-prototype/assets/images/product-icons/vray.svg',
+  'mychaosgroup-logo.svg',
+  'chaoscredits.svg',
+  'veras.svg',
+  'vray.svg',
 ];
 // The page is drawn from this file's markup. Data and rules come from
-// mychaos-prototype/assets/js/store.js (the prototype backend) and
-// shared/credit-model.js (names, budgets, and which features show in the MVP).
+// store.js (the prototype backend) and
+// credit-model.js (names, budgets, and which features show in the MVP).
 const ROUTE_IDS = { credits: 'ORGANIZATION_CONSUMPTION_CREDITS', usage: 'ORGANIZATION_CONSUMPTION_CREDITS_USAGE', teams: 'ORGANIZATION_TEAMS', projects: 'ORGANIZATION_PROJECTS' };
 const ORG_ITEMS = [
   { title: 'Users & Product assignments' },
@@ -731,7 +731,7 @@ const DEGRADED_REASONS = {
 const NAME_ERROR = 'Enter a name of up to 100 characters.';
 const NO_TEAM = '__none';
 
-// The guided walkthroughs (shared/tour.js) open the team editor filled in for each step.
+// The guided walkthroughs (tour.js) open the team editor filled in for each step.
 const BOARD = 'MyChaos.dc.html';
 const TR = () => window.ChaosTour;
 const PX = () => window.Proto;
