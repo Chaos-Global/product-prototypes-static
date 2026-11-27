@@ -1,0 +1,127 @@
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button,
+label {
+  cursor: pointer;
+}
+
+
+:root {
+  /* Colours */
+  --true-black: #000;
+  --black: #1c1c1c;
+  --darker-gray: #3b3b3b;
+  --dark-gray: #525252;
+  --gray: #ababab;
+  --light-gray: #dbdbdb;
+  --lighter-gray: #ededed;
+  --white: #fff;
+  --true-white: #fff;
+  --dark-grey: var(--darker-gray);
+  --med-grey: var(--dark-gray);
+  --grey: var(--gray);
+  --light-grey: var(--light-gray);
+  --blue: #0db5ff;
+  --dark-blue: #17a2df;
+  --darker-blue: #1681bd;
+  --red: #e1161c;
+  --green: #77b22a;
+  --error: #e1161c;
+
+  /* Grid */
+  --container-width: 100%;
+  --gutter: 30px;
+
+  /* Spacings */
+  --spacing-md: 40px;
+  --spacing-xs: calc(var(--spacing-md) / 4);
+  --spacing-sm: calc(var(--spacing-md) / 2);
+  --spacing-lg: calc(var(--spacing-md) * 2);
+
+  /* Typography */
+  --base-font: 'Poppins', sans-serif;
+  --heading-font: 'Poppins', sans-serif;
+  --fs-base: 13px;
+  --base-line-height: 1.55;
+  --fraction: 1.333;
+
+  --fs-small: calc(var(--fs-base) / var(--fraction));
+  --fs-tiny: calc(var(--fs-small) / var(--fraction));
+  --fs-medium: calc(var(--fs-base) * var(--fraction));
+  --fs-large: calc(var(--fs-medium) * var(--fraction));
+  --fs-xlarge: calc(var(--fs-large) * var(--fraction));
+  --fs-xxlarge: calc(var(--fs-xlarge) * var(--fraction));
+  --fs-huge: calc(var(--fs-xxlarge) * var(--fraction));
+}
+
+/* Desktop */
+@media (min-width: 1184px) {
+  :root {
+    --spacing-md: 74px;
+  }
+}
+
+/* Small laptop */
+@media (min-width: 1184px) and (max-width: 1440px) {
+  :root {
+    --container-width: calc(1200px + var(--gutter));
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1441px) {
+  :root {
+    --container-width: calc(1410px + var(--gutter));
+    --spacing-md: 80px;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--heading-font);
+  line-height: 1.4;
+  font-weight: 700;
+  text-transform: none;
+}
+
+h1 {
+  font-size: var(--fs-huge);
+  line-height: 1.2;
+}
+h2 {
+  font-size: var(--fs-xxlarge);
+}
+h3 {
+  font-size: var(--fs-xlarge);
+}
+h4 {
+  font-size: var(--fs-large);
+}
+h5 {
+  font-size: var(--fs-medium);
+}
+h6 {
+  font-size: var(--fs-base);
+}
+
+h6 {
+  font-family: var(--base-font);
+  font-weight: bold;
+  text-transform: none;
+}
+
+body {
+  font-family: var(--base-font);
+  font-size: var(--fs-base);
+  line-height: var(--base-line-height);
+  width: 100vw;
+}
