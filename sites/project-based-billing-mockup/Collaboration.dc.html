@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collaboration</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="ds/eris/colors_and_type.css">
+<link rel="stylesheet" href="ds/eris/components/eris/fig-tokens.css">
+<script src="ds/eris/_ds_bundle.js"></script>
+<script src="shared/credit-model.js"></script>
+<script src="shared/tour.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap">
+<style>html,body{overflow:hidden}body{margin:0;background:#F2F2F2;font-family:Roboto,Inter,sans-serif}a{color:#0B9EDD}a:hover{color:#1681BD}textarea:focus,input:focus{outline:none}
+.cc-coin{position:relative;display:inline-flex;color:#0B9EDD;cursor:default;outline:none;border-radius:8px}
+.cc-coin:focus-visible{box-shadow:0 0 0 2px #0B9EDD}
+.cc-tip{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);width:max-content;max-width:240px;padding:6px 10px;border-radius:4px;background:#323232;color:#FFFFFF;font:400 12px/1.4 Inter,sans-serif;white-space:normal;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .12s;z-index:5}
+.cc-coin:hover .cc-tip,.cc-coin:focus .cc-tip{opacity:1;visibility:visible}
+.cc-coin-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;margin:-5px 0;padding:0;border:0;border-radius:12px;background:transparent;color:#BDBDBD;cursor:pointer;outline:none}
+.cc-coin-btn.on{color:#0B9EDD}
+.cc-coin-btn:hover{background:#E6E6E6;color:#0B9EDD}
+.cc-coin-btn:focus-visible{box-shadow:0 0 0 2px #0B9EDD}
+.cc-coin-btn:hover .cc-tip,.cc-coin-btn:focus-visible .cc-tip{opacity:1;visibility:visible}</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B9EDD"></rect><text x="50" y="64" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="700" fill="#fff">V</text></svg></template>
+</helmet>
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div style="position:absolute;left:0;top:0;transform-origin:0 0;transform:scale({{ fitScale }});width:1918px;height:4000px;background:linear-gradient(to right,#FCFCFC 0 328px,#DCDCDC 328px 330px,#F2F2F2 330px)"></div>
+<div onClick="{{ cc.closeAll }}" style="position:absolute;left:0;top:0;transform-origin:0 0;transform:scale({{ fitScale }});width:1918px;height:1053px;overflow:hidden;font-family:Inter,sans-serif;color:#1a1a1a">
+      <img src="assets/cloud-project.png" style="display:block;width:1918px;height:1053px" draggable="false">
+
+      <div style="position:absolute;left:1570px;top:14px;width:150px;height:38px;background:#fff"></div>
+      <div aria-hidden="true" style="position:absolute;left:1736px;top:21px;width:24px;height:24px;border-radius:12px;background:#E7E7E7;display:flex;align-items:center;justify-content:center;font:400 13px Inter;color:#333333">{{ cc.youInitials }}</div>
+      <div aria-hidden="true" style="position:absolute;left:43px;top:112px;width:40px;height:40px;border-radius:20px;background:#E7E7E7;display:flex;align-items:center;justify-content:center;font:400 16px Inter;color:#424242">{{ cc.orgInitials }}</div>
+      <div style="position:absolute;left:96px;top:114px;width:170px;height:36px;background:#FCFCFC;display:flex;align-items:center;font:500 19px Inter;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cc.orgName }}</div>
+      <div style="position:absolute;left:500px;top:101px;width:320px;height:34px;background:#F6F6F6;display:flex;align-items:center;gap:8px;padding-left:4px;box-sizing:border-box;font:600 19px Inter;color:#1a1a1a;white-space:nowrap">{{ cc.projectName }}<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#1a1a1a" stroke-width="1.6" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"></path></svg></div>
+      <div onClick="{{ cc.openPanel }}" style="position:absolute;right:204px;top:18px;height:30px;display:flex;align-items:center;gap:6px;padding:0 9px;border:1px solid {{ cc.chipBorder }};background:{{ cc.chipBg }};border-radius:4px;cursor:pointer;box-sizing:border-box;white-space:nowrap" style-hover="filter:brightness(0.97)">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="{{ cc.color }}" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg>
+        <span style="font:600 13px Inter;color:{{ cc.color }}">{{ cc.chipFmt }} Credits</span>
+      </div>
+      <div title="Share" onClick="{{ cc.openShare }}" style="position:absolute;left:1852px;top:101px;width:34px;height:34px;border-radius:17px;cursor:pointer" style-hover="background:rgba(0,0,0,0.06)"></div>
+
+      <sc-if value="{{ cc.panel }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ cc.panelClick }}" style="position:absolute;right:204px;top:54px;width:{{ cc.popW }};max-height:980px;overflow-y:auto;background:#FFFFFF;border:1px solid #7FCBEA;border-radius:4px;box-shadow:0 6px 18px rgba(17,17,17,0.12);padding:14px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px;font-family:Inter,sans-serif;color:#212121;cursor:default">
+          <div style="display:flex;align-items:center;gap:8px;font:600 13px Inter;color:#212121"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#424242" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg>Credit balance</div>
+
+          <sc-if value="{{ cc.noBudget }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#F5F5F5;border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:6px">
+              <span style="font:600 13px Inter">Named credits</span>
+              <span style="font:400 12.5px/1.45 Inter;color:#424242;text-wrap:pretty">This is your monthly credit allowance. These credits are accessible only for your user account.</span>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font:400 13px Inter"><span>Current usage</span><span><b style="font-weight:700">{{ cc.named.leftFmt }}</b> / {{ cc.named.totalFmt }} left</span></div>
+              <div style="height:3px;background:#E0E0E0;border-radius:2px"><div style="height:3px;width:{{ cc.named.pct }};background:#0B9EDD;border-radius:2px"></div></div>
+              <span style="margin-top:6px;font:400 12.5px Inter;color:#616161">Next reset: {{ cc.resetDate }}</span>
+            </div>
+            <div style="background:#F5F5F5;border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:6px">
+              <span style="font:600 13px Inter">Shared pool</span>
+              <span style="font:400 12.5px/1.45 Inter;color:#424242;text-wrap:pretty">This is the amount of credits you are allowed to use from a <b style="font-weight:700;color:#212121">common shared pool</b>. The allowance is limited by your credit limit and the available credits in your organization.</span>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font:400 13px Inter"><span>Current usage</span><span><b style="font-weight:700">{{ cc.leftFmt }}</b> / {{ cc.totalFmt }} left</span></div>
+              <div style="height:3px;background:#E0E0E0;border-radius:2px"><div style="height:3px;width:{{ cc.pct }};background:#0B9EDD;border-radius:2px"></div></div>
+              <span style="margin-top:6px;font:400 12.5px Inter;color:#616161">Next reset: {{ cc.resetDate }}</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ cc.hasBudget }}" hint-placeholder-val="{{ true }}">
+            <div style="background:#F5F5F5;border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px"><span style="min-width:0;font:600 13px Inter;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ cc.teamName }}</span><span style="flex:none;font:400 12.5px Inter;color:#616161">Team budget</span></div>
+              <span style="font:400 12.5px/1.45 Inter;color:#424242;text-wrap:pretty">{{ cc.budgetDesc }}</span>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;font:400 13px Inter"><span>Current usage</span><span><b style="font-weight:700;color:{{ cc.color }}">{{ cc.leftFmt }}</b> / {{ cc.totalFmt }} left</span></div>
+              <div style="height:3px;background:#E0E0E0;border-radius:2px"><div style="height:3px;width:{{ cc.pct }};background:{{ cc.barColor }};border-radius:2px"></div></div>
+              <span style="margin-top:6px;font:400 12.5px Inter;color:#616161">{{ cc.resetLine }}</span>
+              <sc-if value="{{ cc.teamBudget }}" hint-placeholder-val="{{ true }}">
+                <div style="margin-top:8px;background:#FFF8E6;border:1px solid #F3D27A;border-radius:4px;padding:10px 12px;font:400 12.5px/1.45 Inter;color:#6B4A00;display:flex;gap:8px;align-items:flex-start;text-wrap:pretty"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#B26A00" stroke-width="1.5" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M8 1.8 15 14H1z" stroke-linejoin="round"></path><path d="M8 6.2v3.6M8 11.6v.4" stroke-linecap="round"></path></svg><span>This budget is shared by all projects in the {{ cc.teamName }} team. Credits used on this project reduce what is left for the team's other projects.</span></div>
+              </sc-if>
+              <sc-if value="{{ cc.exhausted }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:8px;background:#FDECEC;border:1px solid #F5C2C3;border-radius:4px;padding:10px 12px;font:400 12.5px/1.45 Inter;color:#7A1518;text-wrap:pretty">This project's credits are used up. Generating in Veras, Cosmos and Cloud rendering is blocked for this project until a License Manager adds credits.</div>
+              </sc-if>
+            </div>
+
+            <sc-if value="{{ cc.hasTeam }}" hint-placeholder-val="{{ true }}">
+            <button type="button" onClick="{{ cc.openAccess }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;box-sizing:border-box;padding:12px 14px;border:0;border-radius:4px;background:#F5F5F5;cursor:pointer;text-align:left;font:inherit" style-hover="background:#EEEEEE">
+              <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:600 13px Inter;color:#212121">Credit access</span><span style="font:400 12.5px Inter;color:#616161">{{ cc.accessCount }} can use these credits</span></span>
+              <span style="font:600 13px Inter;color:#0B9EDD;white-space:nowrap">Manage in Share</span>
+            </button>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ cc.pending }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#E6F5FC;border:1px solid #B8E2F5;border-radius:4px;padding:10px 12px;font:400 12.5px/1.45 Inter;color:#0A4A6B;display:flex;justify-content:space-between;gap:12px"><span>Request pending · {{ cc.pendingFmt }} credits</span><span onClick="{{ cc.cancelReq }}" style="font-weight:600;cursor:pointer">Cancel</span></div>
+          </sc-if>
+
+          <div style="position:relative;display:flex;justify-content:flex-end;align-items:center;gap:12px">
+            <sc-if value="{{ cc.noBudget }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ cc.toggleGet }}" style="height:30px;display:flex;align-items:center;gap:8px;padding:0 12px;border:1px solid #7FCBEA;background:#EEF6FA;border-radius:2px;font:500 13px Inter;color:#212121;cursor:pointer" style-hover="background:#E1F0F8">Get credits<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#212121" stroke-width="1.6" style="transform:{{ cc.getRot }}" aria-hidden="true"><path d="M3 7.5 6 4.5 9 7.5"></path></svg></div>
+              <sc-if value="{{ cc.getMenu }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;right:-1px;top:38px;width:220px;background:#FFFFFF;border:1px solid #7FCBEA;border-radius:4px;box-shadow:0 6px 18px rgba(17,17,17,0.12);padding:6px 0;z-index:3">
+                  <div onClick="{{ cc.buyCredits }}" style="padding:10px 14px;font:600 13px Inter;color:#212121;cursor:pointer" style-hover="background:#F5F5F5">Buy credits</div>
+                  <div onClick="{{ cc.openReq }}" style="padding:10px 14px;display:flex;flex-direction:column;gap:2px;cursor:pointer" style-hover="background:#F5F5F5"><span style="font:600 13px Inter;color:#212121">Request credits</span><span style="font:400 12.5px Inter;color:#424242">(Applicable for Organizations)</span></div>
+                </div>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ cc.hasBudget }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ cc.openReq }}" style="height:30px;display:flex;align-items:center;padding:0 12px;border:1px solid #7FCBEA;background:#EEF6FA;border-radius:2px;font:500 13px Inter;color:#212121;cursor:pointer" style-hover="background:#E1F0F8">Request credits</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ cc.share }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ cc.closeShare }}" style="position:absolute;inset:0;background:rgba(0,0,0,0.4)">
+          <div onClick="{{ cc.shareClick }}" style="position:absolute;left:644px;top:127px;width:627px;height:803px;background:#fff;box-sizing:border-box;padding:30px 33px 28px;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 19px Inter">Share project</span><div onClick="{{ cc.closeShare }}" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:14px" style-hover="background:#F2F2F2"><svg width="14" height="14" viewBox="0 0 14 14" stroke="#424242" stroke-width="1.6"><path d="M2 2l10 10M12 2 2 12"></path></svg></div></div>
+            <div style="display:flex;align-items:center;gap:12px;margin-top:18px;font:400 19px Inter"><svg width="26" height="22" viewBox="0 0 26 22" fill="none" stroke="#424242" stroke-width="1.6"><rect x="1" y="3" width="24" height="17" rx="1"></rect><path d="M1 16l7-6 6 5 4-3 7 6"></path><path d="M4 1h18"></path></svg>{{ cc.projectName }}</div>
+            <div style="margin-top:22px;border:1px dashed #D0D0D0;border-radius:4px;padding:12px 10px 10px;display:flex;flex-direction:column;gap:12px">
+              <span style="font:600 13px Inter">Add members</span>
+              <div style="display:flex;gap:10px;align-items:stretch;background:#F2F2F2;padding:8px">
+                <div style="flex:1;min-height:50px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start">
+                  <sc-for list="{{ cc.chips }}" as="c" hint-placeholder-count="1">
+                    <span style="display:flex;align-items:center;gap:8px;height:26px;padding:0 8px;background:#fff;border:1px solid #E0E0E0;font:400 13px Inter">{{ c.email }}<span onClick="{{ c.remove }}" style="cursor:pointer;display:flex"><svg width="11" height="11" viewBox="0 0 14 14" stroke="#424242" stroke-width="1.6"><path d="M2 2l10 10M12 2 2 12"></path></svg></span></span>
+                  </sc-for>
+                  <input value="{{ cc.draft }}" onInput="{{ cc.setDraft }}" onKeyDown="{{ cc.draftKey }}" placeholder="{{ cc.draftPh }}" style="flex:1;min-width:140px;height:26px;border:0;background:transparent;font:400 13px Inter">
+                </div>
+                <div style="position:relative;align-self:flex-start"><div onClick="{{ cc.toggleRole }}" style="height:30px;display:flex;align-items:center;gap:6px;padding:0 8px;border:1px solid {{ cc.roleBorder }};background:#fff;font:400 13px Inter;cursor:pointer">{{ cc.inviteRole }}<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#424242" stroke-width="1.6"><path d="M3 4.5 6 7.5 9 4.5"></path></svg></div>
+                  <sc-if value="{{ cc.roleMenu }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;left:-48px;top:36px;width:120px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,0.14);padding:6px 0;z-index:2">
+                      <sc-for list="{{ cc.roles }}" as="r" hint-placeholder-count="2"><div onClick="{{ r.pick }}" style="padding:10px 16px;font:400 13px Inter;cursor:pointer;color:{{ r.color }}" style-hover="background:#F5F5F5">{{ r.label }}</div></sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+                <div onClick="{{ cc.invite }}" style="align-self:flex-start;height:30px;display:flex;align-items:center;gap:6px;padding:0 14px;background:#0B9EDD;color:#fff;font:600 13px Inter;cursor:pointer;border-radius:2px" style-hover="background:#1681BD"><svg width="12" height="12" viewBox="0 0 14 14" stroke="#fff" stroke-width="2"><path d="M7 1v12M1 7h12"></path></svg>Invite</div>
+              </div>
+              <sc-if value="{{ cc.ownerAccess }}" hint-placeholder-val="{{ true }}">
+              <label style="display:flex;align-items:center;gap:8px;font:400 13px Inter;color:{{ cc.inviteCreditColor }};cursor:{{ cc.inviteCreditCursor }}"><input type="checkbox" checked="{{ cc.inviteCredits }}" disabled="{{ cc.inviteCreditDisabled }}" onChange="{{ cc.toggleInviteCredits }}" style="width:16px;height:16px;margin:0;accent-color:#0B9EDD"><span style="display:flex;color:{{ cc.inviteCoinColor }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg></span>{{ cc.inviteCreditText }}</label>
+              </sc-if>
+            </div>
+            <div style="height:1px;background:#E8E8E8;margin-top:32px"></div>
+            <div style="display:flex;gap:24px;margin-top:14px;border-bottom:1px solid #E8E8E8">
+              <sc-for list="{{ cc.shareTabs }}" as="t" hint-placeholder-count="2">
+                <div onClick="{{ t.pick }}" style="padding:8px 0 9px;font:600 13px Inter;cursor:pointer;color:{{ t.color }};border-bottom:2px solid {{ t.line }};margin-bottom:-1px">{{ t.label }}</div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ cc.tabMembers }}" hint-placeholder-val="{{ true }}">
+            <sc-if value="{{ cc.hasTeam }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:12px;font:400 12px/1.5 Inter;color:#616161"><span style="display:flex;align-items:center;gap:6px"><span style="display:flex;color:#0B9EDD"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg></span>{{ cc.shareCreditText }}</span><sc-if value="{{ cc.noOwnerAccess }}" hint-placeholder-val="{{ false }}"><a href="MyChaos.dc.html" onClick="{{ cc.toMyChaosTeams }}" style="font:600 13px Inter;color:#0B9EDD;text-decoration:none;white-space:nowrap">Manage ↗</a></sc-if></div>
+            </sc-if>
+            <sc-if value="{{ cc.noTeam }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:12px;padding:10px 12px;background:#F5F5F5;font:400 12px/1.5 Inter;color:#616161;text-wrap:pretty">{{ cc.noTeamNote }}</div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;overflow-y:auto;max-height:260px">
+              <sc-for list="{{ cc.members }}" as="m" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:36px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:7px 8px;background:#F5F5F5">
+                  <span style="width:36px;height:36px;border-radius:18px;background:#E4E4E4;display:flex;align-items:center;justify-content:center;font:400 15px Inter;color:#424242">{{ m.init }}</span>
+                  <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="display:flex;align-items:center;gap:6px;font:500 13px Inter"><span>{{ m.label }}</span><sc-if value="{{ m.canToggle }}" hint-placeholder-val="{{ false }}"><button type="button" class="cc-coin-btn {{ m.coinCls }}" onClick="{{ m.toggleCredit }}" aria-pressed="{{ m.credits }}" aria-label="{{ m.coinLabel }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg><span class="cc-tip" role="tooltip">{{ m.coinLabel }}</span></button></sc-if><sc-if value="{{ m.coin }}" hint-placeholder-val="{{ false }}"><span class="cc-coin" tabindex="0" aria-label="{{ cc.coinTip }}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg><span class="cc-tip" role="tooltip">{{ cc.coinTip }}</span></span></sc-if></span><span style="font:400 11px Inter;color:#757575">{{ m.email }}</span></div>
+                  <span style="width:96px;display:flex;justify-content:space-between;align-items:center;font:400 12px Inter;color:#9E9E9E;padding:0 8px">{{ m.role }}<sc-if value="{{ m.you }}" hint-placeholder-val="{{ false }}"><svg width="13" height="14" viewBox="0 0 13 14" fill="none" stroke="#9E9E9E" stroke-width="1.4"><rect x="1" y="6" width="11" height="7" rx="1"></rect><path d="M3.5 6V4a3 3 0 0 1 6 0v2"></path></svg></sc-if></span>
+                </div>
+              </sc-for>
+            </div>
+            </sc-if>
+            <div style="flex:1"></div>
+            <div style="display:grid;grid-template-columns:44px 104px minmax(0,1fr);align-items:center;padding-bottom:16px;border-bottom:1px solid #E8E8E8">
+              <svg width="26" height="22" viewBox="0 0 26 22" fill="none" stroke="#424242" stroke-width="1.6"><path d="M2 2h22v14H9l-5 4v-4H2z"></path></svg><span style="font:400 13px Inter">Comments</span>
+              <div style="height:34px;background:#EBEBEB;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font:400 13px Inter">Unlocked<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#424242" stroke-width="1.6"><path d="M3 4.5 6 7.5 9 4.5"></path></svg></div>
+            </div>
+            <div style="display:grid;grid-template-columns:44px 104px minmax(0,1fr);align-items:center;margin-top:16px">
+              <svg width="22" height="26" viewBox="0 0 22 26" fill="none" stroke="#424242" stroke-width="1.6"><rect x="2" y="11" width="18" height="13" rx="1"></rect><path d="M6 11V7a5 5 0 0 1 10 0v4"></path></svg><span style="font:400 13px Inter">Access</span><span style="text-align:right;font:400 12px Inter;color:#9E9E9E">Invited only</span>
+            </div>
+            <div style="display:grid;grid-template-columns:44px 104px minmax(0,1fr) auto;align-items:center;margin-top:18px">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#424242" stroke-width="1.6"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"></path></svg><span style="font:400 13px Inter">Link</span>
+              <span><span onClick="{{ cc.copy }}" style="display:inline-block;padding:6px 10px;border:1px solid #BDBDBD;border-radius:3px;font:600 13px Inter;cursor:pointer" style-hover="background:#F5F5F5">{{ cc.copyLabel }}</span></span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#424242" stroke-width="1.5"><rect x="1" y="1" width="7" height="7"></rect><rect x="12" y="1" width="7" height="7"></rect><rect x="1" y="12" width="7" height="7"></rect><path d="M12 12h3v3h-3zM16 16h3v3"></path></svg>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ cc.req }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ cc.closeReq }}" style="position:absolute;inset:0;background:rgba(0,0,0,0.4)">
+          <div onClick="{{ cc.stop }}" style="position:absolute;left:719px;top:300px;width:480px;background:#fff;border-radius:6px;box-shadow:0 24px 48px -12px rgba(17,17,17,0.32);padding:28px;box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font:600 19px Inter">{{ cc.reqLabel }}</span><span style="font:400 13px Inter;color:#757575">{{ cc.projectName }} · {{ cc.leftFmt }} / {{ cc.totalFmt }} left</span></div>
+            <label style="display:flex;flex-direction:column;gap:6px;font:500 13px Inter">Credits needed<input type="number" min="1" value="{{ cc.reqAmount }}" onInput="{{ cc.setAmount }}" style="height:38px;border:1px solid #BDBDBD;border-radius:4px;padding:0 12px;font:400 15px Inter"></label>
+            <label style="display:flex;flex-direction:column;gap:6px;font:500 13px Inter">Reason (optional)<textarea value="{{ cc.reqNote }}" onInput="{{ cc.setNote }}" placeholder="Client review renders due Friday" style="height:80px;border:1px solid #BDBDBD;border-radius:4px;padding:10px 12px;font:400 14px Inter;resize:none"></textarea></label>
+            <div style="font:400 12px/1.5 Inter;color:#616161">Sent to the License Managers and Admins of your organization.</div>
+            <div style="display:flex;justify-content:flex-end;gap:10px">
+              <div onClick="{{ cc.closeReq }}" style="height:36px;padding:0 16px;border:1px solid #BDBDBD;border-radius:6px;font:600 14px Inter;display:flex;align-items:center;cursor:pointer" style-hover="background:#F5F5F5">Cancel</div>
+              <div onClick="{{ cc.sendReq }}" style="height:36px;padding:0 16px;border-radius:6px;background:#0B9EDD;color:#fff;font:600 14px Inter;display:flex;align-items:center;cursor:pointer" style-hover="background:#1681BD">Send request</div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ cc.toast }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:1124px;bottom:40px;transform:translateX(-50%);background:#323232;color:#fff;font:400 14px Inter;padding:12px 18px;border-radius:4px;box-shadow:0 4px 14px rgba(0,0,0,0.25);white-space:nowrap">{{ cc.toast }}</div>
+      </sc-if>
+    </div>
+<sc-if value="{{ tour.on }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:2147483000;font-family:Inter,Roboto,system-ui,sans-serif;text-align:left">
+<sc-if value="{{ tour.open }}" hint-placeholder-val="{{ true }}">
+<section aria-label="Tutorial step" style="width:420px;max-width:calc(100vw - 48px);box-sizing:border-box;background:#272727;color:#FFFFFF;border:1px solid #3B3B3B;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.35);padding:16px 18px 16px 20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="min-width:0;font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tour.useCase }}</span>
+<div style="display:flex;align-items:center;gap:2px;flex:none">
+<span style="font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB;white-space:nowrap;margin-right:4px">{{ tour.stepLabel }}</span>
+<button type="button" aria-label="Minimize tutorial" onClick="{{ tour.toggle }}" style="width:32px;height:32px;border:0;border-radius:16px;background:transparent;color:#DBDBDB;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 5.5 7 9.5 11 5.5"></path></svg></button>
+<a href="Tutorial.dc.html" onClick="{{ tour.exit }}" aria-label="Exit tutorial" style="width:32px;height:32px;border-radius:16px;color:#DBDBDB;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l10 10M12 2 2 12"></path></svg></a>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="padding:2px 8px;border-radius:999px;background:{{ tour.roleBg }};color:#FFFFFF;font:600 11px/1.6 Inter,Roboto,system-ui,sans-serif;letter-spacing:0.02em">{{ tour.role }}</span><span style="font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB">in {{ tour.app }}</span></div>
+<h2 style="margin:0;font:600 17px/1.35 Inter,Roboto,system-ui,sans-serif;color:#FFFFFF">{{ tour.title }}</h2>
+<p style="margin:0;font:400 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#DBDBDB;text-wrap:pretty">{{ tour.text }}</p>
+<sc-if value="{{ tour.done }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font:600 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#8DDFFF">{{ tour.doneText }}</p></sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<div aria-hidden="true" style="flex:1;min-width:0;display:flex;gap:4px;align-items:center">
+<sc-for list="{{ tour.dots }}" as="d" hint-placeholder-count="6"><span style="flex:1;height:4px;border-radius:2px;background:{{ d.bg }}"></span></sc-for>
+</div>
+<a href="{{ tour.prevHref }}" onClick="{{ tour.prev }}" aria-label="{{ tour.prevLabel }}" title="{{ tour.prevLabel }}" style="flex:none;width:44px;height:44px;box-sizing:border-box;border-radius:22px;border:1px solid #525252;color:#FFFFFF;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"></path></svg></a>
+<a href="{{ tour.nextHref }}" onClick="{{ tour.next }}" style="flex:none;height:44px;box-sizing:border-box;padding:0 16px 0 18px;border-radius:22px;background:#0B9EDD;color:#FFFFFF;display:flex;align-items:center;gap:8px;font:600 14px/1 Inter,Roboto,system-ui,sans-serif;text-decoration:none;box-shadow:{{ tour.nextRing }}">{{ tour.nextLabel }}<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></a>
+</div>
+<span style="font:400 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB">{{ tour.nextHint }}</span>
+</section>
+</sc-if>
+<sc-if value="{{ tour.closed }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ tour.toggle }}" aria-label="Show tutorial step" style="height:44px;display:flex;align-items:center;gap:10px;padding:0 18px;border:1px solid #3B3B3B;border-radius:22px;background:#272727;color:#FFFFFF;box-shadow:0 8px 24px rgba(0,0,0,0.3);font:600 13px/1 Inter,Roboto,system-ui,sans-serif;cursor:pointer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.5 7 4.5 11 8.5"></path></svg>{{ tour.shortLabel }}</button>
+</sc-if>
+</div>
+</sc-if>
+</sc-if>
+<p style="margin: 0">Enter a valid project ID.</p></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1055},&quot;scenario&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Team budget&quot;,&quot;Budget used up&quot;,&quot;No budget yet&quot;],&quot;default&quot;:&quot;Team budget&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;release&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Full&quot;,&quot;MVP&quot;],&quot;default&quot;:&quot;Full&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+// Project and team names, budgets and the feature-to-release map come from
+// shared/credit-model.js, shared with the Veras and My Chaos artboards.
+// Each scenario shows one of the shared projects.
+const SCENARIO_PROJECT = { 'Team budget': 'elm', 'Budget used up': 'civic', 'No budget yet': 'oak' };
+const fmt = n => n.toLocaleString('en-US');
+const stop = e => e && e.stopPropagation && e.stopPropagation();
+const M = () => window.CreditModel;
+// The guided walkthroughs (shared/tour.js) set the project, members and open panels for each step.
+const BOARD = 'Collaboration.dc.html';
+const T = () => window.ChaosTour;
+const initials = s => s.split(/[\s.@+_-]+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join('');
+function ccInit() {
+  const m = M();
+  return { pop: false, panel: false, share: false, req: false, roleMenu: false, addMenu: false, inviteRole: 'Viewer', inviteCredits: false,
+    chips: ['ivailo.iliev@gmail.com'], draft: '', reqAmount: '500', reqNote: '', pending: null, toast: null, copied: false,
+    members: m ? m.PROJECT_MEMBERS.map(x => ({ id: m.PEOPLE[x.person].guid, name: m.PEOPLE[x.person].name, email: m.PEOPLE[x.person].email,
+      role: x.role, you: x.person === 'you', credits: x.teamMember })) : [] };
+}
+
+class Component extends DCLogic {
+  state = { cc: ccInit() };
+  ensureMembers() { if (!this.state.cc.members.length && M()) this.state.cc = { ...this.state.cc, members: ccInit().members }; }
+  timers = {};
+  release() { if (this.tourKey) return 'Full'; return this.props.release === 'MVP' ? 'MVP' : 'Full'; }
+  // When a walkthrough step runs on this artboard, show its project, members and panels.
+  ensureTour() {
+    const t = T();
+    const s = t && t.stepFor(BOARD);
+    const key = s ? s.key : null;
+    if (key === this.tourKey) return;
+    const was = this.tourKey;
+    this.tourKey = key;
+    if (!s) {
+      if (was) { t.applyWorld(M(), null); this.tourProject = null; this.state.cc = ccInit(); }
+      return;
+    }
+    t.applyWorld(M(), s.world);
+    const sc = s.scene || {};
+    const P = t.PEOPLE;
+    const base = ccInit();
+    const members = sc.members
+      ? sc.members.map(([p, role, credits]) => ({ id: P[p].guid, name: P[p].name, email: P[p].email, role, you: p === 'omar', credits: Boolean(credits) }))
+      : base.members;
+    this.tourProject = sc.project || null;
+    this.state.cc = { ...base, chips: [], ...(sc.cc || {}), members };
+  }
+  tourCard() { const t = T(); return t ? t.card(BOARD, { apply: () => this.forceUpdate(), refresh: () => this.forceUpdate() }) : { on: false }; }
+  tourDid(evt) { const t = T(); if (t) t.did(evt); }
+  ccUpd(patch) { this.setState(s => ({ cc: { ...s.cc, ...(typeof patch === 'function' ? patch(s.cc) : patch) } })); }
+  ccToast(t) { this.ccUpd({ toast: t }); this.timers.toast = setTimeout(() => { if (this.state.cc.toast === t) this.ccUpd({ toast: null }); }, 3500); }
+  ccVals() {
+    const c = this.state.cc;
+    const release = this.release();
+    const b = M().balance((this.tourKey && this.tourProject) || SCENARIO_PROJECT[this.props.scenario] || 'elm', release);
+    const team = b.team ? b.team.name : '';
+    const left = Math.max(0, b.left), total = b.amount;
+    const h = fn => e => { stop(e); fn(e); };
+    const ratio = left / total;
+    const low = b.warnings && ratio < 0.2;
+    const color = left === 0 ? '#D32F2F' : low ? '#B26A00' : '#1a1a1a';
+    // Credit access is team membership, so a project without a team has none to show.
+    const hasTeam = !!b.team;
+    const ownerAccess = hasTeam && M().on('projectOwnerAccess', release);
+    const noOwnerAccess = hasTeam && !ownerAccess;
+    const external = m => !m.email.endsWith('@' + M().ORG.domain);
+    const label = m => m.you ? `${m.name} · You` : m.name;
+    const granted = c.members.filter(m => m.credits);
+    const named = M().YOUR_NAMED || { amount: 100, used: 0 };
+    const namedLeft = Math.max(0, named.amount - named.used);
+    const setCredits = (id, v) => this.ccUpd(s => ({ members: s.members.map(m => m.id === id ? { ...m, credits: v } : m), addMenu: false }));
+    const addChip = () => { const e = c.draft.trim().replace(/,$/, ''); if (e && e.includes('@') && !c.chips.includes(e)) this.ccUpd(s => ({ chips: [...s.chips, e], draft: '' })); };
+    // Credit access is shown in the Members tab: a coin next to each person who can use the project's credits.
+    const tab = 'members';
+    const tabs = [['members', `Members · ${c.members.length}`]];
+    return {
+      projectName: b.project.name, teamName: team, youInitials: initials(M().PEOPLE.you.name),
+      orgName: M().ORG.name, orgInitials: initials(M().ORG.name),
+      reset: () => this.setState({ cc: ccInit() }),
+      stop, noop: e => { e.preventDefault(); stop(e); },
+      // Credit balance opens under the credits chip and closes on a click outside it.
+      closeAll: () => (c.pop || c.addMenu || c.panel || c.getMenu) && this.ccUpd({ pop: false, addMenu: false, panel: false, getMenu: false }),
+      panelClick: e => { stop(e); if (c.getMenu || c.addMenu) this.ccUpd({ getMenu: false, addMenu: false }); },
+      pop: c.pop, togglePop: h(() => this.ccUpd({ pop: !c.pop })),
+      // Projects without a budget keep today's popup: named credits and the shared pool.
+      noBudget: !b.budget, hasBudget: !!b.budget, popW: b.budget ? '360px' : '300px',
+      named: { leftFmt: fmt(namedLeft), totalFmt: fmt(named.amount), pct: Math.round(namedLeft / named.amount * 100) + '%' },
+      chipFmt: fmt(b.budget ? left : left + namedLeft),
+      resetDate: M().ORG.nextReset,
+      resetLine: b.budget ? (b.monthly ? `Next reset: ${M().ORG.nextReset}` : 'One-time budget, no reset') : `Next reset: ${M().ORG.nextReset}`,
+      budgetDesc: b.budget
+        ? (left === 0 ? 'The team budget is used up. Request more credits from your License Manager to keep generating in this project.' : 'Credits for this project come from the team budget, set by your License Manager.')
+        : '',
+      getMenu: !!c.getMenu, getRot: c.getMenu ? 'none' : 'rotate(180deg)',
+      toggleGet: h(() => this.ccUpd({ getMenu: !c.getMenu, addMenu: false })),
+      buyCredits: h(() => { this.ccUpd({ getMenu: false }); this.ccToast('Buy credits opens the Chaos store in the real app'); }),
+      leftFmt: fmt(left), totalFmt: fmt(total), pct: Math.round(ratio * 100) + '%', color,
+      barColor: left === 0 ? '#D32F2F' : low ? '#F3B830' : '#0B9EDD',
+      chipBg: left === 0 ? '#FDECEC' : '#EDEDED', chipBorder: c.panel ? '#0B9EDD' : (left === 0 ? '#F5C2C3' : '#EDEDED'),
+      budget: b.budget ? `${team} team` : 'None · each person’s own credit limit applies',
+      renew: b.resetText,
+      exhausted: !!b.budget && left === 0,
+      teamBudget: !!b.budget && b.team.kind === 'department',
+      ownerAccess, noOwnerAccess, hasTeam, noTeam: !hasTeam,
+      noTeamNote: 'This project is not part of a team. Everyone uses their own credit limit when generating.',
+      // Opens My Chaos › Teams on this project's team (read by MyChaos.dc.html).
+      toMyChaosTeams: () => { try { localStorage.setItem('mychaos-open', JSON.stringify({ route: 'teams', team: b.team ? b.team.guid : null, at: Date.now() })); } catch (e) {} },
+      accessNote: b.budget
+        ? `Members of the ${team} team can use these credits. Your License Manager manages team membership in My Chaos.`
+        : `The ${team} team has no budget yet, so everyone generates with their own credit limit. Your License Manager sets team budgets in My Chaos.`,
+      panel: c.panel, openPanel: h(() => this.ccUpd({ panel: !c.panel, pop: false, getMenu: false, addMenu: false })), closePanel: h(() => this.ccUpd({ panel: false, addMenu: false })),
+      reqLabel: b.budget ? 'Request credits' : 'Request project budget',
+      pending: !!c.pending, pendingFmt: c.pending ? fmt(c.pending) : '', cancelReq: h(() => this.ccUpd({ pending: null })),
+      openReq: h(() => this.ccUpd({ req: true, addMenu: false, getMenu: false })), closeReq: h(() => this.ccUpd({ req: false })),
+      req: c.req, reqAmount: c.reqAmount, reqNote: c.reqNote,
+      setAmount: e => this.ccUpd({ reqAmount: e.target.value }), setNote: e => this.ccUpd({ reqNote: e.target.value }),
+      sendReq: h(() => { const n = parseInt(c.reqAmount, 10); if (!n || n < 1) return; this.tourDid('collab.request'); this.ccUpd({ req: false, pending: n, reqNote: '' }); this.ccToast(`Request for ${fmt(n)} credits sent to License Managers`); }),
+      accessCount: `${granted.length} of ${c.members.length} members`,
+      openAccess: h(() => this.ccUpd({ panel: false, getMenu: false, share: true, shareTab: 'members' })),
+      inviteCredits: c.inviteRole !== 'Viewer' && !!c.inviteCredits, inviteCreditDisabled: c.inviteRole === 'Viewer',
+      inviteCreditColor: c.inviteRole === 'Viewer' ? '#9E9E9E' : '#1a1a1a', inviteCreditCursor: c.inviteRole === 'Viewer' ? 'default' : 'pointer',
+      inviteCoinColor: c.inviteRole === 'Viewer' ? '#BDBDBD' : '#0B9EDD',
+      inviteCreditText: c.inviteRole === 'Viewer' ? 'Credit access: Viewers can’t generate, so it’s for Editors only' : `Give credit access, adding them to the ${team} team`,
+      toggleInviteCredits: e => { stop(e); this.ccUpd({ inviteCredits: !c.inviteCredits }); },
+      granted: granted.map(m => ({ init: initials(m.name), label: label(m), email: m.email, role: m.role, revoke: h(() => setCredits(m.id, false)) })),
+      noneGranted: granted.length === 0,
+      addMenu: c.addMenu, toggleAdd: h(() => this.ccUpd({ addMenu: !c.addMenu })),
+      candidates: c.members.filter(m => !m.credits).map(m => ({ init: initials(m.name), label: label(m),
+        hint: external(m) ? 'Not a member of your organization' : `${m.email} · ${m.role}`,
+        cursor: external(m) ? 'default' : 'pointer', opacity: external(m) ? 0.5 : 1,
+        grant: h(() => { if (external(m)) return; this.tourDid('collab.grant'); setCredits(m.id, true); }) })),
+      noCandidates: c.members.every(m => m.credits),
+      share: c.share, openShare: h(() => this.ccUpd({ share: true, pop: false, panel: false })),
+      closeShare: h(() => this.ccUpd({ share: false, roleMenu: false })),
+      shareClick: h(() => c.roleMenu && this.ccUpd({ roleMenu: false })),
+      chips: c.chips.map(e => ({ email: e, remove: h(() => this.ccUpd(s => ({ chips: s.chips.filter(x => x !== e) }))) })),
+      draft: c.draft, draftPh: c.chips.length ? '' : 'Enter email addresses',
+      setDraft: e => this.ccUpd({ draft: e.target.value }),
+      draftKey: e => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addChip(); } else if (e.key === 'Backspace' && !c.draft && c.chips.length) this.ccUpd(s => ({ chips: s.chips.slice(0, -1) })); },
+      inviteRole: c.inviteRole, roleMenu: c.roleMenu, roleBorder: c.roleMenu ? '#0B9EDD' : '#D0D0D0',
+      toggleRole: h(() => this.ccUpd({ roleMenu: !c.roleMenu })),
+      roles: ['Viewer', 'Editor'].map(r => ({ label: r, color: r === c.inviteRole ? '#0B9EDD' : '#1a1a1a', pick: h(() => this.ccUpd({ inviteRole: r, roleMenu: false })) })),
+      invite: h(() => {
+        const d = c.draft.trim();
+        const emails = [...c.chips, ...(d.includes('@') ? [d] : [])].filter(e => !c.members.some(m => m.email === e));
+        if (!emails.length) return;
+        const withCredits = ownerAccess && c.inviteRole !== 'Viewer' && !!c.inviteCredits;
+        const added = emails.map(e => ({ id: e, name: e.split('@')[0].replace(/[._+]/g, ' ').replace(/\b\w/g, x => x.toUpperCase()), email: e, role: c.inviteRole, credits: withCredits }));
+        this.tourDid('collab.invite');
+        this.ccUpd(s => ({ members: [...s.members, ...added], chips: [], draft: '' }));
+        this.ccToast(`${added.length} member${added.length > 1 ? 's' : ''} invited as ${c.inviteRole}${withCredits ? ' with credit access' : ''}`);
+      }),
+      memberCount: c.members.length,
+      shareTabs: tabs.map(([k, l]) => {
+        const on = tab === k;
+        return { label: l, color: on ? '#1a1a1a' : '#757575', line: on ? '#0B9EDD' : 'transparent', pick: h(() => this.ccUpd({ shareTab: k, roleMenu: false })) };
+      }),
+      tabMembers: tab === 'members', tabCredits: tab === 'credits',
+      members: c.members.map(m => ({ init: initials(m.name), label: label(m), email: m.email, role: m.role, you: !!m.you, credits: m.credits, coin: hasTeam && !ownerAccess && !!m.credits,
+        // Full: the Project Owner gives or removes credit access from the coin. Viewers cannot generate, so they cannot be given it.
+        canToggle: ownerAccess && !external(m) && (m.role !== 'Viewer' || m.credits), coinCls: m.credits ? 'on' : '',
+        coinLabel: m.credits ? `Can use this project's credits. Click to remove credit access.` : `Give credit access, adding ${m.name.split(' ')[0]} to the ${team} team`,
+        toggleCredit: h(() => { if (!m.credits) this.tourDid('collab.grant'); setCredits(m.id, !m.credits); }) })),
+      coinTip: `Can generate with this project's credits as a member of the ${team} team`,
+      shareCreditText: `${granted.length} of ${c.members.length} members can generate with this project's credits`,
+      manageAccess: h(() => this.ccUpd({ share: false, panel: true })),
+      copyLabel: c.copied ? 'Copied' : 'Copy',
+      copy: h(() => { this.ccUpd({ copied: true }); this.timers.copy = setTimeout(() => this.ccUpd({ copied: false }), 1500); }),
+      toast: c.toast,
+    };
+  }
+  fitScale = 1;
+  onFit = () => { const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1055); if (s !== this.fitScale) { this.fitScale = s; this.forceUpdate(); } };
+  componentDidMount() {
+    this.onFit(); window.addEventListener('resize', this.onFit);
+    if (!T()) this.timers.tour = setInterval(() => { if (T()) { clearInterval(this.timers.tour); this.forceUpdate(); } }, 50);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this.onFit); Object.values(this.timers).forEach(t => { clearInterval(t); clearTimeout(t); }); }
+  renderVals() {
+    if (!M()) {
+      if (!this.timers.model) this.timers.model = setInterval(() => { if (M()) { clearInterval(this.timers.model); this.forceUpdate(); } }, 50);
+      return { ready: false, fitScale: this.fitScale, cc: {}, tour: { on: false } };
+    }
+    this.ensureMembers();
+    this.ensureTour();
+    return { ready: true, fitScale: this.fitScale, cc: this.ccVals(), tour: this.tourCard() };
+  }
+}
+</script>
+</body>
+</html>
