@@ -167,7 +167,7 @@
           h('div', { className: `sub-menu-background ${ROUTES[route].id}` }),
         ),
       ),
-      h('a', { className: 'logo', href: `#${ROUTES.credits.path}` }, h('img', { src: `${P.assetBase}images/mychaosgroup-logo.svg`, alt: 'Chaos Group' })),
+      h('a', { className: 'logo', href: `#${ROUTES.credits.path}` }, h('img', { src: `${P.assetBase}mychaosgroup-logo.svg`, alt: 'Chaos Group' })),
       h(
         'div',
         { className: 'side-menu' },
