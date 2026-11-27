@@ -152,18 +152,18 @@
   pointer-events: none;
 }
 .button.button-delete {
-  background: no-repeat center center url(../images/delete.svg);
+  background: no-repeat center center url(delete.svg);
   height: 20px;
   width: 20px;
   padding: 20px;
   border-radius: 999px;
 }
 .button.button-delete:hover {
-  background-image: url(../images/delete-red.svg);
+  background-image: url(delete-red.svg);
   background-color: #dbdbdb;
 }
 .button.button-delete:active {
-  background-image: url(../images/delete-red.svg);
+  background-image: url(delete-red.svg);
   background-color: #ababab;
 }
 .button.with-icon {
@@ -608,7 +608,7 @@
   font-size: 15px;
   outline: none;
   margin: 0px 9px 0px;
-  background-image: url("../images/education/paper_clip.svg");
+  background-image: url("paper_clip.svg");
   background-repeat: no-repeat;
   background-position: calc(100% - 10px);
   background-size: 30px;
@@ -634,7 +634,7 @@
   bottom: 16px;
 }
 .form-field-wrapper .field-icon.valid-icon {
-  background-image: url("../images/ic_check.svg");
+  background-image: url("ic_check.svg");
 }
 .form-field-wrapper .info {
   background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGcgY2xpcC1wYXRoPSJ1cmwoI2NsaXAwXzIwXzM3NzIpIj4KPHBhdGggZD0iTTUgNUg2LjA5MDkxVjguNU02LjA5MDkxIDguNUg1TTYuMDkwOTEgOC41SDdNNiAzLjVINi4wMDVNMTEgNkMxMSA4Ljc2MTQyIDguNzYxNDIgMTEgNiAxMUMzLjIzODU4IDExIDEgOC43NjE0MiAxIDZDMSAzLjIzODU4IDMuMjM4NTggMSA2IDFDOC43NjE0MiAxIDExIDMuMjM4NTggMTEgNloiIHN0cm9rZT0iIzUyNTI1MiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CjwvZz4KPGRlZnM+CjxjbGlwUGF0aCBpZD0iY2xpcDBfMjBfMzc3MiI+CjxyZWN0IHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0id2hpdGUiLz4KPC9jbGlwUGF0aD4KPC9kZWZzPgo8L3N2Zz4K");
@@ -665,10 +665,10 @@
   top: 37px;
 }
 .form-field-wrapper .password-show-hide-button .password-visibility-icon.visible {
-  background-image: url("../images/ic_visibility.svg");
+  background-image: url("ic_visibility.svg");
 }
 .form-field-wrapper .password-show-hide-button .password-visibility-icon.off {
-  background-image: url("../images/ic_visibility_off.svg");
+  background-image: url("ic_visibility_off.svg");
 }
 .form-field-wrapper .password-show-hide-button .password-visibility-text {
   display: block;
@@ -686,7 +686,7 @@
   padding-right: 20px;
   padding-bottom: 8px;
   padding-top: 8px;
-  background-image: url(../images/pad.svg);
+  background-image: url(pad.svg);
   background-size: contain;
   background-repeat: no-repeat;
   color: #ffffff;
@@ -727,7 +727,7 @@
   background-color: #edeef0;
   color: #1c1c1c;
   cursor: pointer;
-  background-image: url(../images/arrow-down.svg);
+  background-image: url(arrow-down.svg);
   background-repeat: no-repeat;
   background-position: right 20px center;
   background-size: 12px;
@@ -778,7 +778,7 @@ form {
 }
 
 .datePickerInput {
-  background-image: url("../images/education/calendar.svg");
+  background-image: url("calendar.svg");
   background-repeat: no-repeat;
   background-position: calc(100% - 10px);
   background-size: 30px;
@@ -966,7 +966,7 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
   line-height: 18px;
 }
 #page-header .nav-menu .menu > .nav-menu-item .chevron {
-  content: url("../images/chevron-down.svg");
+  content: url("chevron-down.svg");
   vertical-align: sub;
   margin-left: 5px;
 }
@@ -974,7 +974,7 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
   color: #0db5ff;
 }
 #page-header .nav-menu .menu > .nav-menu-item.current .chevron {
-  content: url("../images/chevron-up.svg");
+  content: url("chevron-up.svg");
 }
 @media (max-width: 1200px) {
   #page-header .nav-menu .menu > .nav-menu-item.current {
@@ -1085,7 +1085,7 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
   line-height: 16px;
 }
 #page-header .nav-menu .sub-menu .nav-menu-item.decorated:after {
-  background: url("../images/link-arrow.svg");
+  background: url("link-arrow.svg");
   background-size: contain;
   content: "";
   height: 13px;
@@ -1127,7 +1127,7 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
     top: -30px;
   }
   #page-header .side-menu.x {
-    content: url("../images/account-details/x.svg") !important;
+    content: url("x.svg") !important;
     top: 25px;
     right: 25px;
   }
@@ -1268,10 +1268,10 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
 .account-info-popover .wrapper .links .back-to-chaos span.image {
   width: 12px;
   margin: 0px 17px 0px 3px;
-  content: url("../images/account-details/arrow.svg");
+  content: url("arrow.svg");
 }
 .account-info-popover .wrapper .links .back-to-chaos:hover span.image {
-  content: url("../images/account-details/arrow-hover.svg");
+  content: url("arrow-hover.svg");
 }
 @media (max-width: 1200px) {
   .account-info-popover .wrapper .links .back-to-chaos {
@@ -1279,10 +1279,10 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
   }
 }
 .account-info-popover .wrapper .links .my-products span.image {
-  content: url("../images/account-details/product.svg");
+  content: url("product.svg");
 }
 .account-info-popover .wrapper .links .my-products:hover span.image {
-  content: url("../images/account-details/product-hover.svg");
+  content: url("product-hover.svg");
 }
 @media (max-width: 1200px) {
   .account-info-popover .wrapper .links .my-products {
@@ -1293,10 +1293,10 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
   margin-top: 20px;
 }
 .account-info-popover .wrapper .links .my-account span.image {
-  content: url("../images/account-details/user.svg");
+  content: url("user.svg");
 }
 .account-info-popover .wrapper .links .my-account:hover span.image {
-  content: url("../images/account-details/user-hover.svg");
+  content: url("user-hover.svg");
 }
 @media (max-width: 1200px) {
   .account-info-popover .wrapper .links .my-account {
@@ -1464,7 +1464,7 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
   outline: 0;
 }
 .ReactTable .rt-thead.-filters .rt-th select, .ReactTable .rt-thead.-filters .grouped-filter-dropdown {
-  background-image: url(../images/arrow-down.svg);
+  background-image: url(arrow-down.svg);
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 10px;
@@ -2107,7 +2107,7 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
 }
 .edit-quota > div:hover:not(.read-only) {
   background-color: #fafafa;
-  background-image: url(../images/icon-edit-quota.svg);
+  background-image: url(icon-edit-quota.svg);
   background-repeat: no-repeat;
   background-position: 10px 10px;
   cursor: pointer;
@@ -3143,8 +3143,8 @@ body.mobile-menu-opened #page-header .nav-menu .menu {
   width: 16px;
   height: 16px;
   background-color: #aaaab3;
-  -webkit-mask: url(../images/icon-edit-quota.svg) no-repeat center/contain;
-  mask: url(../images/icon-edit-quota.svg) no-repeat center/contain;
+  -webkit-mask: url(icon-edit-quota.svg) no-repeat center/contain;
+  mask: url(icon-edit-quota.svg) no-repeat center/contain;
   transition: background-color 0.1s linear;
 }
 .rt-td.centered-cell .floating-quota-cell-trigger:hover {
