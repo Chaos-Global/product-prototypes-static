@@ -8,42 +8,42 @@
 /* Inter variable (uploaded) — covers 100–900 + optical size; static cuts below remain as fallback */
 @font-face {
   font-family: "Inter";
-  src: url("./fonts/Inter-VariableFont_opsz_wght.ttf") format("truetype");
+  src: url("Inter-VariableFont_opsz_wght.ttf") format("truetype");
   font-weight: 100 900; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("./fonts/Inter-Italic-VariableFont_opsz_wght.ttf") format("truetype");
+  src: url("Inter-Italic-VariableFont_opsz_wght.ttf") format("truetype");
   font-weight: 100 900; font-style: italic; font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("./fonts/Inter-Regular.woff2") format("woff2");
+  src: url("Inter-Regular.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("./fonts/Inter-Medium.woff2") format("woff2");
+  src: url("Inter-Medium.woff2") format("woff2");
   font-weight: 500; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("./fonts/Inter-SemiBold.woff2") format("woff2");
+  src: url("Inter-SemiBold.woff2") format("woff2");
   font-weight: 600; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("./fonts/Inter-Bold.woff2") format("woff2");
+  src: url("Inter-Bold.woff2") format("woff2");
   font-weight: 700; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("./fonts/Poppins-Regular.woff2") format("woff2");
+  src: url("Poppins-Regular.woff2") format("woff2");
   font-weight: 400; font-style: normal; font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("./fonts/Poppins-Bold.woff2") format("woff2");
+  src: url("Poppins-Bold.woff2") format("woff2");
   font-weight: 700; font-style: normal; font-display: swap;
 }
 
@@ -259,6 +259,6 @@ code, pre { font-family: var(--font-mono); font-size: var(--code-size); line-hei
 .body-xs { font-size: 11px; line-height: 1.4;  font-weight: 400; }
 
 /* Figma weight-name tokens (--typography-font-weight-*) resolve to these Inter cuts */
-@font-face { font-family: 'Regular'; src: url('fonts/Inter-Regular.woff2') format('woff2'); font-weight: 400; }
-@font-face { font-family: 'Medium'; src: url('fonts/Inter-Medium.woff2') format('woff2'); font-weight: 500; }
-@font-face { font-family: 'Semi bold'; src: url('fonts/Inter-SemiBold.woff2') format('woff2'); font-weight: 600; }
+@font-face { font-family: 'Regular'; src: url('Inter-Regular.woff2') format('woff2'); font-weight: 400; }
+@font-face { font-family: 'Medium'; src: url('Inter-Medium.woff2') format('woff2'); font-weight: 500; }
+@font-face { font-family: 'Semi bold'; src: url('Inter-SemiBold.woff2') format('woff2'); font-weight: 600; }
