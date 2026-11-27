@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veras</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<link rel="stylesheet" href="ds/eris/colors_and_type.css">
+<link rel="stylesheet" href="ds/eris/components/eris/fig-tokens.css">
+<script src="ds/eris/_ds_bundle.js"></script>
+<script src="shared/credit-model.js"></script>
+<script src="shared/tour.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap">
+<style>html,body{overflow:hidden}body{margin:0;background:#F6F6F6;font-family:Roboto,Inter,sans-serif}a{color:#0B9EDD}a:hover{color:#1681BD}textarea:focus,input:focus{outline:none}
+.veras-picker-list{scrollbar-width:thin;scrollbar-color:#BDBDBD transparent}
+.veras-picker-list::-webkit-scrollbar{width:8px}
+.veras-picker-list::-webkit-scrollbar-thumb{background:#BDBDBD;border-radius:4px;border:2px solid #FFFFFF}
+.veras-picker-list::-webkit-scrollbar-track{background:transparent}</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B9EDD"></rect><text x="50" y="64" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="700" fill="#fff">V</text></svg></template>
+</helmet>
+<sc-for list="{{ variants }}" as="v" hint-placeholder-count="1">
+<div onClick="{{ v.closeAll }}" style="position:absolute;left:0;top:0;transform-origin:0 0;transform:scale({{ fitScale }});width:1920px;height:1055px;overflow:hidden;font-family:Roboto,sans-serif;color:#212121;user-select:none">
+        <img src="assets/veras-image-tab.png" style="display:block;width:1920px;height:1055px" draggable="false">
+
+        <div title="Account" onClick="{{ v.openAccount }}" style="position:absolute;left:1884px;top:5px;width:32px;height:34px;border-radius:4px;cursor:pointer" style-hover="background:rgba(0,0,0,0.07)"></div>
+
+        <div style="position:absolute;left:9px;top:52px;width:80px;height:36px;background:#F6F6F6;display:flex;align-items:center">
+          <sc-for list="{{ v.modes }}" as="m" hint-placeholder-count="2">
+            <div onClick="{{ m.pick }}" style="width:40px;height:34px;display:flex;align-items:center;justify-content:center;font:400 20px Roboto;cursor:pointer;background:{{ m.bg }};color:{{ m.color }}">{{ m.label }}</div>
+          </sc-for>
+        </div>
+        <div title="Add image" onClick="{{ v.upload }}" style="position:absolute;left:174px;top:54px;width:52px;height:32px;border-radius:4px;cursor:pointer" style-hover="background:rgba(0,0,0,0.06)"></div>
+
+        <sc-if value="{{ v.emptyCanvas }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ v.upload }}" onDragOver="{{ v.dragOver }}" onDrop="{{ v.drop }}" style="position:absolute;left:13px;top:104px;width:1542px;height:807px;cursor:pointer;border-radius:6px" style-hover="background:rgba(13,181,255,0.04)"></div>
+        </sc-if>
+        <sc-if value="{{ v.hasCanvas }}" hint-placeholder-val="{{ false }}">
+          <div onDragOver="{{ v.dragOver }}" onDrop="{{ v.drop }}" style="position:absolute;left:13px;top:104px;width:1542px;height:807px;background:#EDEDED;display:flex;align-items:center;justify-content:center">
+            <div style="position:relative;width:{{ v.frame.w }};height:{{ v.frame.h }};background:#E2E2E2;background-image:repeating-linear-gradient(135deg,#E2E2E2 0 14px,#DADADA 14px 28px);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.12)">
+              <sc-if value="{{ v.frame.hasImg }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;background-size:cover;background-position:center;background-image:{{ v.frame.bgImg }}"></div></sc-if>
+              <sc-if value="{{ v.frame.noImg }}" hint-placeholder-val="{{ false }}"><div style="font:400 18px Roboto;color:#757575">{{ v.frame.placeholder }}</div></sc-if>
+              <div style="position:absolute;left:12px;bottom:12px;background:rgba(33,33,33,0.82);color:#fff;font:500 13px Roboto;padding:6px 10px;border-radius:4px">{{ v.frame.label }}</div>
+              <div title="Clear" onClick="{{ v.clear }}" style="position:absolute;right:10px;top:10px;width:32px;height:32px;border-radius:16px;background:rgba(33,33,33,0.7);display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:rgba(33,33,33,0.9)"><svg width="14" height="14" viewBox="0 0 14 14" stroke="#fff" stroke-width="1.8"><path d="M2 2l10 10M12 2 2 12"></path></svg></div>
+            </div>
+          </div>
+        </sc-if>
+        <div onClick="{{ v.prev }}" style="position:absolute;left:14px;top:969px;width:32px;height:32px;border-radius:16px;cursor:pointer" style-hover="background:rgba(0,0,0,0.07)"></div>
+        <div onClick="{{ v.next }}" style="position:absolute;left:1530px;top:969px;width:32px;height:32px;border-radius:16px;cursor:pointer" style-hover="background:rgba(0,0,0,0.07)"></div>
+
+        <div style="position:absolute;left:1590px;top:66px;width:282px;height:96px;background:#F6F6F6;display:flex;gap:15px;align-items:flex-start;padding:5px 0 0 6px;box-sizing:border-box">
+          <div style="width:84px;height:84px;flex:none;border-radius:42px;box-shadow:0 1px 4px rgba(0,0,0,0.25);background-image:url(assets/veras-image-tab.png);background-size:{{ v.preset.bigSize }};background-position:{{ v.preset.bigPos }}"></div>
+          <div style="display:flex;flex-direction:column;gap:3px;padding-top:9px;min-width:0">
+            <div style="font:500 15px Roboto;color:#1a1a1a">{{ v.preset.name }}</div>
+            <div style="font:400 11px/16.5px Roboto;color:#616161;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">{{ v.promptText }}</div>
+          </div>
+        </div>
+
+        <div style="position:absolute;left:1594px;top:174px;width:264px;height:34px;background:#E0E0E0;border-radius:17px;display:flex;align-items:center;padding:0 14px 0 26px;box-sizing:border-box;gap:8px">
+          <input value="{{ v.query }}" onInput="{{ v.setQuery }}" onClick="{{ v.stop }}" placeholder="Search Image Presets" style="flex:1;min-width:0;border:0;background:transparent;font:400 15px Roboto;color:#212121">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#424242" stroke-width="2"><circle cx="7.5" cy="7.5" r="5.5"></circle><path d="M11.5 11.5 16 16"></path></svg>
+        </div>
+        <div onClick="{{ v.toggleCollapse }}" style="position:absolute;left:1588px;top:221px;width:140px;height:24px;background:#F6F6F6;display:flex;align-items:center;gap:8px;padding-left:3px;cursor:pointer;font:400 15px Roboto;color:#424242">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#424242" stroke-width="1.6" style="transform:{{ v.chevronRot }}"><path d="M2.5 4.5 6 8 9.5 4.5"></path></svg>Veras Presets
+        </div>
+        <div style="position:absolute;left:1588px;top:247px;width:310px;height:293px;background:#F6F6F6;overflow-y:auto;overflow-x:hidden;scrollbar-width:none">
+          <sc-if value="{{ v.showGrid }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(3,84px);gap:17px 20px;padding:9px 0 12px 8px">
+              <sc-for list="{{ v.presets }}" as="p" hint-placeholder-count="9">
+                <div onClick="{{ p.pick }}" title="{{ p.name }}" style="position:relative;width:84px;height:84px;border-radius:42px;box-sizing:border-box;border:3px solid {{ p.ring }};cursor:pointer;display:flex;align-items:center;justify-content:center">
+                  <div style="width:76px;height:76px;border-radius:38px;background-image:url(assets/veras-image-tab.png);background-size:1920px 1055px;background-position:{{ p.pos }}"></div>
+                  <div style="position:absolute;left:62px;top:-6px;height:18px;padding:0 5px;border-radius:9px;background:#0DB5FF;border:2px solid #F6F6F6;color:#fff;font:700 11px/18px Roboto">7F</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ v.noPresets }}" hint-placeholder-val="{{ false }}"><div style="padding:24px 8px;font:400 14px Roboto;color:#757575">No presets match “{{ v.query }}”.</div></sc-if>
+        </div>
+
+        <div style="position:absolute;left:1588px;top:540px;width:312px;height:132px;background:#F6F6F6;display:flex;flex-wrap:wrap;align-content:flex-start;gap:10px 9px;padding:2px 0 0 6px;box-sizing:border-box">
+          <div style="width:36px;height:34px;border-radius:17px;background:#E0E0E0;display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 14 14" fill="#616161"><circle cx="2" cy="2" r="1.3"></circle><circle cx="7" cy="2" r="1.3"></circle><circle cx="12" cy="2" r="1.3"></circle><circle cx="2" cy="7" r="1.3"></circle><circle cx="7" cy="7" r="1.3"></circle><circle cx="12" cy="7" r="1.3"></circle><circle cx="2" cy="12" r="1.3"></circle><circle cx="7" cy="12" r="1.3"></circle><circle cx="12" cy="12" r="1.3"></circle></svg></div>
+          <sc-for list="{{ v.tags }}" as="t" hint-placeholder-count="6">
+            <div onClick="{{ t.toggle }}" style="height:34px;border-radius:17px;padding:0 22px;display:flex;align-items:center;gap:4px;font:400 15px Roboto;color:#212121;cursor:pointer;background:{{ t.bg }}" style-hover="filter:brightness(0.96)">
+              <sc-if value="{{ t.on }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#212121" stroke-width="1.8" style="margin-left:-8px"><path d="M2 7.5 5.5 11 12 3.5"></path></svg></sc-if>{{ t.label }}
+            </div>
+          </sc-for>
+        </div>
+
+        <textarea value="{{ v.prompt }}" onInput="{{ v.setPrompt }}" onClick="{{ v.stop }}" style="position:absolute;left:1594px;top:720px;width:296px;height:115px;box-sizing:border-box;border:0;border-bottom:1px solid #9E9E9E;background:#E0E0E0;padding:13px 13px;font:400 15.5px/17.5px Roboto;color:#212121;resize:none"></textarea>
+
+        <div onClick="{{ v.toggleAspect }}" style="position:absolute;left:1594px;top:891px;width:142px;height:36px;border-radius:18px;background:#E0E0E0;display:flex;align-items:center;gap:9px;padding:0 14px 0 26px;box-sizing:border-box;cursor:pointer;font:400 16px Roboto" style-hover="background:#D6D6D6">
+          <span style="width:24px;display:flex;justify-content:center"><span style="width:{{ v.aspectIcon.w }};height:{{ v.aspectIcon.h }};border:2px solid #0DB5FF;border-radius:1px"></span></span><span style="flex:1">{{ v.aspect }}</span>
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="#424242"><path d="M0 0h10L5 6z"></path></svg>
+        </div>
+        <div onClick="{{ v.toggleRes }}" style="position:absolute;left:1744px;top:891px;width:142px;height:36px;border-radius:18px;background:#E0E0E0;display:flex;align-items:center;padding:0 24px 0 26px;box-sizing:border-box;cursor:pointer;font:400 16px Roboto" style-hover="background:#D6D6D6">
+          <span style="flex:1">{{ v.res }}</span><svg width="10" height="6" viewBox="0 0 10 6" fill="#424242"><path d="M0 0h10L5 6z"></path></svg>
+        </div>
+        <sc-if value="{{ v.menuAspect }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:1594px;bottom:168px;width:142px;background:#fff;border-radius:6px;box-shadow:0 8px 24px rgba(17,17,17,0.18);padding:6px 0">
+            <sc-for list="{{ v.aspects }}" as="a" hint-placeholder-count="5">
+              <div onClick="{{ a.pick }}" style="height:36px;display:flex;align-items:center;gap:10px;padding:0 16px;cursor:pointer;font:400 15px Roboto;background:{{ a.bg }}" style-hover="background:#F2F2F2"><span style="width:24px;display:flex;justify-content:center"><span style="width:{{ a.w }};height:{{ a.h }};border:2px solid #0DB5FF;border-radius:1px"></span></span>{{ a.v }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ v.menuRes }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:1744px;bottom:168px;width:142px;background:#fff;border-radius:6px;box-shadow:0 8px 24px rgba(17,17,17,0.18);padding:6px 0">
+            <sc-for list="{{ v.resList }}" as="r" hint-placeholder-count="3">
+              <div onClick="{{ r.pick }}" style="height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;cursor:pointer;font:400 15px Roboto;background:{{ r.bg }}" style-hover="background:#F2F2F2"><span>{{ r.v }}</span><span style="font-size:12px;color:#757575">{{ r.costFmt }} cr</span></div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ v.isA }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ v.togglePicker }}" style="position:absolute;top:6px;right:132px;height:32px;display:flex;align-items:center;gap:10px;padding:0 10px 0 12px;background:{{ v.pickerBg }};border:1px solid {{ v.pickerBorder }};border-radius:4px;cursor:pointer;box-sizing:border-box" style-hover="background:#FFFFFF">
+            <sc-if value="{{ v.pickerClosed }}" hint-placeholder-val="{{ true }}"><span style="font:500 14px Roboto;color:#212121;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.sel.name }}</span></sc-if>
+            <sc-if value="{{ v.pickerOpen }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#757575" stroke-width="1.6" aria-hidden="true"><circle cx="7" cy="7" r="4.5"></circle><path d="m10.5 10.5 3 3" stroke-linecap="round"></path></svg><input data-picker-input="true" value="{{ v.pq }}" onInput="{{ v.setPq }}" onKeyDown="{{ v.pickKey }}" onClick="{{ v.stop }}" placeholder="{{ v.sel.name }}" aria-label="Search projects" style="width:160px;border:0;outline:none;background:transparent;font:500 14px Roboto;color:#212121;padding:0"></span></sc-if>
+            <span style="width:1px;height:18px;background:#D0D0D0"></span>
+            <span style="display:flex;align-items:center;gap:5px;font:500 13px Roboto;color:{{ v.sel.color }}"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg>{{ v.sel.leftFmt }}</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#616161" stroke-width="1.6" style="transform:{{ v.pickerRot }}"><path d="M3 4.5 6 7.5 9 4.5"></path></svg>
+          </div>
+          <div style="position:absolute;top:938px;left:1594px;width:304px;display:flex;justify-content:space-between;gap:12px;font:400 12px Roboto;color:#616161"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Charged to {{ v.sel.name }}</span><span style="color:{{ v.sel.color }};font-weight:500;white-space:nowrap">{{ v.sel.leftFmt }} left</span></div>
+        </sc-if>
+        <sc-if value="{{ v.isB }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ v.togglePicker }}" style="position:absolute;top:930px;left:1594px;width:304px;height:32px;display:flex;align-items:center;gap:8px;padding:0 10px 0 12px;background:#FFFFFF;border:1px solid {{ v.pickerBorder }};border-radius:4px;cursor:pointer;box-sizing:border-box" style-hover="border-color:#9E9E9E">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#616161" stroke-width="1.6"><path d="M1.5 4.5v8h13v-7H8L6.5 3.5h-5z"></path></svg>
+            <sc-if value="{{ v.pickerClosed }}" hint-placeholder-val="{{ true }}"><span style="flex:1;min-width:0;font:500 14px Roboto;color:#212121;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ v.sel.name }}</span></sc-if>
+            <sc-if value="{{ v.pickerOpen }}" hint-placeholder-val="{{ false }}"><input data-picker-input="true" value="{{ v.pq }}" onInput="{{ v.setPq }}" onKeyDown="{{ v.pickKey }}" onClick="{{ v.stop }}" placeholder="Search projects" aria-label="Search projects" style="flex:1;min-width:0;border:0;outline:none;background:transparent;font:500 14px Roboto;color:#212121;padding:0"></sc-if>
+            <span style="font:500 13px Roboto;color:{{ v.sel.color }};white-space:nowrap">{{ v.sel.leftFmt }} left</span>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="#616161" stroke-width="1.6" style="transform:{{ v.pickerRot }}"><path d="M3 4.5 6 7.5 9 4.5"></path></svg>
+          </div>
+        </sc-if>
+        <sc-if value="{{ v.pickerOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ v.stop }}" style="position:absolute;top:{{ v.menuTop }};bottom:{{ v.menuBottom }};left:{{ v.menuLeft }};width:{{ v.menuWidth }};background:#fff;border-radius:6px;box-shadow:0 8px 24px rgba(17,17,17,0.18);border:1px solid #E0E0E0;padding:8px 0;display:flex;flex-direction:column">
+            <div class="veras-picker-list" style="max-height:{{ v.listMax }};overflow-y:auto;display:flex;flex-direction:column">
+            <sc-for list="{{ v.projects }}" as="p" hint-placeholder-count="4">
+              <div onClick="{{ p.pick }}" style="display:grid;grid-template-columns:20px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 16px;cursor:pointer;background:{{ p.bg }}" style-hover="background:#F2F2F2">
+                <span style="color:#0B9EDD;display:flex"><sc-if value="{{ p.selected }}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8.5 6.5 12 13 4.5"></path></svg></sc-if></span>
+                <div style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font:500 14px Roboto;color:#212121">{{ p.name }}</span><span style="font:400 12px Roboto;color:#757575">{{ p.sub }}</span></div>
+                <span style="font:500 13px Roboto;color:{{ p.color }};text-align:right">{{ p.leftFmt }} left</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ v.noMatch }}" hint-placeholder-val="{{ false }}"><div style="padding:14px 16px;font:400 13px Roboto;color:#757575">No projects match “{{ v.pq }}”.</div></sc-if>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="position:absolute;left:1590px;top:964px;width:312px;height:20px;background:#F5F5F5;display:flex;align-items:center;gap:8px;padding-left:4px;box-sizing:border-box">
+          <sc-for list="{{ v.slots }}" as="s" hint-placeholder-count="4">
+            <div onClick="{{ s.pick }}" title="{{ s.title }}" style="width:70px;height:10px;box-sizing:border-box;border-radius:5px;border:2px {{ s.style }} {{ s.color }};cursor:pointer"></div>
+          </sc-for>
+        </div>
+        <div style="position:absolute;left:1590px;top:990px;width:312px;height:48px;background:#F6F6F6;display:flex;align-items:center;gap:2px;padding-left:4px;box-sizing:border-box">
+          <div onClick="{{ v.render }}" style="position:relative;width:245px;height:39px;border-radius:20px 0 0 20px;background:{{ v.renderBg }};display:flex;align-items:center;justify-content:center;gap:6px;color:#fff;font:500 15px Roboto;letter-spacing:1.5px;cursor:{{ v.renderCursor }};overflow:hidden" style-hover="filter:brightness(1.05)">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:{{ v.progressPct }};background:rgba(255,255,255,0.28)"></div>
+            <span style="position:relative">{{ v.renderLabel }}</span>
+            <sc-if value="{{ v.showCost }}" hint-placeholder-val="{{ true }}"><span style="position:relative;display:flex;align-items:center;gap:3px;font-weight:400;letter-spacing:1px">· {{ v.costFmt }}<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.8"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg></span></sc-if>
+          </div>
+          <div style="width:57px;height:39px;border-radius:0 20px 20px 0;background:{{ v.renderBg }};display:flex;align-items:center;justify-content:center"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2"><path d="M3 5l4 4 4-4"></path></svg></div>
+        </div>
+
+        <sc-if value="{{ v.toast }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:784px;top:848px;transform:translateX(-50%);background:#323232;color:#fff;font:400 14px Roboto;padding:12px 18px;border-radius:4px;box-shadow:0 4px 14px rgba(0,0,0,0.25);white-space:nowrap">{{ v.toast }}</div>
+        </sc-if>
+
+        <sc-if value="{{ v.account }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ v.closeAccount }}" style="position:absolute;inset:0;background:rgba(0,0,0,0.32)">
+            <div onClick="{{ v.stop }}" style="position:absolute;left:630px;top:186px;width:660px;box-sizing:border-box;background:#EFEFEF;border-radius:4px;box-shadow:0 24px 48px -12px rgba(17,17,17,0.4);padding:28px 26px 26px;display:flex;flex-direction:column;color:#1a1a1a">
+              <div style="font:500 27px Roboto;letter-spacing:0.5px;padding-bottom:20px;border-bottom:1px solid #BDBDBD">ACCOUNT</div>
+              <div style="display:flex;align-items:center;gap:14px;margin-top:28px;font:500 22px Roboto;letter-spacing:0.3px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 21v-1.5A4.5 4.5 0 0 1 8.5 15h7a4.5 4.5 0 0 1 4.5 4.5V21"></path></svg>CURRENT USER</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin:10px 49px 0 40px;font:400 18px Roboto;letter-spacing:0.3px">{{ v.youEmail }}<span style="border:1px solid #1a1a1a;border-radius:20px;padding:9px 19px;font:500 15px Roboto;letter-spacing:1.5px;cursor:pointer">LOGOUT</span></div>
+              <div style="display:flex;align-items:center;gap:12px;margin-top:14px;font:500 22px Roboto;letter-spacing:0.3px"><svg width="32" height="32" viewBox="0 0 16 16" fill="none" stroke="#1a1a1a" stroke-width="1.4"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg>CREDIT BALANCE</div>
+              <div style="margin:12px 49px 0 44px;background:#fff;border:1px solid #DADADA;border-radius:8px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:0">
+                <sc-if value="{{ v.sel.isTeam }}" hint-placeholder-val="{{ true }}"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:10px"><span style="font:500 18px Roboto">{{ v.sel.name }}</span><span style="font:400 13px Roboto;color:#616161">{{ v.sel.kind }}</span></div></sc-if>
+                <div style="font:400 17px/24px Roboto;letter-spacing:0.15px;text-wrap:pretty">{{ v.sel.desc }}</div>
+                <div style="display:flex;justify-content:space-between;font:400 17px Roboto;margin-top:20px"><span>Credits left</span><span><b style="font-weight:700;color:{{ v.sel.color }}">{{ v.sel.leftFmt }}</b> / {{ v.sel.totalFmt }}</span></div>
+                <div style="height:4px;background:#E1F3FB;border-radius:2px;margin-top:8px"><div style="height:4px;width:{{ v.sel.pct }};background:#0DB5FF;border-radius:2px"></div></div>
+                <div style="display:flex;justify-content:space-between;margin-top:14px;font:400 13px Roboto"><span>{{ v.sel.resetLine }}</span><sc-if value="{{ v.sel.isTeam }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ v.noop }}" style="color:#0B9EDD;text-decoration:none;font-weight:500">Request more credits</a></sc-if></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:14px;margin-top:30px;font:500 22px Roboto;letter-spacing:0.3px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2"><path d="M7 18h10a4 4 0 0 0 .5-7.97A5.5 5.5 0 0 0 6.6 9.6 4.2 4.2 0 0 0 7 18z"></path></svg>CLOUD STORAGE</div>
+              <div style="display:flex;justify-content:space-between;margin:12px 49px 0 40px;font:400 18px Roboto;letter-spacing:0.3px"><span>Current usage</span><span><b style="font-weight:700">0 B</b> / 100 GB</span></div>
+              <div style="height:4px;background:#D6EEF9;border-radius:2px;margin:8px 49px 0 40px"></div>
+              <div style="display:flex;justify-content:flex-end;margin-top:44px"><span onClick="{{ v.closeAccount }}" style="border:1px solid #0DB5FF;color:#0DB5FF;border-radius:20px;padding:10px 22px;font:500 16px Roboto;letter-spacing:1.5px;cursor:pointer" style-hover="background:#E6F7FF">OK</span></div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+</sc-for>
+<sc-if value="{{ tour.on }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:2147483000;font-family:Inter,Roboto,system-ui,sans-serif;text-align:left">
+<sc-if value="{{ tour.open }}" hint-placeholder-val="{{ true }}">
+<section aria-label="Tutorial step" style="width:420px;max-width:calc(100vw - 48px);box-sizing:border-box;background:#272727;color:#FFFFFF;border:1px solid #3B3B3B;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.35);padding:16px 18px 16px 20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="min-width:0;font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tour.useCase }}</span>
+<div style="display:flex;align-items:center;gap:2px;flex:none">
+<span style="font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB;white-space:nowrap;margin-right:4px">{{ tour.stepLabel }}</span>
+<button type="button" aria-label="Minimize tutorial" onClick="{{ tour.toggle }}" style="width:32px;height:32px;border:0;border-radius:16px;background:transparent;color:#DBDBDB;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 5.5 7 9.5 11 5.5"></path></svg></button>
+<a href="Tutorial.dc.html" onClick="{{ tour.exit }}" aria-label="Exit tutorial" style="width:32px;height:32px;border-radius:16px;color:#DBDBDB;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l10 10M12 2 2 12"></path></svg></a>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="padding:2px 8px;border-radius:999px;background:{{ tour.roleBg }};color:#FFFFFF;font:600 11px/1.6 Inter,Roboto,system-ui,sans-serif;letter-spacing:0.02em">{{ tour.role }}</span><span style="font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB">in {{ tour.app }}</span></div>
+<h2 style="margin:0;font:600 17px/1.35 Inter,Roboto,system-ui,sans-serif;color:#FFFFFF">{{ tour.title }}</h2>
+<p style="margin:0;font:400 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#DBDBDB;text-wrap:pretty">{{ tour.text }}</p>
+<sc-if value="{{ tour.done }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font:600 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#8DDFFF">{{ tour.doneText }}</p></sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<div aria-hidden="true" style="flex:1;min-width:0;display:flex;gap:4px;align-items:center">
+<sc-for list="{{ tour.dots }}" as="d" hint-placeholder-count="6"><span style="flex:1;height:4px;border-radius:2px;background:{{ d.bg }}"></span></sc-for>
+</div>
+<a href="{{ tour.prevHref }}" onClick="{{ tour.prev }}" aria-label="{{ tour.prevLabel }}" title="{{ tour.prevLabel }}" style="flex:none;width:44px;height:44px;box-sizing:border-box;border-radius:22px;border:1px solid #525252;color:#FFFFFF;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"></path></svg></a>
+<a href="{{ tour.nextHref }}" onClick="{{ tour.next }}" style="flex:none;height:44px;box-sizing:border-box;padding:0 16px 0 18px;border-radius:22px;background:#0B9EDD;color:#FFFFFF;display:flex;align-items:center;gap:8px;font:600 14px/1 Inter,Roboto,system-ui,sans-serif;text-decoration:none;box-shadow:{{ tour.nextRing }}">{{ tour.nextLabel }}<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></a>
+</div>
+<span style="font:400 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB">{{ tour.nextHint }}</span>
+</section>
+</sc-if>
+<sc-if value="{{ tour.closed }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ tour.toggle }}" aria-label="Show tutorial step" style="height:44px;display:flex;align-items:center;gap:10px;padding:0 18px;border:1px solid #3B3B3B;border-radius:22px;background:#272727;color:#FFFFFF;box-shadow:0 8px 24px rgba(0,0,0,0.3);font:600 13px/1 Inter,Roboto,system-ui,sans-serif;cursor:pointer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.5 7 4.5 11 8.5"></path></svg>{{ tour.shortLabel }}</button>
+</sc-if>
+</div>
+</sc-if>
+<p style="margin: 0">isplay</p></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1055},&quot;placement&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Picker in the top bar&quot;,&quot;Picker above Render&quot;],&quot;default&quot;:&quot;Picker above Render&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;release&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Full&quot;,&quot;MVP&quot;],&quot;default&quot;:&quot;MVP&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+// Project and team names, budgets and the feature-to-release map come from
+// shared/credit-model.js, shared with the Collaboration and My Chaos artboards.
+const PRESETS = [
+  { id: 'brick', name: 'Brick Facade', c: [1638, 298], interior: false, prompt: 'mid-rise brick apartment building, warm evening light, balconies with plants, street level, professional architectural photography' },
+  { id: 'aerial', name: 'Aerial Townhouses', c: [1742, 298], interior: false, aerial: true, prompt: 'aerial view of modern townhouses, dark brick and timber, landscaped courtyard, overcast sky, drone photography' },
+  { id: 'atrium', name: 'Warm Atrium', c: [1846, 298], interior: true, prompt: 'timber atrium interior, skylight roof, warm wood floors, indoor plants, soft daylight, professional photography' },
+  { id: 'white', name: 'White Interior', c: [1638, 399], interior: true, prompt: 'white interior design, white walls, white ceiling, gray wood floor, forest outside, professional photography, add people and entourage to embellish the scene' },
+  { id: 'moody', name: 'Moody Interior', c: [1742, 399], interior: true, prompt: 'dark moody living room, floor to ceiling windows, black steel frames, warm lamps, dusk, cinematic lighting' },
+  { id: 'param', name: 'Parametric Facade', c: [1846, 399], interior: false, prompt: 'parametric white facade, flowing curves, autumn trees, clear sky, professional architectural photography' },
+  { id: 'villa', name: 'Modern Villa', c: [1638, 500], interior: false, prompt: 'white modern villa, flat roofs, glass balustrades, lush garden, bright daylight, professional photography' },
+  { id: 'glass', name: 'Glass Pavilion', c: [1742, 500], interior: false, prompt: 'curved glass pavilion at night, glowing interior, reflections in water, blue hour, cinematic' },
+  { id: 'timber', name: 'Timber Cantilever', c: [1846, 500], interior: false, prompt: 'timber cantilever house, wooden slats, forest setting, golden hour, film photography' },
+];
+const TAGS = ['Is Interior', 'Is Aerial View', 'Turbo Nature', 'Atmospheric', 'Cinematic', 'Film Photography'];
+const ASPECTS = [{ v: '16:9', r: 16 / 9 }, { v: '4:3', r: 4 / 3 }, { v: '1:1', r: 1 }, { v: '3:4', r: 3 / 4 }, { v: '9:16', r: 9 / 16 }];
+const RES = [{ v: '1K', cost: 10 }, { v: '2K', cost: 20 }, { v: '4K', cost: 40 }];
+const fmt = n => n.toLocaleString('en-US');
+const icon = r => r >= 1 ? { w: '20px', h: Math.round(20 / r) + 'px' } : { w: Math.round(20 * r) + 'px', h: '20px' };
+const stop = e => e && e.stopPropagation && e.stopPropagation();
+const tagsFor = p => [...(p.interior ? ['Is Interior'] : []), ...(p.aerial ? ['Is Aerial View'] : [])];
+const M = () => window.CreditModel;
+// The guided walkthroughs (shared/tour.js) pick the project and open the picker for each step.
+const BOARD = 'Main.dc.html';
+const T = () => window.ChaosTour;
+
+function init() {
+  const p = PRESETS.find(x => x.id === 'white');
+  return { sel: 'riverside', spent: {}, picker: false, account: false,
+    preset: 'white', query: '', collapsed: false, tags: tagsFor(p), prompt: p.prompt, aspect: '16:9', res: '1K', count: 1,
+    menu: null, progress: null, results: [], idx: 0, source: null, toast: null, mode: '2D' };
+}
+// What a project draws on in this release, less what was spent in this session.
+function projView(id, release, spent, selId) {
+  const b = M().balance(id, release);
+  const p = b.project;
+  const team = b.team ? b.team.name : null;
+  const l = b.left - (spent[b.key] || 0);
+  const color = l <= 0 ? '#D32F2F' : b.warnings && l / b.amount < 0.2 ? '#B26A00' : '#424242';
+  const shared = b.budget && b.team.kind === 'department' ? ' It is shared with the team’s other projects.' : '';
+  return { id: p.id, name: p.name, team, key: b.key, left: l, allowance: b.overageAllowance,
+    leftFmt: fmt(Math.max(0, l)), totalFmt: fmt(b.amount), pct: Math.max(0, Math.round(l / b.amount * 100)) + '%', color, isTeam: !!b.team,
+    sub: b.budget ? team + ' · team budget' : team ? team + ' · your own credit limit' : 'Your own credit limit',
+    kind: team ? 'Team: ' + team : '',
+    desc: b.budget
+      ? (l <= 0 ? `The ${team} team budget is used up. Request more credits from your License Manager to keep generating in this project.` : `Credits for this project come from the ${team} team budget, set by your License Manager.${shared}`)
+      : team ? `The ${team} team has no budget yet, so your own credit limit applies.` : 'This project belongs to no team, so your own credit limit applies.',
+    resetLine: b.monthly ? `Next credit reset: ${M().ORG.nextResetShort}` : 'One-time budget, no reset',
+    selected: p.id === selId, bg: p.id === selId ? '#E6F5FC' : 'transparent' };
+}
+
+class Component extends DCLogic {
+  state = { '1a': init(), '1b': init() };
+  fitScale = 1;
+  onFit = () => { const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1055); if (s !== this.fitScale) { this.fitScale = s; this.forceUpdate(); } };
+  componentDidMount() {
+    this.onFit(); window.addEventListener('resize', this.onFit);
+    if (!T()) this.timers.tour = setInterval(() => { if (T()) { clearInterval(this.timers.tour); this.forceUpdate(); } }, 50);
+  }
+  timers = {};
+  componentWillUnmount() { window.removeEventListener('resize', this.onFit); Object.values(this.timers).forEach(t => { clearInterval(t); clearTimeout(t); }); }
+  release() { if (this.tourKey) return 'Full'; return this.props.release === 'MVP' ? 'MVP' : 'Full'; }
+  // When a walkthrough step runs on this artboard, select its project and open the picker.
+  ensureTour() {
+    const t = T();
+    const s = t && t.stepFor(BOARD);
+    const key = s ? s.key : null;
+    if (key === this.tourKey) return;
+    const was = this.tourKey;
+    this.tourKey = key;
+    if (!s) {
+      if (was) { t.applyWorld(M(), null); this.state['1a'] = init(); this.state['1b'] = init(); }
+      return;
+    }
+    t.applyWorld(M(), s.world);
+    const sc = s.scene || {};
+    ['1a', '1b'].forEach(k => { clearInterval(this.timers[k]); this.state[k] = { ...init(), sel: sc.project || 'riverside', picker: Boolean(sc.picker), account: Boolean(sc.account) }; });
+  }
+  tourCard() { const t = T(); return t ? t.card(BOARD, { apply: () => this.forceUpdate(), refresh: () => this.forceUpdate() }) : { on: false }; }
+  upd(k, patch) { this.setState(s => ({ [k]: { ...s[k], ...(typeof patch === 'function' ? patch(s[k]) : patch) } })); }
+  setSource(k, file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    this.upd(k, { source: URL.createObjectURL(file), results: [], idx: 0 });
+  }
+  pickFile(k) {
+    const i = document.createElement('input'); i.type = 'file'; i.accept = 'image/*';
+    i.onchange = () => this.setSource(k, i.files[0]); i.click();
+  }
+  cost(v) { return RES.find(r => r.v === v.res).cost * v.count; }
+  render(k) {
+    const v = this.state[k];
+    const cost = this.cost(v);
+    const sel = projView(v.sel, this.release(), v.spent, v.sel);
+    if (v.progress != null || cost > sel.left + sel.allowance) return;
+    this.upd(k, { progress: 0, menu: null, picker: false, toast: null });
+    const t0 = Date.now();
+    clearInterval(this.timers[k]);
+    this.timers[k] = setInterval(() => {
+      const p = Math.min(100, (Date.now() - t0) / 25);
+      if (p < 100) return this.upd(k, { progress: p });
+      clearInterval(this.timers[k]);
+      const cur = this.state[k];
+      const now = projView(cur.sel, this.release(), cur.spent, cur.sel);
+      const remaining = Math.max(0, now.left - cost);
+      const batch = Array.from({ length: cur.count }, () => ({ preset: cur.preset, aspect: cur.aspect, res: cur.res, src: cur.source }));
+      const toast = `${fmt(cost)} credits charged to ${now.name} · ${fmt(remaining)} left`;
+      if (T()) T().did('veras.render');
+      this.upd(k, s => ({ progress: null, spent: { ...s.spent, [now.key]: (s.spent[now.key] || 0) + cost }, results: [...s.results, ...batch], idx: s.results.length, toast }));
+      this.timers[k + 'toast'] = setTimeout(() => { if (this.state[k].toast === toast) this.upd(k, { toast: null }); }, 4000);
+    }, 50);
+  }
+  variant(k, title) {
+    const v = this.state[k];
+    const release = this.release();
+    const h = fn => e => { stop(e); fn(e); };
+    const sel = projView(v.sel, release, v.spent, v.sel);
+    const preset = PRESETS.find(p => p.id === v.preset);
+    const k78 = 84 / 76;
+    const cost = this.cost(v);
+    const broke = cost > sel.left + sel.allowance;
+    const rendering = v.progress != null;
+    const q = v.query.trim().toLowerCase();
+    const presets = PRESETS.filter(p => !q || p.name.toLowerCase().includes(q) || p.prompt.includes(q)).map(p => ({
+      name: p.name, ring: p.id === v.preset ? '#0DB5FF' : 'transparent',
+      pos: `-${p.c[0] - 38}px -${p.c[1] - 38}px`,
+      pick: h(() => this.upd(k, { preset: p.id, prompt: p.prompt, tags: tagsFor(p) })),
+    }));
+    const res = v.results[v.idx];
+    let frame = { w: '0px', h: '0px' };
+    const fit = r => { const w = Math.min(1440, 740 * r); return { w: Math.round(w) + 'px', h: Math.round(w / r) + 'px' }; };
+    if (res) {
+      const pr = PRESETS.find(p => p.id === res.preset);
+      frame = { ...fit(ASPECTS.find(a => a.v === res.aspect).r), hasImg: !!res.src, noImg: !res.src, src: res.src,
+        placeholder: 'Render preview', label: `Render ${v.idx + 1} of ${v.results.length} · ${pr.name} · ${res.aspect} · ${res.res}` };
+    } else if (v.source) {
+      frame = { ...fit(ASPECTS.find(a => a.v === v.aspect).r), hasImg: true, noImg: false, src: v.source, label: 'Source image' };
+    }
+    const isA = k === '1a';
+    return {
+      id: k, title, isA, isB: !isA, youEmail: M().PEOPLE.you.email,
+      reset: () => { clearInterval(this.timers[k]); this.setState({ [k]: init() }); },
+      stop, noop: e => { e.preventDefault(); stop(e); },
+      closeAll: () => (v.picker || v.menu) && this.upd(k, { picker: false, menu: null }),
+      openAccount: h(() => this.upd(k, { account: true, picker: false, menu: null })),
+      closeAccount: h(() => this.upd(k, { account: false })),
+      account: v.account,
+      modes: ['2D', '3D'].map(m => ({ label: m, bg: v.mode === m ? '#DBEFF7' : '#DBDBDB', color: v.mode === m ? '#0DB5FF' : '#212121', pick: h(() => this.upd(k, { mode: m })) })),
+      upload: h(() => this.pickFile(k)),
+      dragOver: e => e.preventDefault(),
+      drop: e => { e.preventDefault(); this.setSource(k, e.dataTransfer.files[0]); },
+      emptyCanvas: !res && !v.source, hasCanvas: !!(res || v.source), frame,
+      clear: h(() => this.upd(k, { source: null, results: [], idx: 0 })),
+      prev: h(() => v.results.length && this.upd(k, { idx: (v.idx - 1 + v.results.length) % v.results.length })),
+      next: h(() => v.results.length && this.upd(k, { idx: (v.idx + 1) % v.results.length })),
+      preset: { name: preset.name, bigSize: `${1920 * k78}px ${1055 * k78}px`, bigPos: `-${(preset.c[0] - 38) * k78}px -${(preset.c[1] - 38) * k78}px` },
+      promptText: v.prompt,
+      query: v.query, setQuery: e => this.upd(k, { query: e.target.value }),
+      toggleCollapse: h(() => this.upd(k, { collapsed: !v.collapsed })),
+      chevronRot: v.collapsed ? 'rotate(-90deg)' : 'none',
+      showGrid: !v.collapsed && presets.length > 0, noPresets: !v.collapsed && presets.length === 0, presets,
+      tags: TAGS.map(t => { const on = v.tags.includes(t); return { label: t, on, bg: on ? '#C8C8C8' : '#E0E0E0',
+        toggle: h(() => this.upd(k, s => ({ tags: on ? s.tags.filter(x => x !== t) : [...s.tags, t] }))) }; }),
+      prompt: v.prompt, setPrompt: e => this.upd(k, { prompt: e.target.value }),
+      aspect: v.aspect, aspectIcon: icon(ASPECTS.find(a => a.v === v.aspect).r), res: v.res,
+      toggleAspect: h(() => this.upd(k, { menu: v.menu === 'aspect' ? null : 'aspect', picker: false })),
+      toggleRes: h(() => this.upd(k, { menu: v.menu === 'res' ? null : 'res', picker: false })),
+      menuAspect: v.menu === 'aspect', menuRes: v.menu === 'res',
+      aspects: ASPECTS.map(a => ({ v: a.v, ...icon(a.r), bg: a.v === v.aspect ? '#E6F5FC' : 'transparent', pick: h(() => this.upd(k, { aspect: a.v, menu: null })) })),
+      resList: RES.map(r => ({ v: r.v, costFmt: fmt(r.cost * v.count), bg: r.v === v.res ? '#E6F5FC' : 'transparent', pick: h(() => this.upd(k, { res: r.v, menu: null })) })),
+      sel, togglePicker: h(() => {
+        this.upd(k, { picker: !v.picker, menu: null, pq: '' });
+        // Opening turns the selector into a search field, ready to type in.
+        if (!v.picker) setTimeout(() => { const el = document.querySelector('[data-picker-input]'); if (el) el.focus(); }, 0);
+      }), pickerOpen: v.picker, pickerClosed: !v.picker,
+      // Enter picks the first match, Escape closes.
+      pickKey: e => {
+        if (e.key === 'Escape') { this.upd(k, { picker: false, pq: '' }); return; }
+        if (e.key !== 'Enter') return;
+        const q = (v.pq || '').trim().toLowerCase();
+        const first = M().PROJECTS.find(p => p.name.toLowerCase().includes(q));
+        if (first) this.upd(k, { sel: first.id, picker: false, pq: '' });
+      },
+      pickerBg: v.picker ? '#FFFFFF' : '#FAFAFA', pickerBorder: v.picker ? '#0B9EDD' : '#C4C4C4', pickerRot: v.picker ? 'rotate(180deg)' : 'none',
+      menuTop: isA ? '44px' : 'auto', menuBottom: isA ? 'auto' : '129px', menuLeft: isA ? '1408px' : '1546px', menuWidth: isA ? '380px' : '352px',
+      // Type-in search over project names; the list scrolls once it holds more than four projects.
+      pq: v.pq || '', setPq: e => this.upd(k, { pq: e.target.value }),
+      listMax: '216px',
+      noMatch: !M().PROJECTS.some(p => p.name.toLowerCase().includes((v.pq || '').trim().toLowerCase())),
+      projects: M().PROJECTS.filter(p => p.name.toLowerCase().includes((v.pq || '').trim().toLowerCase())).map(p => ({ ...projView(p.id, release, v.spent, v.sel), pick: h(() => this.upd(k, { sel: p.id, picker: false, pq: '' })) })),
+      slots: [1, 2, 3, 4].map(n => ({ title: `${n} image${n > 1 ? 's' : ''}`, style: n <= v.count ? 'solid' : 'dashed', color: n <= v.count ? '#0DB5FF' : '#BDBDBD', pick: h(() => this.upd(k, { count: n })) })),
+      render: h(() => this.render(k)),
+      renderBg: broke && !rendering ? '#BDBDBD' : '#0DB5FF', renderCursor: broke || rendering ? 'default' : 'pointer',
+      renderLabel: rendering ? `RENDERING ${Math.round(v.progress)}%` : broke ? 'NOT ENOUGH CREDITS' : 'RENDER',
+      showCost: !rendering, costFmt: fmt(cost), progressPct: rendering ? v.progress + '%' : '0%',
+      toast: v.toast,
+    };
+  }
+  variantWithBg(k, t) { const o = this.variant(k, t); o.frame.bgImg = o.frame.src ? `url("${o.frame.src}")` : 'none'; return o; }
+  renderVals() {
+    if (!M()) {
+      if (!this.timers.model) this.timers.model = setInterval(() => { if (M()) { clearInterval(this.timers.model); this.forceUpdate(); } }, 50);
+      return { fitScale: this.fitScale, variants: [], tour: { on: false } };
+    }
+    this.ensureTour();
+    const opt = this.props.placement === 'Picker above Render' ? '1b' : '1a';
+    const OPTS = [['1a', 'Picker in the top bar'], ['1b', 'Picker above Render']];
+    return {
+      fitScale: this.fitScale,
+      variants: [this.variantWithBg(opt, OPTS.find(o => o[0] === opt)[1])],
+      tour: this.tourCard(),
+    };
+  }
+}
+</script>
+</body>
+</html>
