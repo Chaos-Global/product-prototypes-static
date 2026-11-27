@@ -28,7 +28,7 @@
       h(
         'div',
         { className: 'cell col-product' },
-        h('img', { src: `${P.assetBase}images/product-icons/${row.productCode}.svg`, alt: '', className: 'product-icon' }),
+        h('img', { src: `${P.assetBase}${row.productCode}.svg`, alt: '', className: 'product-icon' }),
         h(
           'div',
           { className: 'product-text' },
