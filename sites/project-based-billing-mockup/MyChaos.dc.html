@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Chaos</title>
+<script src="./_runtime/react.js"></script>
+<script src="./_runtime/react-dom.js"></script>
+<script src="./_runtime/support.js"></script>
+<script src="shared/credit-model.js"></script>
+<script src="shared/tour.js"></script>
+<script src="mychaos-prototype/assets/js/data.js"></script>
+<script src="mychaos-prototype/assets/js/store.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="mychaos-prototype/assets/css/globals.css">
+<link rel="stylesheet" href="mychaos-prototype/assets/css/mychaos.css">
+<link rel="stylesheet" href="mychaos-prototype/assets/css/prototype.css">
+<style>.mc-tip{transform:translateX(-50%)}
+/* Eris DropdownField and DropdownMenu (ds/eris), in the Eris light theme: neutral-0 field, neutral-200 border, accent-500 focus, checkmark on the selected option. */
+.eris-select{position:relative;display:inline-flex;align-items:center;gap:6px;box-sizing:border-box;min-width:260px;height:32px;padding:0 6px 0 10px;background:#FFFFFF;border:1px solid #DBDBDB;border-radius:4px;font:400 13px/1.4 Inter,Roboto,system-ui,sans-serif;color:#1C1C1C;cursor:pointer;transition:border-color .12s,background-color .12s,box-shadow .12s}
+.eris-select:hover{background:#FAFAFA;border-color:#ABABAB}
+.eris-select.open,.eris-select:focus-within{border-color:#0B9EDD;box-shadow:0 0 0 1px #0B9EDD;background:#FFFFFF}
+.eris-select .eris-select-value{flex:1;min-width:0;height:100%;padding:0;border:0;background:transparent;font:inherit;color:inherit;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:inherit;outline:none}
+.eris-select svg{flex:none;width:16px;height:16px;color:#525252;pointer-events:none;transition:transform .15s}
+.eris-select.open svg{transform:rotate(180deg)}
+.mui-popover-paper.eris-menu{padding:4px 0;border-radius:4px;background:#FFFFFF;box-shadow:0 0 0 1px #DBDBDB,0 6px 24px rgba(69,97,109,0.2);animation:none}
+.eris-menu .mui-menu-item{height:36px;box-sizing:border-box;margin:0 4px;padding:10px;gap:8px;border-radius:4px;font:400 13px/16px Inter,Roboto,system-ui,sans-serif;color:#1C1C1C}
+.eris-menu .mui-menu-item:hover{background:#F6F6F6}
+.eris-menu .mui-menu-item.selected{background:transparent;font-weight:500}
+.eris-menu .mui-menu-item.selected:hover{background:#F6F6F6}
+.mui-menu-item .eris-check{display:none}
+.eris-menu .mui-menu-item .eris-check{display:inline-flex;flex:none;width:16px;height:16px;color:#1681BD;visibility:hidden}
+.eris-menu .mui-menu-item.selected .eris-check{visibility:visible}
+.eris-select.te-filter-select{min-width:0;width:100%}
+.eris-select.credit-team-select{display:flex;width:100%;min-width:0}
+.te-new-btn{padding:0 12px 0 10px}
+.te-new-btn svg{width:16px;height:16px;flex:none}
+.eris-select.te-filter-select.on .eris-select-value{color:#1681BD;font-weight:600}
+/* Eris Button (ds/eris), size M, light theme: 32px high, 6px corners, Inter 600 14px.
+   Primary #0870A8 with blue-700 hover; Secondary a 2px neutral-500 outline; Tertiary text only; Destructive error red. */
+.button,.mui-button{display:inline-flex;align-items:center;justify-content:center;gap:4px;box-sizing:border-box;width:fit-content;min-width:0;height:32px;min-height:32px;padding:0 12px;border:0;border-radius:6px;font-family:Inter,Roboto,system-ui,sans-serif;font-size:14px;font-weight:600 !important;line-height:16px;letter-spacing:0;text-transform:none;white-space:nowrap;cursor:pointer;box-shadow:none;transition:background-color .12s,box-shadow .12s,color .12s}
+.button,.mui-button.contained-primary{background:#0870A8;color:#FFFFFF !important}
+.button:hover,.mui-button.contained-primary:hover{background:#1681BD;box-shadow:0 1px 2px rgba(16,24,40,0.05)}
+.button.plain,.mui-button.outlined-primary{background:transparent;color:#1C1C1C !important;border:0;box-shadow:inset 0 0 0 2px #525252}
+.button.plain:hover,.mui-button.outlined-primary:hover{background:#EBF8FF;color:#085982 !important;box-shadow:inset 0 0 0 2px #525252,0 1px 2px rgba(16,24,40,0.05)}
+.mui-button.text-secondary{background:transparent;color:#1C1C1C !important}
+.mui-button.text-secondary:hover{background:#EBF8FF;color:#085982 !important}
+.mui-button.contained-error{background:#E74549;color:#FFFFFF !important}
+.mui-button.contained-error:hover{background:#C9373B}
+.button:disabled,.mui-button:disabled{background:#EDEDED;color:#ABABAB !important;box-shadow:none;cursor:default}
+.button.plain:disabled,.mui-button.outlined-primary:disabled{background:transparent;box-shadow:inset 0 0 0 2px #DBDBDB}
+.mui-button.text-secondary:disabled{background:transparent}
+.button:focus-visible,.mui-button:focus-visible{outline:2px solid #0B9EDD;outline-offset:2px}
+/* The page never scrolls sideways: anything wider is clipped at the edge, and wide tables scroll inside their own card. */
+html,body,#root{overflow-x:clip;max-width:100%}
+.credits-table-section-card{overflow-x:auto}
+.info-tooltip-paper{position:fixed;max-width:calc(100vw - 32px);box-sizing:border-box}
+.mc-usage{background:#fff;border-radius:12px;padding:28px 32px 24px;margin-top:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+.mc-usage-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px}
+.mc-usage-heading{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.mc-usage-title{margin:0;font-size:20px;font-weight:500;color:#1c1c1c}
+.mc-usage-chip{display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border-radius:4px;background:#ededed;font-size:13px;font-weight:600;color:#3b3b3b}
+.mc-usage-count{font-size:13px;color:#828282}
+.mc-usage-tools{display:flex;flex-wrap:wrap;align-items:center;gap:16px}
+.mc-usage-seg{display:inline-flex;border:1px solid #dbdbdb;border-radius:999px;padding:2px}
+.mc-usage-seg button{border:0;background:none;border-radius:999px;padding:5px 14px;font:inherit;font-size:12px;font-weight:600;color:#525252;cursor:pointer}
+.mc-usage-seg button.active{background:#0db5ff;color:#fff}
+.mc-usage-range{font-size:14px;color:#1c1c1c;white-space:nowrap}
+.mc-usage-legend{display:flex;flex-wrap:wrap;gap:8px 28px;margin:18px 0 22px;font-size:13px;color:#525252}
+.mc-usage-legend-item{display:inline-flex;align-items:center;gap:8px}
+.mc-usage-legend-item strong{color:#1c1c1c;font-weight:700}
+.mc-usage-swatch{width:12px;height:12px;border-radius:2px}
+.mc-usage-rows{display:flex;flex-direction:column;gap:18px}
+.mc-usage-row{display:grid;grid-template-columns:minmax(140px,240px) minmax(0,1fr) minmax(110px,max-content);align-items:center;gap:24px}
+.mc-usage-name{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mc-usage-label{font-size:14px;color:#1c1c1c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-usage-sub{font-size:12px;color:#828282;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-usage-track{min-width:0}
+.mc-usage-bar{display:flex;height:16px;border-radius:2px;overflow:hidden;min-width:4px}
+.mc-usage-seg-part{display:block;height:100%}
+.mc-usage-value{text-align:right;font-size:14px;color:#1c1c1c;white-space:nowrap}
+.mc-usage-value span{margin-left:6px;color:#828282}
+.mc-usage-more{margin-top:16px;border:0;background:none;padding:0;font:inherit;font-size:13px;font-weight:600;color:#0b9edd;cursor:pointer}
+@media (max-width:700px){.mc-usage{padding:20px 16px}.mc-usage-row{grid-template-columns:minmax(0,1fr) max-content;gap:6px 12px}.mc-usage-track{grid-column:1 / -1;grid-row:2}}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B9EDD"></rect><text x="50" y="64" text-anchor="middle" font-family="sans-serif" font-size="40" font-weight="700" fill="#fff">V</text></svg></template>
+</helmet>
+<div id="root">
+<sc-if value="{{ ready }}" hint-placeholder-val="{{ true }}">
+<div class="page" id="page">
+<div class="page-header-content">
+<header id="page-header">
+  <div class="nav-menu">
+    <div>
+      <div class="mui-grid-container justify-center menu">
+        <sc-for list="{{ v.top }}" as="t" hint-placeholder-count="7">
+          <div class="mui-grid-item nav-menu-item{{ t.cur }}">
+            <a class="page-nav-item" href="#" onClick="{{ t.go }}">{{ t.title }}</a>
+            <sc-if value="{{ t.chevron }}" hint-placeholder-val="{{ true }}"><span class="chevron"></span></sc-if>
+            <sc-if value="{{ t.isOrg }}" hint-placeholder-val="{{ false }}">
+              <div class="mui-grid-container justify-center sub-menu" style="z-index:1">
+                <sc-for list="{{ v.orgItems }}" as="o" hint-placeholder-count="4">
+                  <div class="mui-grid-item nav-menu-item{{ o.cur }}"><a class="page-nav-item" href="#" onClick="{{ o.go }}">{{ o.title }}<sc-if value="{{ o.badge }}" hint-placeholder-val="{{ false }}"><span class="menu-item-badge">{{ o.badge }}</span></sc-if></a></div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div class="sub-menu-background {{ v.routeId }}"></div>
+    </div>
+  </div>
+  <a class="logo" href="#" onClick="{{ v.goCredits }}"><img src="mychaos-prototype/assets/images/mychaosgroup-logo.svg" alt="Chaos Group"></a>
+  <div class="side-menu"><div class="mui-grid-container account-info" title="{{ v.admin.title }}"><div class="name">{{ v.admin.initials }}</div></div></div>
+</header>
+<div id="page-content" class="{{ v.contentCls }}">
+
+<sc-if value="{{ v.isCredits }}" hint-placeholder-val="{{ false }}">
+<div class="mui-grid-container justify-center">
+  <div class="mui-grid-item" style="flex-basis:100%">
+    <div class="mui-grid-container justify-center"><div class="mui-grid-item">
+      <h1 class="page-title with-subtitle">Organization Credits Management</h1>
+      <h6 class="page-title-subtitle">Chaos Credits is a new system that manages credit consumption across Veras, AI Enhancer, AI Upscaler, and Cloud rendering.</h6>
+    </div></div>
+  </div>
+  <div class="mui-grid-item" style="flex-basis:100%;max-width:100%">
+    <div class="organization-quick-actions"><div class="actions">
+      <button type="button" class="button plain" onClick="{{ v.goUsage }}">Usage report</button>
+      <button type="button" class="button" onClick="{{ v.buyCredits }}">Buy credits</button>
+    </div></div>
+    <div class="credits-overview-tiles">
+      <sc-if value="{{ v.cr.hasNamed }}" hint-placeholder-val="{{ true }}">
+        <div class="credits-overview-tile">
+          <div class="tile-header">
+            <div class="header-summary">
+              <div class="header-title"><span class="tile-label">Named credits</span><span class="info-tooltip-host" onMouseEnter="{{ v.cr.namedInfo.enter }}" onMouseLeave="{{ v.infoOut }}"><span class="info-icon"></span><sc-if value="{{ v.cr.namedInfo.on }}" hint-placeholder-val="{{ false }}"><div class="info-tooltip-paper" style="top:{{ v.cr.namedInfo.top }};left:{{ v.cr.namedInfo.left }}"><div class="custom-tooltip"><p>Assigned to one person. Only that person can spend them, and they are used up before any shared credits.</p></div></div></sc-if></span></div>
+              <div class="metrics">
+                <div class="counts"><div class="remaining"><span class="numeric-metrics">{{ v.cr.named.balance }}</span><span>&nbsp;remaining</span></div><span>of {{ v.cr.named.total }}</span></div>
+                <div class="percentage"><span class="numeric-metrics">{{ v.cr.named.pct }}</span><span>&nbsp;available</span></div>
+              </div>
+            </div>
+            <button type="button" class="collapse-toggle" aria-label="Collapse" aria-expanded="{{ v.cr.named.expanded }}" onClick="{{ v.cr.named.toggle }}">
+              <sc-if value="{{ v.cr.named.open }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></sc-if>
+              <sc-if value="{{ v.cr.named.closed }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path></svg></sc-if>
+            </button>
+          </div>
+          <sc-if value="{{ v.cr.named.open }}" hint-placeholder-val="{{ true }}">
+            <div><div class="credits-entry-list named">
+              <div class="row header-row"><div class="cell col-product">Product</div><div class="cell col-remaining">Remaining</div><div class="cell col-refresh">Refresh</div></div>
+              <sc-for list="{{ v.cr.named.rows }}" as="r" hint-placeholder-count="1">
+                <div class="row entry-row">
+                  <div class="cell col-product">
+                    <sc-if value="{{ r.isVeras }}" hint-placeholder-val="{{ true }}"><img src="mychaos-prototype/assets/images/product-icons/veras.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isVray }}" hint-placeholder-val="{{ false }}"><img src="mychaos-prototype/assets/images/product-icons/vray.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isCredits }}" hint-placeholder-val="{{ false }}"><img src="mychaos-prototype/assets/images/product-icons/chaoscredits.svg" alt="" class="product-icon"></sc-if>
+                    <div class="product-text"><span class="product-name">{{ r.productName }}</span><span class="product-subtitle">{{ r.subtitle }}<sc-if value="{{ r.unassigned }}" hint-placeholder-val="{{ false }}"><span class="unassigned-badge"><span class="dot"></span>{{ r.unassigned }} unassigned</span></sc-if></span></div>
+                  </div>
+                  <div class="cell col-remaining"><span class="remaining-value">{{ r.balance }}</span><span class="remaining-total"> / {{ r.total }}</span></div>
+                  <div class="cell col-refresh">{{ r.refresh }}</div>
+                </div>
+              </sc-for>
+            </div></div>
+          </sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ v.cr.hasShared }}" hint-placeholder-val="{{ true }}">
+        <div class="credits-overview-tile">
+          <div class="tile-header">
+            <div class="header-summary">
+              <div class="header-title"><span class="tile-label">Shared pool</span><span class="info-tooltip-host" onMouseEnter="{{ v.cr.sharedInfo.enter }}" onMouseLeave="{{ v.infoOut }}"><span class="info-icon"></span><sc-if value="{{ v.cr.sharedInfo.on }}" hint-placeholder-val="{{ false }}"><div class="info-tooltip-paper" style="top:{{ v.cr.sharedInfo.top }};left:{{ v.cr.sharedInfo.left }}"><div class="custom-tooltip"><p>All users can draw from this balance. Credits are being consumed by expiration date.</p></div></div></sc-if></span></div>
+              <div class="metrics">
+                <div class="counts"><div class="remaining"><span class="numeric-metrics">{{ v.cr.shared.balance }}</span><span>&nbsp;remaining</span></div><span>of {{ v.cr.shared.total }}</span></div>
+                <div class="percentage"><span class="numeric-metrics">{{ v.cr.shared.pct }}</span><span>&nbsp;available</span></div>
+              </div>
+            </div>
+            <button type="button" class="collapse-toggle" aria-label="Collapse" aria-expanded="{{ v.cr.shared.expanded }}" onClick="{{ v.cr.shared.toggle }}">
+              <sc-if value="{{ v.cr.shared.open }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></sc-if>
+              <sc-if value="{{ v.cr.shared.closed }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path></svg></sc-if>
+            </button>
+          </div>
+          <sc-if value="{{ v.cr.shared.open }}" hint-placeholder-val="{{ true }}">
+            <div><div class="credits-entry-list shared">
+              <div class="row header-row"><div class="cell col-rank">#</div><div class="cell col-product">Product</div><div class="cell col-remaining">Remaining</div><div class="cell col-refresh">Refresh</div></div>
+              <sc-for list="{{ v.cr.shared.rows }}" as="r" hint-placeholder-count="2">
+                <div class="row entry-row">
+                  <div class="cell col-rank"><span class="rank-usage" onMouseEnter="{{ r.tipIn }}" onMouseLeave="{{ v.tipOut }}"><svg viewBox="0 0 18 18" width="18" height="18" aria-hidden="true"><circle cx="9" cy="9" r="7" fill="none" stroke="#ededed" stroke-width="3"></circle><circle cx="9" cy="9" r="7" fill="none" stroke="{{ r.ringColor }}" stroke-width="3" stroke-dasharray="{{ r.dash }}" transform="rotate(-90 9 9)"></circle></svg></span></div>
+                  <div class="cell col-product">
+                    <sc-if value="{{ r.isVeras }}" hint-placeholder-val="{{ false }}"><img src="mychaos-prototype/assets/images/product-icons/veras.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isVray }}" hint-placeholder-val="{{ true }}"><img src="mychaos-prototype/assets/images/product-icons/vray.svg" alt="" class="product-icon"></sc-if>
+                    <sc-if value="{{ r.isCredits }}" hint-placeholder-val="{{ false }}"><img src="mychaos-prototype/assets/images/product-icons/chaoscredits.svg" alt="" class="product-icon"></sc-if>
+                    <div class="product-text"><span class="product-name">{{ r.productName }}</span><span class="product-subtitle">{{ r.subtitle }}</span></div>
+                  </div>
+                  <div class="cell col-remaining"><span class="remaining-value">{{ r.balance }}</span><span class="remaining-total"> / {{ r.total }}</span></div>
+                  <div class="cell col-refresh">{{ r.refresh }}</div>
+                </div>
+              </sc-for>
+            </div></div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+    <div class="team-budgets-card">
+      <div class="team-budgets-figures">
+        <span class="tile-label">Team budgets</span>
+        <sc-if value="{{ v.f.allocation }}" hint-placeholder-val="{{ true }}"><span><span class="numeric-metrics">{{ v.cr.reserved }}</span> allocated to teams</span></sc-if>
+        <span><span class="numeric-metrics">{{ v.cr.limits }}</span> in team limits</span>
+        <span>{{ v.cr.budgeted }} teams with a budget</span>
+      </div>
+      <button type="button" class="button" onClick="{{ v.goTeams }}">Manage teams</button>
+    </div>
+    <div class="credits-table-section-card">
+      <p class="title">Users</p>
+      <div class="credits-details-table credit-users-table">
+        <div class="row header-row">
+          <div class="cell header-cell col-user">User</div>
+          <div class="cell header-cell col-usage">Named credits used</div>
+          <div class="cell header-cell col-usage">Shared pool used</div>
+          <div class="cell header-cell col-limit" onMouseEnter="{{ v.cr.limitTipIn }}" onMouseLeave="{{ v.tipOut }}">Usage limit</div>
+          <div class="cell header-cell col-actions"></div>
+        </div>
+        <div class="divider"></div>
+        <sc-for list="{{ v.cr.users }}" as="u" hint-placeholder-count="8">
+          <div class="row {{ u.cls }}">
+            <div class="cell col-user"><span class="user-name">{{ u.name }}</span><span class="user-email">{{ u.email }}</span></div>
+            <div class="cell col-usage usage-data-cell">
+              <sc-if value="{{ u.hasNamed }}" hint-placeholder-val="{{ false }}">
+                <div class="usage-progress-bar"><span class="count">{{ u.named.count }}</span><sc-if value="{{ u.named.badge }}" hint-placeholder-val="{{ true }}"><span class="badge" style="background-color:{{ u.named.bg }};color:{{ u.named.fg }}">{{ u.named.badgeText }}</span></sc-if></div>
+                <div class="progress-bar"><div class="fill" style="width:{{ u.named.w }};background-color:{{ u.named.c }}"></div></div>
+              </sc-if>
+              <sc-if value="{{ u.noNamed }}" hint-placeholder-val="{{ true }}">-</sc-if>
+            </div>
+            <div class="cell col-usage usage-data-cell">
+              <div class="usage-progress-bar"><span class="count">{{ u.shared.count }}</span><sc-if value="{{ u.shared.badge }}" hint-placeholder-val="{{ true }}"><span class="badge" style="background-color:{{ u.shared.bg }};color:{{ u.shared.fg }}">{{ u.shared.badgeText }}</span></sc-if></div>
+              <div class="progress-bar"><div class="fill" style="width:{{ u.shared.w }};background-color:{{ u.shared.c }}"></div></div>
+            </div>
+            <div class="cell col-limit">
+              <sc-if value="{{ u.unlimited }}" hint-placeholder-val="{{ false }}"><span class="quota-badge unlimited" onMouseEnter="{{ u.unlimitedTip }}" onMouseLeave="{{ v.tipOut }}">Unlimited</span></sc-if>
+              <sc-if value="{{ u.noAccess }}" hint-placeholder-val="{{ false }}"><span class="quota-badge disabled" onMouseEnter="{{ u.noAccessTip }}" onMouseLeave="{{ v.tipOut }}">No access</span></sc-if>
+              <sc-if value="{{ u.hasLimit }}" hint-placeholder-val="{{ true }}"><span>{{ u.limit }}</span><span class="limit-reset">Resets {{ u.reset }}</span></sc-if>
+            </div>
+            <div class="cell col-actions">
+              <sc-if value="{{ u.active }}" hint-placeholder-val="{{ true }}"><button type="button" class="mui-icon-button" aria-label="User actions" onClick="{{ u.menu }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button></sc-if>
+            </div>
+          </div>
+          <div class="divider"></div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ v.isUsage }}" hint-placeholder-val="{{ false }}">
+<div class="mui-grid-container justify-center">
+  <div class="mui-grid-item" style="flex-basis:100%">
+    <div class="mui-grid-container justify-center"><div class="mui-grid-item">
+      <h1 class="page-title with-subtitle">Chaos Credits Usage Report</h1>
+      <h6 class="page-title-subtitle">Chaos Credits is a new system that manages credit consumption across Veras, AI Enhancer, AI Upscaler, and Cloud rendering.</h6>
+    </div></div>
+  </div>
+  <div class="mui-grid-item" style="flex-basis:100%;max-width:100%">
+    <div class="organization-quick-actions"><div class="actions"><button type="button" class="button plain" onClick="{{ v.goCredits }}">Back to credits management</button></div></div>
+    <section class="mc-usage" aria-label="Credits usage">
+      <div class="mc-usage-head">
+        <div class="mc-usage-heading">
+          <h2 class="mc-usage-title">{{ v.us.title }}</h2>
+          <span class="mc-usage-chip"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="8" r="6.2"></circle><path d="M8 4.5a3.5 3.5 0 0 1 0 7"></path></svg>{{ v.us.total }} Credits</span>
+          <span class="mc-usage-count">{{ v.us.count }}</span>
+        </div>
+        <div class="mc-usage-tools">
+          <div class="mc-usage-seg" role="radiogroup" aria-label="Group by">
+            <sc-for list="{{ v.us.groupBy }}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{ o.checked }}" class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for>
+          </div>
+          <span class="mc-usage-range">{{ v.us.range }}</span>
+        </div>
+      </div>
+      <div class="mc-usage-legend">
+        <sc-for list="{{ v.us.legend }}" as="l" hint-placeholder-count="6">
+          <span class="mc-usage-legend-item"><span class="mc-usage-swatch" style="background:{{ l.color }}"></span>{{ l.label }}<strong>{{ l.pct }}</strong></span>
+        </sc-for>
+      </div>
+      <sc-if value="{{ v.us.hasGroups }}" hint-placeholder-val="{{ true }}">
+        <div class="mc-usage-rows">
+          <sc-for list="{{ v.us.groups }}" as="g" hint-placeholder-count="8">
+            <div class="mc-usage-row">
+              <div class="mc-usage-name"><span class="mc-usage-label" title="{{ g.label }}">{{ g.label }}</span><span class="mc-usage-sub" title="{{ g.sub }}">{{ g.sub }}</span></div>
+              <div class="mc-usage-track"><div class="mc-usage-bar" style="width:{{ g.w }}">
+                <sc-for list="{{ g.segs }}" as="s" hint-placeholder-count="5"><span class="mc-usage-seg-part" style="width:{{ s.w }};background:{{ s.color }}" onMouseEnter="{{ s.tip }}" onMouseLeave="{{ v.tipOut }}"></span></sc-for>
+              </div></div>
+              <div class="mc-usage-value">{{ g.credits }}<span>({{ g.pct }})</span></div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ v.us.moreLabel }}" hint-placeholder-val="{{ false }}"><button type="button" class="mc-usage-more" onClick="{{ v.us.toggleMore }}">{{ v.us.moreLabel }}</button></sc-if>
+      </sc-if>
+      <sc-if value="{{ v.us.noGroups }}" hint-placeholder-val="{{ false }}"><p class="credit-teams-empty">No usage in this period.</p></sc-if>
+    </section>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ v.isTeams }}" hint-placeholder-val="{{ true }}">
+<div class="mui-grid-container justify-center">
+  <div class="mui-grid-item" style="flex-basis:100%">
+    <div class="mui-grid-container justify-center"><div class="mui-grid-item">
+      <h1 class="page-title with-subtitle">Teams</h1>
+      <h6 class="page-title-subtitle">Group users and projects into teams. Give a team a credit budget to control its Chaos Credits spend.</h6>
+    </div></div>
+  </div>
+  <div class="mui-grid-item" style="flex-basis:100%;max-width:100%">
+    <sc-if value="{{ v.tm.hasPool }}" hint-placeholder-val="{{ true }}">
+      <div class="credits-overview-tiles teams-overview-tiles">
+        <sc-for list="{{ v.tm.tiles }}" as="t" hint-placeholder-count="4">
+          <div class="credits-overview-tile">
+            <div class="tile-header">
+              <div class="header-summary">
+                <div class="header-title"><span class="tile-label">{{ t.label }}</span><span class="info-tooltip-host" onMouseEnter="{{ t.info.enter }}" onMouseLeave="{{ v.infoOut }}"><span class="info-icon"></span><sc-if value="{{ t.info.on }}" hint-placeholder-val="{{ false }}"><div class="info-tooltip-paper" style="top:{{ t.info.top }};left:{{ t.info.left }}"><div class="custom-tooltip"><p>{{ t.info.text }}</p></div></div></sc-if></span></div>
+                <div class="metrics"><div class="counts"><span class="numeric-metrics">{{ t.value }}</span><span>{{ t.caption }}</span></div></div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ v.tm.noPool }}" hint-placeholder-val="{{ false }}">
+      <div class="credit-teams-no-credits"><p>Credit budgets become available once your organization has shared Chaos Credits.</p><a class="button" href="#" onClick="{{ v.buyCredits }}">Buy credits</a></div>
+    </sc-if>
+    <div class="te-layout">
+      <aside class="te-sidebar">
+        <div class="te-sidebar-head">
+          <span class="te-sidebar-title">Teams ({{ v.tm.count }})</span>
+          <button type="button" class="button te-new-btn" onClick="{{ v.tm.newTeam }}"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M8 3.5v9M3.5 8h9"></path></svg>New team</button>
+        </div>
+        <sc-if value="{{ v.tm.showFilters }}" hint-placeholder-val="{{ true }}">
+          <div class="te-filters">
+            <div class="te-filter-row">
+              <sc-for list="{{ v.tm.filters }}" as="s" hint-placeholder-count="3">
+                <div class="eris-select {{ s.cls }}"><button type="button" class="eris-select-value" aria-label="{{ s.aria }}" aria-haspopup="menu" onClick="{{ s.open }}">{{ s.label }}</button><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ v.tm.filtersActive }}" hint-placeholder-val="{{ false }}">
+              <div class="te-filter-status"><span>{{ v.tm.shown }} of {{ v.tm.count }} teams</span><button type="button" class="te-filter-clear" onClick="{{ v.tm.clearFilters }}">Clear filters</button></div>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ v.tm.hasTeams }}" hint-placeholder-val="{{ true }}">
+          <ul class="te-team-list">
+            <sc-for list="{{ v.tm.teams }}" as="t" hint-placeholder-count="8">
+              <li>
+                <button type="button" class="te-team{{ t.active }}" aria-current="{{ t.current }}" data-testid="team-row" onClick="{{ t.open }}">
+                  <span class="te-team-info">
+                    <span class="te-team-top"><span class="te-team-name" title="{{ t.name }}">{{ t.name }}</span><sc-if value="{{ t.degraded }}" hint-placeholder-val="{{ false }}"><span class="team-badge team-badge-degraded" onMouseEnter="{{ t.degradedTip }}" onMouseLeave="{{ v.tipOut }}">Degraded</span></sc-if></span>
+                    <span class="te-team-meta">{{ t.meta }}</span>
+                  </span>
+                  <sc-if value="{{ t.showBudget }}" hint-placeholder-val="{{ true }}">
+                    <sc-if value="{{ t.noBudget }}" hint-placeholder-val="{{ false }}"><span class="te-team-budget te-muted">No budget</span></sc-if>
+                    <sc-if value="{{ t.hasBudget }}" hint-placeholder-val="{{ true }}">
+                      <div class="te-team-usage">
+                        <div class="usage-progress-bar"><span class="count">{{ t.bar.count }}</span></div>
+                        <div class="progress-bar"><div class="fill" style="width:{{ t.bar.w }};background-color:{{ t.bar.c }}"></div></div>
+                        <span class="te-team-period">{{ t.period }}</span>
+                      </div>
+                    </sc-if>
+                  </sc-if>
+                </button>
+              </li>
+            </sc-for>
+          </ul>
+        </sc-if>
+        <sc-if value="{{ v.tm.noneShown }}" hint-placeholder-val="{{ false }}"><p class="te-sidebar-empty">{{ v.tm.emptyText }}</p></sc-if>
+      </aside>
+
+      <sc-if value="{{ v.tm.noEditor }}" hint-placeholder-val="{{ false }}">
+        <section class="team-editor te-empty">
+          <p class="te-empty-title">No team selected</p>
+          <p class="te-empty-text">Select a team to edit its projects, credit access and budget, or create a new team.</p>
+          <button type="button" class="mui-button contained-primary" onClick="{{ v.tm.newTeam }}">New team</button>
+        </section>
+      </sc-if>
+      <sc-if value="{{ v.ed }}" hint-placeholder-val="{{ true }}">
+        <section class="team-editor sb-dialog{{ v.ed.pendingCls }}" aria-busy="{{ v.ed.busy }}" aria-label="{{ v.ed.aria }}">
+          <header class="te-head">
+            <div class="te-head-text"><h2>{{ v.ed.heading }}</h2></div>
+            <div class="te-head-aside">
+              <sc-if value="{{ v.ed.isDefaultSaved }}" hint-placeholder-val="{{ false }}"><span class="te-head-sub">Default for new projects</span></sc-if>
+              <sc-if value="{{ v.ed.status }}" hint-placeholder-val="{{ false }}"><span class="team-badge team-badge-{{ v.ed.status.state }}" onMouseEnter="{{ v.ed.status.tip }}" onMouseLeave="{{ v.tipOut }}">{{ v.ed.status.label }}</span></sc-if>
+              <sc-if value="{{ v.ed.hasActions }}" hint-placeholder-val="{{ false }}"><button type="button" class="mui-icon-button" aria-label="Team actions" onClick="{{ v.ed.actions }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button></sc-if>
+            </div>
+          </header>
+          <div class="te-body">
+            <div class="sb-name{{ v.ed.nameErrCls }}">
+              <span class="sb-title-row"><label class="sb-label sb-title" for="teamName">Team name</label></span>
+              <input id="teamName" name="teamName" type="text" value="{{ v.ed.name }}" onInput="{{ v.ed.setName }}">
+              <sc-if value="{{ v.ed.nameError }}" hint-placeholder-val="{{ false }}"><p class="sb-error">{{ v.ed.nameError }}</p></sc-if>
+            </div>
+
+            <section class="sb-section">
+              <div class="sb-section-head">
+                <span class="sb-title-row"><span class="sb-label sb-title">Projects</span></span>
+                <sc-if value="{{ v.ed.selectedCount }}" hint-placeholder-val="{{ false }}"><span class="sb-meta">{{ v.ed.selectedCount }} selected</span></sc-if>
+              </div>
+              <sc-if value="{{ v.ed.selectedCount }}" hint-placeholder-val="{{ false }}">
+                <div class="sb-chips">
+                  <sc-for list="{{ v.ed.chips }}" as="c" hint-placeholder-count="2">
+                    <span class="sb-chip">{{ c.name }}<button type="button" aria-label="Remove {{ c.name }}" onClick="{{ c.remove }}">×</button></span>
+                  </sc-for>
+                  <sc-for list="{{ v.ed.newChips }}" as="c" hint-placeholder-count="0">
+                    <span class="sb-chip sb-chip-new">{{ c.name }}<span class="sb-chip-tag">New</span><button type="button" aria-label="Remove {{ c.name }}" onClick="{{ c.remove }}">×</button></span>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <div class="sb-ac" onFocus="{{ v.ed.acFocus }}" onBlur="{{ v.ed.acBlur }}">
+                <input class="sb-search" name="projectQuery" type="text" autocomplete="off" role="combobox" aria-expanded="{{ v.ed.acExpanded }}" placeholder="{{ v.ed.projectPh }}" value="{{ v.ed.projectQuery }}" onFocus="{{ v.ed.openAc }}" onInput="{{ v.ed.setProjectQuery }}" onKeyDown="{{ v.ed.projectKey }}">
+                <sc-if value="{{ v.ed.acOpen }}" hint-placeholder-val="{{ false }}">
+                  <div class="sb-ac-pop" role="listbox">
+                    <div class="sb-list-caption">{{ v.ed.acCaption }}</div>
+                    <ul class="sb-list sb-list-projects">
+                      <sc-for list="{{ v.ed.projectRows }}" as="p" hint-placeholder-count="5">
+                        <li><label class="sb-row{{ p.onCls }}"><input type="checkbox" checked="{{ p.on }}" onChange="{{ p.toggle }}"><span class="sb-row-main">{{ p.name }}</span><span class="sb-row-aside">{{ p.members }} members</span></label></li>
+                      </sc-for>
+                      <sc-if value="{{ v.ed.canCreate }}" hint-placeholder-val="{{ false }}">
+                        <li><button type="button" class="sb-row sb-row-create" onClick="{{ v.ed.createProject }}"><span class="sb-plus">+</span><span class="sb-row-main">Create project <strong>{{ v.ed.projectQueryTrim }}</strong></span></button></li>
+                      </sc-if>
+                    </ul>
+                    <sc-if value="{{ v.ed.noMatch }}" hint-placeholder-val="{{ false }}"><p class="sb-hint sb-ac-empty">No projects match this search.</p></sc-if>
+                  </div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ v.ed.showDefault }}" hint-placeholder-val="{{ true }}">
+              <div class="sb-check-row">
+                <label class="sb-check"><input type="checkbox" checked="{{ v.ed.isDefault }}" onChange="{{ v.ed.toggleDefault }}"><span>Default team for new projects</span></label>
+                <span class="info-tooltip-host" onMouseEnter="{{ v.ed.defaultInfo.enter }}" onMouseLeave="{{ v.infoOut }}"><span class="info-icon"></span><sc-if value="{{ v.ed.defaultInfo.on }}" hint-placeholder-val="{{ false }}"><div class="info-tooltip-paper" style="top:{{ v.ed.defaultInfo.top }};left:{{ v.ed.defaultInfo.left }}"><div class="custom-tooltip"><p>Projects that members of this team create join it automatically. They do not pick a team.</p></div></div></sc-if></span>
+              </div>
+              </sc-if>
+            </section>
+
+            <section class="sb-section">
+              <div class="sb-section-head">
+                <span class="sb-title-row"><span class="sb-label sb-title">Members with credit access</span><span class="info-tooltip-host" onMouseEnter="{{ v.ed.membersInfo.enter }}" onMouseLeave="{{ v.infoOut }}"><span class="info-icon"></span><sc-if value="{{ v.ed.membersInfo.on }}" hint-placeholder-val="{{ false }}"><div class="info-tooltip-paper" style="top:{{ v.ed.membersInfo.top }};left:{{ v.ed.membersInfo.left }}"><div class="custom-tooltip"><p>{{ v.ed.membersInfo.text }}</p></div></div></sc-if></span></span>
+                <span class="sb-meta">{{ v.ed.accessCount }}</span>
+              </div>
+              <div class="sb-toolbar">
+                <input class="sb-search" name="memberQuery" type="text" placeholder="Search all organization members" value="{{ v.ed.query }}" onInput="{{ v.ed.setQuery }}">
+                <sc-if value="{{ v.ed.bulkLabel }}" hint-placeholder-val="{{ false }}"><button type="button" class="sb-link" onClick="{{ v.ed.bulk }}">{{ v.ed.bulkLabel }}</button></sc-if>
+              </div>
+              <sc-if value="{{ v.ed.hasVisible }}" hint-placeholder-val="{{ true }}">
+                <ul class="sb-list sb-list-members">
+                  <sc-for list="{{ v.ed.members }}" as="m" hint-placeholder-count="6">
+                    <li><label class="sb-row{{ m.onCls }}" title="{{ m.email }}"><input type="checkbox" checked="{{ m.on }}" onChange="{{ m.toggle }}"><span class="sb-row-main">{{ m.name }}<span class="sb-row-sub">{{ m.email }}</span></span><span class="sb-row-aside">{{ m.aside }}</span></label></li>
+                  </sc-for>
+                </ul>
+              </sc-if>
+              <sc-if value="{{ v.ed.noVisible }}" hint-placeholder-val="{{ false }}"><p class="sb-hint sb-empty">{{ v.ed.emptyText }}</p></sc-if>
+            </section>
+
+            <sc-if value="{{ v.ed.noPool }}" hint-placeholder-val="{{ false }}">
+              <section class="sb-section"><div class="sb-section-head"><span class="sb-title-row"><span class="sb-label sb-title">Credit budget</span></span></div><p class="sb-hint">Credit budgets become available once your organization has shared Chaos Credits.</p></section>
+            </sc-if>
+            <sc-if value="{{ v.ed.hasPool }}" hint-placeholder-val="{{ true }}">
+              <section class="sb-section">
+                <div class="sb-section-head">
+                  <span class="sb-title-row"><span class="sb-label sb-title">Credit budget</span><sc-if value="{{ v.ed.lockedInfo }}" hint-placeholder-val="{{ false }}"><span class="info-tooltip-host" onMouseEnter="{{ v.ed.lockedInfo.enter }}" onMouseLeave="{{ v.infoOut }}"><span class="info-icon"></span><sc-if value="{{ v.ed.lockedInfo.on }}" hint-placeholder-val="{{ false }}"><div class="info-tooltip-paper" style="top:{{ v.ed.lockedInfo.top }};left:{{ v.ed.lockedInfo.left }}"><div class="custom-tooltip"><p>Type and period are fixed after the budget is created, because usage and allocated credits are tracked against them. To change them, release this budget and set a new one.</p></div></div></sc-if></span></sc-if></span>
+                </div>
+                <div class="sb-check-row"><label class="sb-check"><input type="checkbox" checked="{{ v.ed.isSet }}" onChange="{{ v.ed.toggleSet }}"><span>Set limit</span></label></div>
+                <sc-if value="{{ v.ed.notSet }}" hint-placeholder-val="{{ false }}"><p style="margin:4px 0 0;font-size:12px;color:#757575">Individual member quotas apply.</p></sc-if>
+                <sc-if value="{{ v.ed.isSet }}" hint-placeholder-val="{{ true }}">
+                  <div class="sb-amount-row">
+                    <div class="sb-amount{{ v.ed.amountErrCls }}"><input name="amount" type="text" inputmode="numeric" placeholder="0" value="{{ v.ed.amount }}" aria-label="Amount (credits)" onInput="{{ v.ed.setAmount }}"><span>credits</span></div>
+                    <sc-if value="{{ v.ed.showPeriod }}" hint-placeholder-val="{{ true }}">
+                      <div class="sb-seg sb-seg-sm" role="radiogroup">
+                        <sc-for list="{{ v.ed.periodSeg }}" as="o" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{ o.checked }}" class="{{ o.cls }}" disabled="{{ o.disabled }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ v.ed.oneTimeOnly }}" hint-placeholder-val="{{ false }}"><span class="sb-meta">One-time</span></sc-if>
+                  </div>
+                  <sc-if value="{{ v.ed.amountError }}" hint-placeholder-val="{{ false }}"><p class="sb-error">{{ v.ed.amountError }}</p></sc-if>
+                  <sc-if value="{{ v.ed.stopNote }}" hint-placeholder-val="{{ false }}"><p style="margin:4px 0 0;font-size:12px;color:#757575">Work in the team’s projects stops when the limit is used up.</p></sc-if>
+                  <sc-if value="{{ v.ed.hasRules }}" hint-placeholder-val="{{ true }}">
+                    <details class="sb-more" open="{{ v.ed.moreOpen }}" onToggle="{{ v.ed.onToggleMore }}">
+                      <summary><span class="sb-label sb-title">Budget rules</span><span class="sb-more-summary">{{ v.ed.summary }}</span></summary>
+                      <div class="sb-more-body">
+                        <sc-if value="{{ v.ed.showType }}" hint-placeholder-val="{{ true }}">
+                          <div class="sb-rule"><span class="sb-rule-label">Type<span class="info-tooltip-host" onMouseEnter="{{ v.ed.typeInfo.enter }}" onMouseLeave="{{ v.infoOut }}"><span class="info-icon"></span><sc-if value="{{ v.ed.typeInfo.on }}" hint-placeholder-val="{{ false }}"><div class="info-tooltip-paper" style="top:{{ v.ed.typeInfo.top }};left:{{ v.ed.typeInfo.left }}"><div class="custom-tooltip"><p>Limit: Caps what the team can spend. Credits stay open to everyone. Allocation: Holds credits aside so only the team can use them. Both stop work when used up, unless an overage is allowed. Warning only: Notifies when the amount is reached and lets work continue.</p></div></div></sc-if></span></span>
+                            <div class="sb-seg sb-seg-sm" role="radiogroup"><sc-for list="{{ v.ed.typeSeg }}" as="o" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{ o.checked }}" class="{{ o.cls }}" disabled="{{ o.disabled }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ v.ed.showOverage }}" hint-placeholder-val="{{ true }}">
+                          <div class="sb-rule">
+                            <label class="sb-check"><input type="checkbox" checked="{{ v.ed.isOverage }}" onChange="{{ v.ed.toggleOverage }}"><span>Allow overage</span></label>
+                            <sc-if value="{{ v.ed.isOverage }}" hint-placeholder-val="{{ false }}"><div class="sb-amount sb-amount-sm{{ v.ed.overageErrCls }}"><input name="overagePct" type="text" inputmode="numeric" placeholder="10" value="{{ v.ed.overagePct }}" aria-label="Overage percentage" onInput="{{ v.ed.setOverage }}"><span>% over</span></div></sc-if>
+                            <sc-if value="{{ v.ed.overageError }}" hint-placeholder-val="{{ false }}"><p class="sb-error">{{ v.ed.overageError }}</p></sc-if>
+                          </div>
+                        </sc-if>
+                        <sc-if value="{{ v.ed.showNotify }}" hint-placeholder-val="{{ true }}">
+                          <div class="sb-rule"><span class="sb-rule-label">Notify at</span>
+                            <div class="sb-seg sb-seg-sm sb-seg-multi"><sc-for list="{{ v.ed.notify }}" as="o" hint-placeholder-count="4"><button type="button" aria-pressed="{{ o.pressed }}" class="{{ o.cls }}" onClick="{{ o.pick }}">{{ o.label }}</button></sc-for></div>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </details>
+                  </sc-if>
+                </sc-if>
+              </section>
+            </sc-if>
+          </div>
+          <sc-if value="{{ v.ed.error }}" hint-placeholder-val="{{ false }}"><p class="te-error" role="alert">{{ v.ed.error }}</p></sc-if>
+          <footer class="te-foot">
+            <button type="button" class="mui-button text-secondary" disabled="{{ v.ed.pending }}" onClick="{{ v.ed.cancel }}">Cancel</button>
+            <button type="button" class="mui-button contained-primary" disabled="{{ v.ed.pending }}" onClick="{{ v.ed.submit }}">{{ v.ed.confirmLabel }}</button>
+          </footer>
+        </section>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ v.isProjects }}" hint-placeholder-val="{{ false }}">
+<div class="mui-grid-container justify-center">
+  <div class="mui-grid-item" style="flex-basis:100%">
+    <div class="mui-grid-container justify-center"><div class="mui-grid-item">
+      <h1 class="page-title with-subtitle">Projects</h1>
+      <h6 class="page-title-subtitle">Track credit spend by project. Assign a project to a team to put its spend under the team budget.</h6>
+    </div></div>
+  </div>
+  <div class="mui-grid-item" style="flex-basis:100%;max-width:100%">
+    <div class="organization-quick-actions"><div class="actions"><button type="button" class="button" onClick="{{ v.pr.create }}">Create project</button></div></div>
+    <div class="credits-table-section-card">
+      <p class="title">Projects</p>
+      <sc-if value="{{ v.pr.hasAny }}" hint-placeholder-val="{{ true }}">
+        <div class="project-toolbar">
+          <div class="project-filter">
+            <div class="eris-select {{ v.pr.filter.cls }}"><button type="button" class="eris-select-value" aria-label="Filter by team" aria-haspopup="menu" onClick="{{ v.pr.filter.open }}">{{ v.pr.filter.label }}</button><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></div>
+          </div>
+          <sc-if value="{{ v.pr.selectedCount }}" hint-placeholder-val="{{ false }}">
+            <div class="project-bulk-bar" role="toolbar" aria-label="Selected projects">
+              <span class="project-bulk-count">{{ v.pr.selectedCount }} selected</span>
+              <button type="button" class="mui-button outlined-primary" onClick="{{ v.pr.addToTeam }}">Add to team</button>
+              <button type="button" class="project-bulk-clear" onClick="{{ v.pr.clearSelection }}">Clear selection</button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ v.pr.emptyText }}" hint-placeholder-val="{{ false }}"><p class="credit-teams-empty">{{ v.pr.emptyText }}</p></sc-if>
+      <sc-if value="{{ v.pr.hasRows }}" hint-placeholder-val="{{ true }}">
+        <div class="credits-details-table credit-teams-table projects-table">
+          <div class="row header-row">
+            <div class="cell header-cell col-check"><input type="checkbox" class="project-check" aria-label="Select all projects" checked="{{ v.pr.allOn }}" ref="{{ v.pr.allRef }}" onChange="{{ v.pr.toggleAll }}"></div>
+            <div class="cell header-cell col-team-name">Project</div>
+            <div class="cell header-cell col-owner">Owner</div>
+            <div class="cell header-cell col-project-team">Team</div>
+            <div class="cell header-cell col-count">Members</div>
+            <div class="cell header-cell col-actions"></div>
+          </div>
+          <div class="divider"></div>
+          <sc-for list="{{ v.pr.rows }}" as="p" hint-placeholder-count="10">
+            <div class="row {{ p.cls }}" data-testid="project-row">
+              <div class="cell col-check"><input type="checkbox" class="project-check" aria-label="Select {{ p.name }}" checked="{{ p.on }}" onChange="{{ p.toggle }}"></div>
+              <div class="cell col-team-name" title="{{ p.name }}">{{ p.name }}</div>
+              <div class="cell col-owner">{{ p.owner }}</div>
+              <div class="cell col-project-team" title="{{ p.team }}">{{ p.team }}</div>
+              <div class="cell col-count"><span class="members-count" onMouseEnter="{{ p.membersTip }}" onMouseLeave="{{ v.tipOut }}">{{ p.memberCount }}</span></div>
+              <div class="cell col-actions"><button type="button" class="mui-icon-button" aria-label="Project actions" onClick="{{ p.menu }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg></button></div>
+            </div>
+            <div class="divider"></div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</div>
+
+<sc-if value="{{ v.dlg }}" hint-placeholder-val="{{ false }}">
+  <div class="mui-dialog-root {{ v.dlg.cls }}" role="dialog">
+    <div class="mui-backdrop" onClick="{{ v.dlg.close }}"></div>
+    <div class="mui-dialog-paper">
+      <div class="dialog-title variant3">
+        <h6>{{ v.dlg.title }}</h6>
+        <sc-if value="{{ v.dlg.notPending }}" hint-placeholder-val="{{ true }}"><button type="button" class="mui-icon-button" aria-label="Close" onClick="{{ v.dlg.close }}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></sc-if>
+      </div>
+      <div class="dialog-content">
+        <sc-if value="{{ v.dlg.isLimit }}" hint-placeholder-val="{{ false }}">
+          <p class="subtitle">Manage limits for the selected users in the Organisation.</p>
+          <div class="users-tag"><strong>1</strong> Users</div>
+          <div class="options-card">
+            <div class="options-header"><svg viewBox="0 0 24 24" aria-hidden="true" class="credits-icon"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"></path></svg><strong>{{ v.dlg.poolTotal }} Credits</strong></div>
+            <div class="divider"></div>
+            <div class="chip-row"><sc-for list="{{ v.dlg.chips }}" as="c" hint-placeholder-count="7"><button type="button" class="{{ c.cls }}" onClick="{{ c.pick }}">{{ c.label }}</button></sc-for></div>
+            <sc-if value="{{ v.dlg.isCustom }}" hint-placeholder-val="{{ false }}">
+              <div id="input-creditLimit-wrapper" class="form-field-wrapper"><label for="creditLimit">Custom limit (credits)</label><input id="creditLimit" name="creditLimit" type="number" value="{{ v.dlg.custom }}" style="border-radius:4px" onInput="{{ v.dlg.setCustom }}"></div>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ v.dlg.isConfirm }}" hint-placeholder-val="{{ false }}">
+          <p class="credit-team-dialog-subject">{{ v.dlg.subject }}</p>
+          <p class="subtitle">{{ v.dlg.message }}</p>
+        </sc-if>
+        <sc-if value="{{ v.dlg.isProjectName }}" hint-placeholder-val="{{ false }}">
+          <div id="input-projectName-wrapper" class="form-field-wrapper {{ v.dlg.nameErrCls }}"><label for="projectName">Project name</label><input id="projectName" name="projectName" type="text" value="{{ v.dlg.name }}" style="border-radius:4px" onInput="{{ v.dlg.setName }}" onKeyDown="{{ v.dlg.enter }}"><sc-if value="{{ v.dlg.nameError }}" hint-placeholder-val="{{ false }}"><p class="error error-text">{{ v.dlg.nameError }}</p></sc-if></div>
+          <sc-if value="{{ v.dlg.isCreate }}" hint-placeholder-val="{{ true }}">
+            <div class="credit-team-field"><span class="credit-team-field-label">Owner</span><div class="eris-select credit-team-select {{ v.dlg.ownerSel.cls }}"><button type="button" class="eris-select-value" aria-label="Owner" aria-haspopup="menu" onClick="{{ v.dlg.ownerSel.open }}">{{ v.dlg.ownerSel.label }}</button><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></div></div>
+          </sc-if>
+        </sc-if>
+        <sc-if value="{{ v.dlg.isProjectTeam }}" hint-placeholder-val="{{ false }}">
+          <p class="credit-team-dialog-subject">{{ v.dlg.subject }}</p>
+          <p class="subtitle">The budget of the team applies to the credits spent in this project.</p>
+        </sc-if>
+        <sc-if value="{{ v.dlg.isAddToTeam }}" hint-placeholder-val="{{ false }}">
+          <p class="subtitle">The budget of the team applies to the credits spent in these projects.</p>
+          <ul class="credit-team-list"><sc-for list="{{ v.dlg.list }}" as="r" hint-placeholder-count="2"><li class="credit-team-list-row"><span class="credit-team-list-label" title="{{ r.label }}">{{ r.label }}<span class="credit-team-list-sublabel">{{ r.sub }}</span></span></li></sc-for></ul>
+          <sc-if value="{{ v.dlg.keptText }}" hint-placeholder-val="{{ false }}"><p class="credit-team-field-hint">{{ v.dlg.keptText }}</p></sc-if>
+          <div class="eris-select credit-team-select {{ v.dlg.teamSel.cls }}"><button type="button" class="eris-select-value" aria-label="Team" aria-haspopup="menu" onClick="{{ v.dlg.teamSel.open }}">{{ v.dlg.teamSel.label }}</button><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></div>
+          <sc-if value="{{ v.dlg.movingText }}" hint-placeholder-val="{{ false }}"><p class="credit-team-field-hint">{{ v.dlg.movingText }}</p></sc-if>
+        </sc-if>
+        <sc-if value="{{ v.dlg.showTeamField }}" hint-placeholder-val="{{ false }}">
+          <div class="credit-team-field"><span class="credit-team-field-label">Team</span><div class="eris-select credit-team-select {{ v.dlg.teamSel.cls }}"><button type="button" class="eris-select-value" aria-label="Team" aria-haspopup="menu" onClick="{{ v.dlg.teamSel.open }}">{{ v.dlg.teamSel.label }}</button><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6l4 4 4-4"></path></svg></div></div>
+          <sc-if value="{{ v.dlg.defaultHint }}" hint-placeholder-val="{{ false }}"><p class="credit-team-field-hint">{{ v.dlg.defaultHint }}</p></sc-if>
+        </sc-if>
+        <sc-if value="{{ v.dlg.isDeleteProject }}" hint-placeholder-val="{{ false }}">
+          <p class="credit-team-dialog-subject">{{ v.dlg.subject }}</p>
+          <p class="subtitle">The project and its member list are deleted. Its members can no longer spend credits in this project.</p>
+        </sc-if>
+        <sc-if value="{{ v.dlg.error }}" hint-placeholder-val="{{ false }}"><p class="credit-team-dialog-error" role="alert">{{ v.dlg.error }}</p></sc-if>
+      </div>
+      <div class="action-buttons"><div class="mui-grid-container justify-end">
+        <button type="button" class="mui-button text-secondary" disabled="{{ v.dlg.pending }}" onClick="{{ v.dlg.close }}">Cancel</button>
+        <button type="button" class="mui-button {{ v.dlg.confirmCls }}" disabled="{{ v.dlg.confirmDisabled }}" onClick="{{ v.dlg.confirm }}">{{ v.dlg.confirmLabel }}</button>
+      </div></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ v.menu }}" hint-placeholder-val="{{ false }}">
+  <div class="mui-click-away" onClick="{{ v.closeMenu }}"></div>
+  <div class="mui-popover-paper {{ v.menu.cls }}" style="top:{{ v.menu.top }};left:{{ v.menu.left }};min-width:{{ v.menu.minW }}">
+    <ul role="menu"><sc-for list="{{ v.menu.items }}" as="i" hint-placeholder-count="3"><li role="menuitem" class="mui-menu-item {{ i.cls }}" onClick="{{ i.pick }}"><span class="eris-check" aria-hidden="true"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7"></path></svg></span>{{ i.label }}</li></sc-for></ul>
+  </div>
+</sc-if>
+<sc-if value="{{ v.tip }}" hint-placeholder-val="{{ false }}"><div class="mui-tooltip mc-tip" role="tooltip" style="top:{{ v.tip.top }};left:{{ v.tip.left }}">{{ v.tip.text }}</div></sc-if>
+<sc-if value="{{ v.snack }}" hint-placeholder-val="{{ false }}"><div class="mui-snackbar" role="status">{{ v.snack }}</div></sc-if>
+<sc-if value="{{ tour.on }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:24px;bottom:24px;z-index:2147483000;font-family:Inter,Roboto,system-ui,sans-serif;text-align:left">
+<sc-if value="{{ tour.open }}" hint-placeholder-val="{{ true }}">
+<section aria-label="Tutorial step" style="width:420px;max-width:calc(100vw - 48px);box-sizing:border-box;background:#272727;color:#FFFFFF;border:1px solid #3B3B3B;border-radius:12px;box-shadow:0 16px 40px rgba(0,0,0,0.35);padding:16px 18px 16px 20px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+<span style="min-width:0;font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ tour.useCase }}</span>
+<div style="display:flex;align-items:center;gap:2px;flex:none">
+<span style="font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB;white-space:nowrap;margin-right:4px">{{ tour.stepLabel }}</span>
+<button type="button" aria-label="Minimize tutorial" onClick="{{ tour.toggle }}" style="width:32px;height:32px;border:0;border-radius:16px;background:transparent;color:#DBDBDB;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 5.5 7 9.5 11 5.5"></path></svg></button>
+<a href="Tutorial.dc.html" onClick="{{ tour.exit }}" aria-label="Exit tutorial" style="width:32px;height:32px;border-radius:16px;color:#DBDBDB;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 2l10 10M12 2 2 12"></path></svg></a>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="padding:2px 8px;border-radius:999px;background:{{ tour.roleBg }};color:#FFFFFF;font:600 11px/1.6 Inter,Roboto,system-ui,sans-serif;letter-spacing:0.02em">{{ tour.role }}</span><span style="font:500 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB">in {{ tour.app }}</span></div>
+<h2 style="margin:0;font:600 17px/1.35 Inter,Roboto,system-ui,sans-serif;color:#FFFFFF">{{ tour.title }}</h2>
+<p style="margin:0;font:400 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#DBDBDB;text-wrap:pretty">{{ tour.text }}</p>
+<sc-if value="{{ tour.done }}" hint-placeholder-val="{{ false }}"><p style="margin:0;font:600 14px/1.5 Inter,Roboto,system-ui,sans-serif;color:#8DDFFF">{{ tour.doneText }}</p></sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<div aria-hidden="true" style="flex:1;min-width:0;display:flex;gap:4px;align-items:center">
+<sc-for list="{{ tour.dots }}" as="d" hint-placeholder-count="6"><span style="flex:1;height:4px;border-radius:2px;background:{{ d.bg }}"></span></sc-for>
+</div>
+<a href="{{ tour.prevHref }}" onClick="{{ tour.prev }}" aria-label="{{ tour.prevLabel }}" title="{{ tour.prevLabel }}" style="flex:none;width:44px;height:44px;box-sizing:border-box;border-radius:22px;border:1px solid #525252;color:#FFFFFF;display:flex;align-items:center;justify-content:center;text-decoration:none"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4"></path></svg></a>
+<a href="{{ tour.nextHref }}" onClick="{{ tour.next }}" style="flex:none;height:44px;box-sizing:border-box;padding:0 16px 0 18px;border-radius:22px;background:#0B9EDD;color:#FFFFFF;display:flex;align-items:center;gap:8px;font:600 14px/1 Inter,Roboto,system-ui,sans-serif;text-decoration:none;box-shadow:{{ tour.nextRing }}">{{ tour.nextLabel }}<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"></path></svg></a>
+</div>
+<span style="font:400 12px/1.4 Inter,Roboto,system-ui,sans-serif;color:#ABABAB">{{ tour.nextHint }}</span>
+</section>
+</sc-if>
+<sc-if value="{{ tour.closed }}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{ tour.toggle }}" aria-label="Show tutorial step" style="height:44px;display:flex;align-items:center;gap:10px;padding:0 18px;border:1px solid #3B3B3B;border-radius:22px;background:#272727;color:#FFFFFF;box-shadow:0 8px 24px rgba(0,0,0,0.3);font:600 13px/1 Inter,Roboto,system-ui,sans-serif;cursor:pointer"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8.5 7 4.5 11 8.5"></path></svg>{{ tour.shortLabel }}</button>
+</sc-if>
+</div>
+</sc-if>
+</sc-if>
+</div>
+</x-dc>
+
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000},&quot;release&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Full&quot;,&quot;MVP&quot;],&quot;default&quot;:&quot;Full&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+// Images used in the page. Listing them here lets the canvas serve them.
+const PROTOTYPE_IMAGES = [
+  'mychaos-prototype/assets/images/mychaosgroup-logo.svg',
+  'mychaos-prototype/assets/images/product-icons/chaoscredits.svg',
+  'mychaos-prototype/assets/images/product-icons/veras.svg',
+  'mychaos-prototype/assets/images/product-icons/vray.svg',
+];
+// The page is drawn from this file's markup. Data and rules come from
+// mychaos-prototype/assets/js/store.js (the prototype backend) and
+// shared/credit-model.js (names, budgets, and which features show in the MVP).
+const ROUTE_IDS = { credits: 'ORGANIZATION_CONSUMPTION_CREDITS', usage: 'ORGANIZATION_CONSUMPTION_CREDITS_USAGE', teams: 'ORGANIZATION_TEAMS', projects: 'ORGANIZATION_PROJECTS' };
+const ORG_ITEMS = [
+  { title: 'Users & Product assignments' },
+  { title: 'Teams', route: 'teams' },
+  { title: 'Projects', route: 'projects' },
+  { title: 'Chaos Credits Management', route: 'credits', subroutes: ['usage'], badge: 'New' },
+];
+const TOP_ITEMS = [
+  { title: 'Products', chevron: true }, { title: 'Licensing', chevron: true }, { title: 'Organization', org: true },
+  { title: 'Billing', chevron: true }, { title: 'Learning' }, { title: 'CGconnect' }, { title: 'Account', chevron: true },
+];
+const LIMIT_OPTIONS = [
+  { value: 0, label: 'Disable access' }, { value: 50, label: '50' }, { value: 100, label: '100' }, { value: 500, label: '500' },
+  { value: 1000, label: '1,000' }, { value: null, label: 'No limit' }, { value: 'custom', label: 'Custom' },
+];
+const MODE_OPTIONS = [{ value: 'limit', label: 'Limit' }, { value: 'reservation', label: 'Allocation' }];
+const PERIOD_OPTIONS = [{ value: 'monthly', label: 'Monthly' }, { value: 'lifetime', label: 'One-time' }];
+const EXHAUSTED_OPTIONS = [
+  { value: 'warn', label: 'Warn and keep going', short: 'Warn only' },
+  { value: 'stop', label: 'Stop team work', short: 'Stop work' },
+  { value: 'overage', label: 'Allow an overage', short: 'Allow overage' },
+];
+const NOTIFY_PCTS = [50, 75, 90, 100];
+const TEAM_FILTERS = [
+  { key: 'period', placeholder: 'Any period', options: [{ value: 'monthly', label: 'Monthly' }, { value: 'lifetime', label: 'One-time' }] },
+  { key: 'usage', placeholder: 'Any usage', options: [{ value: '0', label: 'Unused (0%)' }, { value: '80', label: '80% or more' }, { value: '100', label: 'Used up (100%)' }] },
+  { key: 'access', placeholder: 'Any access', options: [{ value: 'set', label: 'Set amount' }, { value: 'none', label: 'No budget' }] },
+];
+const DEGRADED_REASONS = {
+  pool_shrink: 'The shared pool shrank and no longer covers this allocation.',
+  grant_removed: 'A grant that backed this allocation was removed. Update the budget to clear this state.',
+};
+const NAME_ERROR = 'Enter a name of up to 100 characters.';
+const NO_TEAM = '__none';
+
+// The guided walkthroughs (shared/tour.js) open the team editor filled in for each step.
+const BOARD = 'MyChaos.dc.html';
+const TR = () => window.ChaosTour;
+const PX = () => window.Proto;
+const ST = () => window.Proto && window.Proto.store;
+const F = (name) => !window.Proto || !window.Proto.feature || window.Proto.feature(name);
+const fmt = (n) => Math.floor(n || 0).toLocaleString('en-US');
+const fmtDate = (iso) => (iso ? new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }) : '-');
+const nameOf = (m) => [m.firstName, m.lastName].filter(Boolean).join(' ').trim() || m.email || m.guid;
+const isNum = (v) => v !== '' && v !== null && v !== undefined && !Number.isNaN(Number(v));
+const nameInvalid = (n) => !n.trim() || n.trim().length > 100;
+const isSetB = (b) => Boolean(b) && (b.amountType || 'set') === 'set';
+const usageColor = (p) => (p >= 90 ? '#E1161C' : p >= 80 ? '#F3712B' : '#0B9EDD');
+const badgeColors = (p) => (p >= 90 ? ['#ffe8e8', '#E1161C'] : p >= 80 ? ['#fff1e9', '#F3712B'] : ['#f6f6f6', '#525252']);
+const stop = (e) => e && e.stopPropagation && e.stopPropagation();
+const prevent = (e) => { if (e && e.preventDefault) e.preventDefault(); };
+
+function bar(used, total, showTotal) {
+  const pct = total ? Math.round((used / total) * 100) : undefined;
+  const [bg, fg] = badgeColors(pct || 0);
+  const usedL = Math.ceil(used || 0).toLocaleString('en-US');
+  const against = showTotal && total != null;
+  return {
+    count: against ? `${usedL} / ${Number(total).toLocaleString('en-US')}` : usedL,
+    badge: !against && pct !== undefined, badgeText: `${Math.min(100, pct || 0)}%`, bg, fg,
+    w: `${Math.min(pct || 0, 100)}%`, c: usageColor(pct || 0),
+  };
+}
+function validateBudget(f) {
+  const e = {};
+  if (f.amountType !== 'set') return e;
+  if (!isNum(f.amount) || Number(f.amount) <= 0) e.amount = 'Enter an amount greater than 0.';
+  if (f.onExhausted === 'overage' && (!isNum(f.overagePct) || Number(f.overagePct) <= 0)) e.overagePct = 'Enter an overage percentage greater than 0.';
+  return e;
+}
+function budgetBody(form) {
+  const M = window.CreditModel;
+  const f = M ? { ...form, ...M.effective(form, PX().release) } : form;
+  return f.amountType === 'set'
+    ? { amountType: 'set', mode: f.mode, period: f.period, amount: Number(f.amount), onExhausted: f.onExhausted,
+        overagePct: f.onExhausted === 'overage' ? Number(f.overagePct) : undefined, notifyPcts: [...(f.notifyPcts || [])].sort((a, b) => a - b) }
+    : { amountType: 'none' };
+}
+function emptyForm(b) {
+  return {
+    amountType: b ? (isSetB(b) ? 'set' : 'none') : 'set',
+    mode: isSetB(b) ? b.mode : 'limit',
+    period: isSetB(b) ? b.period : F('monthlyRefresh') ? 'monthly' : 'lifetime',
+    amount: b && b.amount ? String(b.amount) : '',
+    onExhausted: b && b.onExhausted ? b.onExhausted : 'stop',
+    overagePct: b && b.overagePct != null ? String(b.overagePct) : '',
+    notifyPcts: b && b.notifyPcts && b.notifyPcts.length ? [...b.notifyPcts] : [75, 100],
+  };
+}
+
+class Component extends DCLogic {
+  state = { route: 'teams', dialog: null, menu: null, tip: null, info: null, snack: null,
+    open: { named: true, shared: true }, groupBy: 'team', filters: { period: '', usage: '', access: '' },
+    editor: null, teamFilter: '', selected: [] };
+  timers = {};
+
+  // Lifecycle: wait for the store, follow it, and apply the release tweak.
+  componentDidMount() {
+    this.alive = true;
+    const boot = () => {
+      const st = ST();
+      if (st && st.subscribe && window.CreditModel) {
+        this.applyRelease();
+        if (!this.subscribed) { this.subscribed = true; st.subscribe(() => { if (this.alive) this.forceUpdate(); }); }
+        this.openHandoff();
+        if (TR()) this.syncTour();
+        else this.timers.tour = setInterval(() => { if (TR()) { clearInterval(this.timers.tour); this.applyRelease(); this.syncTour(); } }, 50);
+        this.forceUpdate();
+        return;
+      }
+      this.timers.boot = setTimeout(boot, 50);
+    };
+    boot();
+    this.onStorage = (ev) => { if (ev.key === 'mychaos-open' && ev.newValue) this.openHandoff(); };
+    window.addEventListener('storage', this.onStorage);
+  }
+  // "Manage access" in Collaboration asks for Teams, opened on the project's team.
+  openHandoff() {
+    let req = null;
+    try { req = JSON.parse(localStorage.getItem('mychaos-open') || 'null'); localStorage.removeItem('mychaos-open'); } catch (e) {}
+    if (!req || req.route !== 'teams' || Date.now() - (req.at || 0) > 60000) return;
+    const st = ST();
+    this.go('teams');
+    if (req.team && st.teamSummaries().some((t) => t.guid === req.team)) this.openEditor(req.team);
+  }
+  componentDidUpdate(prev) { if ((prev.release === 'MVP') !== (this.props.release === 'MVP')) this.applyRelease(); }
+  componentWillUnmount() { this.alive = false; Object.values(this.timers).forEach(clearTimeout); if (this.onStorage) window.removeEventListener('storage', this.onStorage); }
+  applyRelease() { const st = ST(); const inTour = TR() && TR().stepFor(BOARD); if (st && st.setRelease) st.setRelease(!inTour && this.props.release === 'MVP' ? 'MVP' : 'Full'); }
+
+  // Walkthrough: each step on this artboard opens Teams with the team editor filled in,
+  // or, for a step with save, makes sure the team exists and opens it.
+  syncTour() {
+    const t = TR(); const st = ST();
+    if (!t || !st || !st.org) return;
+    const s = t.stepFor(BOARD);
+    if (!s) { this.tourKey = null; return; }
+    if (s.key === this.tourKey) { this.forceUpdate(); return; }
+    this.tourKey = s.key;
+    if (st.setRelease) st.setRelease('Full');
+    const sc = s.scene || {};
+    const named = (list, n) => list.find((x) => x.name.trim().toLowerCase() === n.trim().toLowerCase());
+    try {
+      (sc.removeTeams || []).forEach((n) => { const x = named(st.teamSummaries(), n); if (x) st.deleteTeam(x.guid); });
+      (sc.removeProjects || []).forEach((n) => { const x = named(st.projectSummaries(), n); if (x) st.deleteProject(x.guid); });
+    } catch (err) { if (!(err instanceof PX().ApiError)) throw err; }
+    this.setState({ route: 'teams', dialog: null, menu: null, tip: null, editor: null });
+    const d = sc.draft;
+    if (!d) return;
+    if (sc.save) { const guid = this.tourEnsureTeam(d); if (guid) this.openEditor(guid); return; }
+    this.openEditor(null);
+    this.ed(this.tourDraft(d));
+  }
+  tourDraft(d) {
+    const st = ST();
+    const guidOf = (n) => (st.projectSummaries().find((p) => p.name.toLowerCase() === n.toLowerCase()) || {}).guid;
+    const form = d.budget
+      ? { ...emptyForm(null), amountType: 'set', mode: d.budget.mode || 'limit', period: d.budget.period || 'lifetime', amount: String(d.budget.amount), onExhausted: 'stop', notifyPcts: [75, 100] }
+      : emptyForm(null);
+    return { name: d.name || '', nameEdited: Boolean(d.nameEdited), projects: (d.projects || []).map(guidOf).filter(Boolean),
+      newProjects: [...(d.newProjects || [])], selected: [...(d.members || [])], isDefault: Boolean(d.isDefault), form };
+  }
+  tourEnsureTeam(d) {
+    const st = ST();
+    const found = st.teamSummaries().find((x) => x.name.trim().toLowerCase() === d.name.trim().toLowerCase());
+    if (found) return found.guid;
+    const draft = this.tourDraft(d);
+    try {
+      const guid = st.createTeam(d.name, { isDefault: draft.isDefault });
+      draft.projects.forEach((p) => st.assignTeamProject(guid, p));
+      draft.newProjects.forEach((n) => st.createProject(n, guid, d.owner));
+      draft.selected.forEach((m) => st.addTeamMember(guid, m));
+      if (d.budget && st.budgetSummary().poolTotal > 0) st.setTeamBudget(guid, budgetBody(draft.form));
+      this.snack('Team created');
+      return guid;
+    } catch (err) { if (!(err instanceof PX().ApiError)) throw err; return null; }
+  }
+  tourCard() { const t = TR(); return t ? t.card(BOARD, { apply: () => this.syncTour(), refresh: () => this.forceUpdate() }) : { on: false }; }
+
+  // Shared UI pieces
+  go(route) { this.setState({ route, dialog: null, menu: null, tip: null }); try { window.scrollTo(0, 0); } catch (e) {} }
+  snack(text) { this.setState({ snack: text }); clearTimeout(this.timers.snack); this.timers.snack = setTimeout(() => this.alive && this.setState({ snack: null }), 3500); }
+  notIn(what) { return (e) => { prevent(e); stop(e); this.snack(`${what} in the real app. It is not part of this prototype.`); }; }
+  openMenu(anchor, items, opts) {
+    const o = opts || {};
+    const r = anchor.getBoundingClientRect();
+    const offset = o.selectedIndex > 0 ? o.selectedIndex * 46 : 0;
+    // The Eris menu opens just below its field; the Material one opens over it, on the selected option.
+    const eris = o.variant === 'eris';
+    const top = eris ? r.bottom + 4 : Math.max(16, r.top - 8 - offset);
+    this.setState({ menu: { top: top + 'px', left: Math.max(16, Math.min(r.left, window.innerWidth - 216)) + 'px', minW: o.matchWidth ? r.width + 'px' : '16px', items, cls: eris ? 'eris-menu' : '', owner: o.owner || null }, tip: null });
+  }
+  menuFor(label, actions) { return (e) => { stop(e); this.openMenu(e.currentTarget, actions.map((a) => ({ label: a.label, cls: 'allocate-product', fn: a.fn }))); }; }
+  // variant 'eris' draws the Eris dropdown; id marks the field as open while its menu shows.
+  select({ options, value, placeholder, onChange, cls, variant, id }) {
+    const all = placeholder === undefined ? options : [{ value: '', label: placeholder }, ...options];
+    const current = all.find((o) => o.value === value) || all[0];
+    const isOpen = !!(id && this.state.menu && this.state.menu.owner === id);
+    return {
+      cls: (cls || '') + (isOpen ? ' open' : ''), label: current.label,
+      open: (e) => { stop(e); const root = e.currentTarget.parentElement || e.currentTarget;
+        this.openMenu(root, all.map((o) => ({ label: o.label, cls: o.value === current.value ? 'selected' : '', fn: () => onChange(o.value) })), { matchWidth: true, selectedIndex: all.indexOf(current), variant, owner: id }); },
+    };
+  }
+  tipIn(text) { return text ? (e) => { const r = e.currentTarget.getBoundingClientRect(); this.setState({ tip: { text, top: r.bottom + 8 + 'px', left: Math.max(150, r.left + r.width / 2) + 'px' } }); } : undefined; }
+  // Info tooltips open in a fixed layer under their icon, so tiles and cards that clip their content can't cut them off.
+  info(id, text) {
+    const on = this.state.info === id; const pos = on ? this.state.infoPos || {} : {};
+    return { on, text, top: pos.top, left: pos.left, enter: (e) => {
+      const r = e.currentTarget.getBoundingClientRect(); const w = Math.min(340, window.innerWidth - 32);
+      this.setState({ info: id, infoPos: { top: r.bottom + 6 + 'px', left: Math.max(16, Math.min(r.left, window.innerWidth - w - 16)) + 'px' } });
+    } };
+  }
+
+  // Dialogs
+  openDialog(d) { this.setState({ dialog: { error: null, pending: false, ...d }, menu: null, tip: null }); }
+  dlg(patch) { this.setState((s) => ({ dialog: s.dialog && { ...s.dialog, ...patch } })); }
+  closeDialog() { if (this.state.dialog && !this.state.dialog.pending) this.setState({ dialog: null }); }
+  mutate(fn, onSuccess) {
+    const d = this.state.dialog;
+    if (!d || d.pending) return;
+    this.dlg({ pending: true, error: null });
+    this.timers.mutate = setTimeout(() => {
+      if (!this.alive || !this.state.dialog) return;
+      try { fn(); } catch (err) { if (!(err instanceof PX().ApiError)) throw err; this.dlg({ pending: false, error: err.message }); return; }
+      this.setState({ dialog: null });
+      if (onSuccess) onSuccess();
+    }, 250);
+  }
+
+  // Team editor
+  openEditor(teamGUID) {
+    const st = ST();
+    const ex = teamGUID ? st.teamDetails(teamGUID) : null;
+    this.setState({ menu: null, editor: {
+      id: Math.random().toString(36).slice(2), teamGUID: teamGUID || null, release: PX().release, orgGUID: st.org().guid,
+      isDefault: ex ? ex.isDefault : false, name: ex ? ex.name : '', nameEdited: Boolean(ex),
+      projects: ex ? ex.projects.map((p) => p.guid) : [], newProjects: [], selected: ex ? ex.members.map((m) => m.guid) : [],
+      query: '', projectQuery: '', projectOpen: false, moreOpen: false, touched: false, error: null, pending: false,
+      form: emptyForm(ex && ex.budget) } });
+  }
+  ed(patch) { this.setState((s) => ({ editor: s.editor && { ...s.editor, ...(typeof patch === 'function' ? patch(s.editor) : patch) } })); }
+  edForm(field, value) { this.ed((e) => ({ form: { ...e.form, [field]: value } })); }
+  syncName(e, projects, newProjects) {
+    if (e.nameEdited) return e.name;
+    const st = ST(); const total = projects.length + newProjects.length;
+    if (total === 1) return projects.length ? (st.projectSummaries().find((p) => p.guid === projects[0]) || {}).name || '' : newProjects[0];
+    return total === 0 ? '' : e.name;
+  }
+  focusSearch() { setTimeout(() => { const s = document.querySelector('.team-editor input[name="projectQuery"]'); if (s) s.focus(); }, 0); }
+  toggleProject(guid, clearQuery) {
+    this.ed((e) => { const projects = e.projects.includes(guid) ? e.projects.filter((g) => g !== guid) : [...e.projects, guid];
+      return { projects, projectQuery: clearQuery ? '' : e.projectQuery, name: this.syncName(e, projects, e.newProjects) }; });
+    this.focusSearch();
+  }
+  createProject() {
+    this.ed((e) => { const n = e.projectQuery.trim(); if (!n) return {}; const newProjects = [...e.newProjects, n];
+      return { newProjects, projectQuery: '', name: this.syncName(e, e.projects, newProjects) }; });
+    this.focusSearch();
+  }
+  edErrors(e, hasPool) { const errors = hasPool ? validateBudget(e.form) : {}; if (nameInvalid(e.name)) errors.name = NAME_ERROR; return errors; }
+  submitEditor() {
+    const e = this.state.editor; const st = ST();
+    if (!e || e.pending) return;
+    const hasPool = st.budgetSummary().poolTotal > 0;
+    if (Object.keys(this.edErrors(e, hasPool)).length) return this.ed({ touched: true });
+    const members = st.org().members.filter((m) => !m.disabled && e.selected.includes(m.guid)).map((m) => m.guid);
+    const existing = e.teamGUID ? st.teamDetails(e.teamGUID) : null;
+    const run = () => {
+      if (existing) {
+        const guid = existing.guid;
+        if (e.name.trim() !== existing.name) st.renameTeam(guid, e.name);
+        existing.projects.forEach((p) => e.projects.includes(p.guid) || st.removeTeamProject(guid, p.guid));
+        e.projects.forEach((p) => existing.projects.some((x) => x.guid === p) || st.assignTeamProject(guid, p));
+        e.newProjects.forEach((n) => st.createProject(n, guid));
+        existing.members.forEach((m) => members.includes(m.guid) || st.removeTeamMember(guid, m.guid));
+        st.setTeamKind(guid, 'project', e.isDefault);
+        members.forEach((m) => existing.members.some((x) => x.guid === m) || st.addTeamMember(guid, m));
+        if (hasPool) st.setTeamBudget(guid, budgetBody(e.form));
+        return guid;
+      }
+      const guid = st.createTeam(e.name, { isDefault: e.isDefault });
+      const created = [];
+      try {
+        e.projects.forEach((p) => st.assignTeamProject(guid, p));
+        e.newProjects.forEach((n) => created.push(st.createProject(n, guid)));
+        members.forEach((m) => st.addTeamMember(guid, m));
+        if (hasPool) st.setTeamBudget(guid, budgetBody(e.form));
+      } catch (err) { created.forEach((p) => st.deleteProject(p)); st.deleteTeam(guid); throw err; }
+      return guid;
+    };
+    this.ed({ pending: true, error: null, touched: true });
+    this.timers.panel = setTimeout(() => {
+      const cur = this.state.editor;
+      if (!this.alive || !cur || cur.id !== e.id) return;
+      let guid;
+      try { guid = run(); } catch (err) { if (!(err instanceof PX().ApiError)) throw err; this.ed({ pending: false, error: err.message }); return; }
+      if (TR()) TR().did('mychaos.save');
+      this.openEditor(guid);
+      this.snack(e.teamGUID ? 'Changes saved' : 'Team created');
+    }, 250);
+  }
+  confirmTeam(action, team) {
+    const msgs = {
+      release: F('allocation')
+        ? 'The budget is released for good. Allocated credits return to the shared pool. You can set a new budget afterwards.'
+        : 'The budget is released for good. Team members fall back to their own credit limits. You can set a new budget afterwards.',
+      delete: F('allocation')
+        ? 'The team and its direct members are deleted. Its projects stay and no longer belong to a team. Its budget is released first and any allocated credits return to the shared pool.'
+        : 'The team and its direct members are deleted. Its projects stay and no longer belong to a team. Its budget is released first.',
+    };
+    this.openDialog({ type: 'confirm', action, guid: team.guid, subject: team.name, title: action === 'delete' ? 'Delete team' : 'Release budget',
+      confirmLabel: action === 'delete' ? 'Delete' : 'Release', destructive: true, message: msgs[action] });
+  }
+
+  // Page view models
+  creditsView() {
+    const st = ST(); const org = st.org();
+    const usedNamed = org.members.reduce((a, m) => a + (m.named || 0), 0);
+    const icon = (code) => ({ isVeras: code === 'veras', isVray: code === 'vray', isCredits: code === 'chaoscredits' });
+    const named = org.namedGrants.map((g) => ({ ...g, totalCredits: g.numberOfSeats * g.creditsPerSeat, bal: g.numberOfSeats * g.creditsPerSeat - usedNamed }));
+    const shared = org.sharedGrants.map((g) => ({ ...g, bal: g.totalCredits - g.consumed, usage: (g.consumed / g.totalCredits) * 100 }));
+    const sum = (rows, k) => rows.reduce((a, r) => a + r[k], 0);
+    const tile = (key, rows) => {
+      const bal = sum(rows, 'bal'), total = sum(rows, 'totalCredits'), open = this.state.open[key];
+      return { balance: fmt(bal), total: fmt(total), pct: `${Math.round(total ? (bal / total) * 100 : 0)}%`, open, closed: !open, expanded: String(open),
+        toggle: () => this.setState((s) => ({ open: { ...s.open, [key]: !s.open[key] } })) };
+    };
+    const ring = (p) => { const v = Math.min(100, Math.max(0, p)); const len = 2 * Math.PI * 7; return { ringColor: v >= 90 ? '#E1161C' : v >= 80 ? '#F3712B' : '#0B9EDD', dash: `${(len * v) / 100} ${len}`, tipIn: this.tipIn(`${Math.round(v)}% used`) }; };
+    const summary = st.budgetSummary();
+    const pool = st.poolFigures().remaining;
+    const perSeat = org.namedGrants.length ? org.namedGrants[0].creditsPerSeat : 0;
+    const remainingFor = (m) => { if (!m.quota) return 0; const left = m.quota.maxAmount === null ? Infinity : Math.max(0, m.quota.maxAmount - m.quota.usage); return Math.min(left, pool); };
+    return {
+      hasNamed: named.length > 0, hasShared: shared.length > 0,
+      namedInfo: this.info('named'), sharedInfo: this.info('shared'),
+      named: { ...tile('named', named), rows: named.map((r) => ({ ...icon(r.productCode), productName: r.productName, subtitle: `Monthly allowance · ${r.numberOfSeats} seats`, unassigned: r.unassignedSeats > 0 ? r.unassignedSeats : 0, balance: fmt(r.bal), total: fmt(r.totalCredits), refresh: fmtDate(r.expireOn) })) },
+      shared: { ...tile('shared', shared), rows: shared.map((r) => ({ ...icon(r.productCode), ...ring(r.usage), productName: r.productName, subtitle: r.grantType === 'ela' ? 'Annual pool' : `Monthly allowance · ${r.numberOfSeats} seats`, balance: fmt(r.bal), total: fmt(r.totalCredits), refresh: fmtDate(r.expireOn) })) },
+      reserved: fmt(summary.reservedForTeams), limits: fmt(summary.limitsTotal), budgeted: st.teamSummaries().filter((t) => t.budget).length,
+      limitTipIn: this.tipIn('Consumption limit for an individual user on credits drawn from the shared pool. Does not include named credits.'),
+      users: org.members.map((m, i) => {
+        const used = m.quota ? m.quota.usage : 0;
+        const noAccess = !m.quota || m.quota.maxAmount === 0, unlimited = !noAccess && m.quota.maxAmount === null;
+        return { cls: `${i % 2 === 0 ? 'even-row' : 'odd-row'}${m.disabled ? ' deactivated' : ''}`, name: nameOf(m), email: m.email,
+          hasNamed: m.named !== undefined, noNamed: m.named === undefined, named: bar(m.named || 0, perSeat), shared: bar(used, used + remainingFor(m)),
+          noAccess, unlimited, hasLimit: !noAccess && !unlimited, limit: m.quota ? fmt(m.quota.maxAmount) : '', reset: fmtDate(org.windowEnd),
+          unlimitedTip: this.tipIn('The user can use all available credits from the shared pool.'), noAccessTip: this.tipIn('The user does not have access to the shared pool'),
+          active: !m.disabled, menu: this.menuFor('User actions', [{ label: 'Set usage limit', fn: () => this.openDialog({ type: 'limit', guid: m.guid, who: nameOf(m), selected: undefined, custom: '0', title: 'Set usage limits', cls: 'distribute-credit-limit', confirmLabel: 'Distribute' }) }]) };
+      }),
+    };
+  }
+  usageView() {
+    const org = ST().org(); const by = this.state.groupBy;
+    const PRODUCTS = [
+      ['veras', 'Veras', '#3B82F6'], ['enhancer', 'AI Enhancer', '#3AA39A'], ['upscaler', 'AI Upscaler', '#9AA20D'],
+      ['material', 'AI Material Generation', '#F37332'], ['rendering', 'Rendering', '#7448B8'], ['others', 'Others', '#97A3B6'],
+    ];
+    const pct = (n, of) => `${of ? ((n / of) * 100).toFixed(1) : '0.0'}%`;
+    const total = org.usage.reduce((a, r) => a + r.credits, 0);
+    const keyOf = (r) => (by === 'team' ? r.teamGUID : by === 'project' ? r.projectGUID || 'my:' + r.userGUID : r.userGUID);
+    const groups = new Map();
+    org.usage.forEach((r) => {
+      const k = keyOf(r);
+      const g = groups.get(k) || { key: k, row: r, credits: 0, byProduct: {} };
+      g.credits += r.credits; g.byProduct[r.product] = (g.byProduct[r.product] || 0) + r.credits;
+      groups.set(k, g);
+    });
+    const team = (guid) => org.teams.find((t) => t.guid === guid);
+    const project = (guid) => org.projects.find((p) => p.guid === guid);
+    const member = (guid) => org.members.find((m) => m.guid === guid);
+    const describe = (g) => {
+      const r = g.row;
+      if (by === 'team') {
+        if (!r.teamGUID) return { label: 'No team', sub: 'Personal work and projects without a team' };
+        const t = team(r.teamGUID);
+        if (!t) return { label: 'Deleted team', sub: '' };
+        const n = org.projects.filter((p) => p.teamGUID === t.guid).length;
+        const b = t.budget && (t.budget.amountType || 'set') === 'set' ? t.budget : null;
+        return { label: t.name, sub: `${n} ${n === 1 ? 'project' : 'projects'} · ${b ? `${fmt(b.usedAmount)} of ${fmt(b.amount)} budget used` : 'no budget'}` };
+      }
+      if (by === 'project') {
+        if (!r.projectGUID) { const m = member(r.userGUID); return { label: 'My Project', sub: `${m ? nameOf(m) : 'Deleted user'} · personal work, no team` }; }
+        const p = project(r.projectGUID); const t = p && team(p.teamGUID);
+        return { label: p ? p.name : 'Deleted project', sub: t ? t.name : 'No team' };
+      }
+      const m = member(r.userGUID);
+      return m ? { label: nameOf(m), sub: m.email } : { label: 'Deleted user', sub: r.userGUID };
+    };
+    const sorted = [...groups.values()].sort((a, b) => b.credits - a.credits);
+    const max = Math.max(1, ...sorted.map((g) => g.credits));
+    const limit = 10;
+    const shown = this.state.usageAll ? sorted : sorted.slice(0, limit);
+    const noun = { team: ['team', 'teams'], project: ['project', 'projects'], user: ['user', 'users'] }[by];
+    const prodTotals = PRODUCTS.map(([id]) => org.usage.filter((r) => r.product === id).reduce((a, r) => a + r.credits, 0));
+    return {
+      title: { team: 'Usage by team', project: 'Usage by project', user: 'Usage by user' }[by],
+      total: fmt(total), count: `${sorted.length} ${sorted.length === 1 ? noun[0] : noun[1]}`, range: '1/10/2026 - 27/10/2026',
+      groupBy: [['team', 'Team'], ['project', 'Project'], ['user', 'User']].map(([k, l]) => ({ label: l, cls: by === k ? 'active' : '', checked: String(by === k), pick: () => this.setState({ groupBy: k, usageAll: false }) })),
+      legend: PRODUCTS.map(([, label, color], i) => ({ label, color, pct: pct(prodTotals[i], total) })),
+      hasGroups: sorted.length > 0, noGroups: sorted.length === 0,
+      groups: shown.map((g) => ({ ...describe(g), credits: fmt(g.credits), pct: pct(g.credits, total), w: `${(g.credits / max) * 100}%`,
+        segs: PRODUCTS.filter(([id]) => g.byProduct[id]).map(([id, label, color]) => ({ color, w: `${(g.byProduct[id] / g.credits) * 100}%`, tip: this.tipIn(`${label}: ${fmt(g.byProduct[id])} credits`) })) })),
+      moreLabel: sorted.length > limit ? (this.state.usageAll ? 'Show top 10' : `Show all ${sorted.length} ${noun[1]}`) : '',
+      toggleMore: () => this.setState((st) => ({ usageAll: !st.usageAll })),
+    };
+  }
+  teamsView() {
+    const st = ST(); const summary = st.budgetSummary(); const hasPool = summary.poolTotal > 0;
+    const all = st.teamSummaries(); const fl = this.state.filters;
+    const match = (t) => {
+      const b = t.budget;
+      if (fl.period && !(isSetB(b) && b.period === fl.period)) return false;
+      if (fl.access && (fl.access === 'set') !== Boolean(isSetB(b))) return false;
+      if (fl.usage) { if (!isSetB(b)) return false; const pct = b.amount ? (b.usedAmount / b.amount) * 100 : 0;
+        if (fl.usage === '0' && b.usedAmount !== 0) return false; if (fl.usage === '80' && pct < 80) return false; if (fl.usage === '100' && pct < 100) return false; }
+      return true;
+    };
+    const teams = hasPool ? all.filter(match) : all;
+    const ed = this.state.editor;
+    const tiles = [
+      { key: 'pool', label: 'Shared pool', tip: 'Total shared pool credits of the organization.', value: fmt(summary.poolTotal), caption: `${fmt(summary.poolRemaining)} remaining` },
+      F('allocation') && { key: 'alloc', label: 'Allocated to teams', tip: 'Credits held aside by allocation budgets. Only the owning team can use them.', value: fmt(summary.reservedForTeams), caption: 'credits allocated' },
+      { key: 'limits', label: 'Team limits', tip: 'Sum of all limit budgets. Limits cap team spend but do not hold credits aside.', value: fmt(summary.limitsTotal), caption: 'credits in limits' },
+      { key: 'used', label: 'Consumed', tip: 'Credits used by teams in their current budget periods.', value: fmt(summary.consumedInWindows), caption: 'credits used' },
+    ].filter(Boolean).map((t) => ({ ...t, info: this.info('tile-' + t.key, t.tip) }));
+    const periodLabel = (b) => (F('allocation') || F('monthlyRefresh') ? `${b.mode === 'reservation' ? 'Allocation' : 'Limit'} · ${b.period === 'monthly' ? 'Monthly' : 'One-time'}` : 'One-time limit');
+    const active = Object.values(fl).some(Boolean);
+    return {
+      hasPool, noPool: !hasPool, tiles, count: all.length, shown: teams.length, newActive: ed && !ed.teamGUID ? ' active' : '',
+      newTeam: () => this.openEditor(null),
+      showFilters: hasPool && all.length > 0, filtersActive: active, clearFilters: () => this.setState({ filters: { period: '', usage: '', access: '' } }),
+      filters: TEAM_FILTERS.filter((f) => f.key !== 'period' || F('monthlyRefresh')).map((f) => ({ aria: f.placeholder.replace('Any ', 'Filter by '),
+        ...this.select({ options: f.options, value: fl[f.key], placeholder: f.placeholder, cls: `te-filter-select${fl[f.key] ? ' on' : ''}`, variant: 'eris', id: `team-filter-${f.key}`, onChange: (v) => this.setState((s) => ({ filters: { ...s.filters, [f.key]: v } })) }) })),
+      hasTeams: teams.length > 0, noneShown: teams.length === 0,
+      emptyText: all.length ? 'No teams match these filters.' : 'No teams yet. Create a team to group projects and give it a credit budget.',
+      teams: teams.map((t) => {
+        const b = t.budget; const on = ed && ed.teamGUID === t.guid; const set = isSetB(b);
+        return { name: t.name, active: on ? ' active' : '', current: on ? 'true' : undefined, open: () => this.openEditor(t.guid),
+          degraded: hasPool && b && b.status !== 'released' && b.degraded, degradedTip: this.tipIn(b && (DEGRADED_REASONS[b.degradedReason] || 'The shared pool no longer covers this allocation.')),
+          meta: [t.isDefault && F('defaultTeam') ? 'Default' : null, `${t.projectCount} ${t.projectCount === 1 ? 'project' : 'projects'}`, `${t.memberCount} ${t.memberCount === 1 ? 'member' : 'members'}`].filter(Boolean).join(' · '),
+          showBudget: hasPool, noBudget: !set, hasBudget: set, bar: set ? bar(b.usedAmount, b.amount, true) : {}, period: set ? periodLabel(b) : '' };
+      }),
+    };
+  }
+  editorView(e) {
+    const st = ST();
+    const existing = e.teamGUID ? st.teamDetails(e.teamGUID) : null;
+    const team = e.teamGUID ? st.teamSummaries().find((t) => t.guid === e.teamGUID) : null;
+    const hasPool = st.budgetSummary().poolTotal > 0;
+    const locked = Boolean(existing && isSetB(existing.budget));
+    const errors = e.touched ? this.edErrors(e, hasPool) : {};
+    const available = st.projectSummaries().filter((p) => !p.team || (existing && p.team.guid === existing.guid)).reverse();
+    const sources = new Map();
+    if (F('suggestedMembers')) e.projects.forEach((g) => { const p = st.projectDetails(g); p.members.forEach((m) => sources.set(m.guid, [...(sources.get(m.guid) || []), p.name])); });
+    const all = st.org().members.filter((m) => !m.disabled);
+    const sel = new Set(e.selected);
+    const q = e.query.trim().toLowerCase(), pq = e.projectQuery.trim().toLowerCase();
+    const matches = (s, ...fs) => !s || fs.some((f) => (f || '').toLowerCase().includes(s));
+    const withAccess = all.filter((m) => sel.has(m.guid));
+    const suggested = all.filter((m) => sources.has(m.guid) && !sel.has(m.guid));
+    const rank = (m) => (sel.has(m.guid) ? 0 : sources.has(m.guid) ? 1 : 2);
+    const visible = all.filter((m) => matches(q, nameOf(m), m.email)).filter((m) => q || sel.has(m.guid) || sources.has(m.guid))
+      .sort((x, y) => rank(x) - rank(y) || nameOf(x).localeCompare(nameOf(y)));
+    const bulkTargets = q ? visible : suggested;
+    const bulkAdds = bulkTargets.some((m) => !sel.has(m.guid));
+    const matched = available.filter((p) => matches(pq, p.name));
+    const rows = pq ? matched.slice(0, 8) : available.slice(0, 5);
+    const canCreate = F('createProjectFromTeam') && Boolean(pq) && !st.projectSummaries().some((p) => p.name.toLowerCase() === pq) && !e.newProjects.some((n) => n.toLowerCase() === pq);
+    const form = e.form; const isSet = form.amountType === 'set';
+    const hasRules = F('allocation') || F('overage') || F('warnings');
+    // Type covers Limit, Allocation and Warning only. Limit and Allocation stop work when used up, unless an overage is allowed.
+    const type = form.mode === 'reservation' ? 'allocation' : form.onExhausted === 'warn' ? 'warn' : 'limit';
+    const savedType = existing && isSetB(existing.budget) ? (existing.budget.mode === 'reservation' ? 'allocation' : 'other') : null;
+    const TYPE_OPTIONS = [{ value: 'limit', label: 'Limit' }, F('allocation') && { value: 'allocation', label: 'Allocation' }, F('overage') && { value: 'warn', label: 'Warning only' }].filter(Boolean);
+    const overage = form.onExhausted === 'overage';
+    const pickType = (t) => this.ed((x) => ({ form: { ...x.form,
+      mode: t === 'allocation' ? 'reservation' : 'limit',
+      onExhausted: t === 'warn' ? 'warn' : x.form.onExhausted === 'overage' ? 'overage' : 'stop' } }));
+    const seg = (options, value, disabled, field) => options.map((o) => ({ label: o.short || o.label, cls: o.value === value ? 'active' : '', checked: String(o.value === value),
+      disabled: Boolean(disabled) && o.value !== value, pick: () => o.value !== value && this.edForm(field, o.value) }));
+    const actions = team ? [...(hasPool && team.budget ? [{ label: 'Release budget', fn: () => this.confirmTeam('release', team) }] : []), { label: 'Delete team', fn: () => this.confirmTeam('delete', team) }] : [];
+    const b = team && team.budget;
+    const state = !b || b.status === 'released' ? 'none' : b.degraded ? 'degraded' : 'active';
+    return {
+      pendingCls: e.pending ? ' is-pending' : '', busy: e.pending ? 'true' : undefined, pending: e.pending, aria: team ? `Edit ${team.name}` : 'New team',
+      heading: team ? team.name : 'New team', isDefaultSaved: Boolean(team && team.isDefault && F('defaultTeam')),
+      status: team && hasPool && team.budget ? { state, label: { none: 'No budget', active: 'Active', degraded: 'Degraded' }[state], tip: this.tipIn(state === 'degraded' ? DEGRADED_REASONS[b.degradedReason] || 'The shared pool no longer covers this allocation.' : null) } : null,
+      hasActions: actions.length > 0, actions: this.menuFor('Team actions', actions),
+      name: e.name, nameErrCls: errors.name ? ' has-error' : '', nameError: errors.name || '',
+      setName: (ev) => { const v = ev.target.value; this.ed({ name: v, nameEdited: v.trim() !== '' }); },
+      selectedCount: e.projects.length + e.newProjects.length,
+      chips: e.projects.map((g) => { const p = available.find((x) => x.guid === g); return { name: p ? p.name : g, remove: () => this.toggleProject(g) }; }),
+      newChips: e.newProjects.map((n) => ({ name: n, remove: () => this.ed((x) => { const newProjects = x.newProjects.filter((y) => y !== n); return { newProjects, name: this.syncName(x, x.projects, newProjects) }; }) })),
+      acOpen: e.projectOpen, acExpanded: String(Boolean(e.projectOpen)),
+      acFocus: () => clearTimeout(this.timers.ac), acBlur: () => { clearTimeout(this.timers.ac); this.timers.ac = setTimeout(() => this.alive && this.ed({ projectOpen: false }), 200); },
+      openAc: () => !e.projectOpen && this.ed({ projectOpen: true }),
+      projectPh: F('createProjectFromTeam') ? `Search ${available.length} projects or create a new one` : `Search ${available.length} projects`,
+      projectQuery: e.projectQuery, projectQueryTrim: e.projectQuery.trim(),
+      setProjectQuery: (ev) => this.ed({ projectQuery: ev.target.value, projectOpen: true }),
+      projectKey: (ev) => {
+        if (ev.key === 'Escape') { stop(ev); this.ed({ projectOpen: false }); return; }
+        if (ev.key !== 'Enter') return;
+        prevent(ev);
+        if (rows[0] && !e.projects.includes(rows[0].guid)) this.toggleProject(rows[0].guid, true);
+        else if (canCreate) this.createProject();
+      },
+      acCaption: pq ? `${matched.length} ${matched.length === 1 ? 'match' : 'matches'}` : 'Recent projects',
+      projectRows: rows.map((p) => { const on = e.projects.includes(p.guid); return { name: p.name, members: p.memberCount, on, onCls: on ? ' on' : '', toggle: () => this.toggleProject(p.guid, Boolean(pq)) }; }),
+      canCreate, createProject: () => this.createProject(), noMatch: Boolean(pq) && !matched.length && !canCreate,
+      showDefault: F('defaultTeam'), isDefault: e.isDefault, toggleDefault: () => this.ed((x) => ({ isDefault: !x.isDefault })),
+      defaultInfo: this.info('default'),
+      membersInfo: this.info('members', `People who can spend this team’s credits. Credit access is separate from project roles.${F('suggestedMembers') ? ' Members of the selected projects are suggested.' : ''}`),
+      accessCount: `${withAccess.length} of ${all.length}`,
+      query: e.query, setQuery: (ev) => this.ed({ query: ev.target.value }),
+      bulkLabel: bulkAdds ? (q ? 'Add results' : `Add suggested (${suggested.length})`) : withAccess.length ? 'Remove all' : '',
+      bulk: () => this.ed((x) => { const s = new Set(x.selected); (bulkAdds ? bulkTargets : withAccess).forEach((m) => (bulkAdds ? s.add(m.guid) : s.delete(m.guid))); return { selected: [...s] }; }),
+      hasVisible: visible.length > 0, noVisible: visible.length === 0,
+      emptyText: q ? 'No members match this search.' : F('suggestedMembers') ? 'Select a project to see suggested members, or search the organization.' : 'Search the organization to add members.',
+      members: visible.map((m) => { const on = sel.has(m.guid); const src = sources.get(m.guid); const where = src ? (src.length > 1 ? `${src.length} projects` : src[0]) : F('suggestedMembers') ? 'Organization' : '';
+        return { name: nameOf(m), email: m.email, on, onCls: on ? ' on' : '', aside: src && !on ? `Suggested · ${where}` : where,
+          toggle: () => this.ed((x) => ({ selected: x.selected.includes(m.guid) ? x.selected.filter((g) => g !== m.guid) : [...x.selected, m.guid] })) }; }),
+      hasPool, noPool: !hasPool,
+      lockedInfo: locked && (F('allocation') || F('monthlyRefresh')) ? this.info('locked') : null,
+      isSet, notSet: !isSet, toggleSet: () => this.edForm('amountType', isSet ? 'none' : 'set'),
+      amount: form.amount, amountErrCls: errors.amount ? ' has-error' : '', amountError: isSet ? errors.amount || '' : '',
+      setAmount: (ev) => this.edForm('amount', ev.target.value.replace(/[^0-9]/g, '')),
+      showPeriod: F('monthlyRefresh'), oneTimeOnly: !F('monthlyRefresh'), periodSeg: seg(PERIOD_OPTIONS, form.period, locked, 'period'),
+      stopNote: isSet && !hasRules, hasRules,
+      moreOpen: Boolean(e.moreOpen || errors.overagePct), onToggleMore: (ev) => { const o = ev.currentTarget.open; if (o !== e.moreOpen) this.ed({ moreOpen: o }); },
+      summary: [TYPE_OPTIONS.length > 1 && TYPE_OPTIONS.find((o) => o.value === type).label,
+        F('overage') && type !== 'warn' && (overage ? `Overage${form.overagePct ? ` ${form.overagePct}%` : ''}` : 'Stops work'),
+        F('warnings') && (form.notifyPcts.length ? `Notify at ${[...form.notifyPcts].sort((x, y) => x - y).join(', ')}%` : 'No notifications')].filter(Boolean).join(' · '),
+      showType: TYPE_OPTIONS.length > 1, typeInfo: this.info('type'),
+      // After the budget is created, Allocation can't be switched to or from the other types.
+      typeSeg: TYPE_OPTIONS.map((o) => { const off = Boolean(savedType) && o.value !== type && ((savedType === 'allocation') !== (o.value === 'allocation'));
+        return { label: o.label, cls: o.value === type ? 'active' : '', checked: String(o.value === type), disabled: off, pick: () => !off && o.value !== type && pickType(o.value) }; }),
+      showOverage: F('overage') && type !== 'warn', isOverage: overage,
+      toggleOverage: () => this.edForm('onExhausted', overage ? 'stop' : 'overage'), overagePct: form.overagePct, overageErrCls: errors.overagePct ? ' has-error' : '', overageError: errors.overagePct || '',
+      setOverage: (ev) => this.edForm('overagePct', ev.target.value.replace(/[^0-9]/g, '')),
+      showNotify: F('warnings'),
+      notify: NOTIFY_PCTS.map((p) => { const on = form.notifyPcts.includes(p); return { label: `${p}%`, pressed: String(on), cls: on ? 'active' : '',
+        pick: () => this.edForm('notifyPcts', on ? form.notifyPcts.filter((x) => x !== p) : [...form.notifyPcts, p]) }; }),
+      error: e.error || '', cancel: () => this.setState({ editor: null }), submit: () => this.submitEditor(),
+      confirmLabel: e.pending ? 'Saving' : existing ? 'Save team' : 'Create team',
+    };
+  }
+  projectsView() {
+    const st = ST(); const all = st.projectSummaries(); const teams = st.teamSummaries();
+    const tf = this.state.teamFilter && this.state.teamFilter !== NO_TEAM && !teams.some((t) => t.guid === this.state.teamFilter) ? '' : this.state.teamFilter;
+    const selected = new Set(this.state.selected.filter((g) => all.some((p) => p.guid === g)));
+    const shown = !tf ? all : all.filter((p) => (tf === NO_TEAM ? !p.team : p.team && p.team.guid === tf));
+    const allOn = shown.length > 0 && shown.every((p) => selected.has(p.guid));
+    const someOn = !allOn && shown.some((p) => selected.has(p.guid));
+    const setSel = (s) => this.setState({ selected: [...s] });
+    const without = all.filter((p) => !p.team).length;
+    const tip = (members) => { if (!members.length) return undefined; const names = members.slice(0, 12).map(nameOf).join(', '); return members.length > 12 ? `${names} and ${members.length - 12} more` : names; };
+    return {
+      hasAny: all.length > 0, hasRows: shown.length > 0,
+      emptyText: !all.length ? 'No projects yet. Create a project to track the credits spent on it.' : !shown.length ? (tf === NO_TEAM ? 'Every project belongs to a team.' : 'This team has no projects yet.') : '',
+      create: () => this.openDialog({ type: 'projectName', create: true, name: '', ownerGUID: '', teamGUID: '', teamPicked: false, touched: false, title: 'Create project', confirmLabel: 'Create' }),
+      filter: this.select({ options: [{ value: NO_TEAM, label: `Without a team (${without})` }, ...teams.map((t) => ({ value: t.guid, label: `${t.name} (${all.filter((p) => p.team && p.team.guid === t.guid).length})` }))],
+        value: tf, placeholder: `All projects (${all.length})`, onChange: (v) => this.setState({ teamFilter: v }), variant: 'eris', id: 'project-team-filter' }),
+      selectedCount: selected.size, clearSelection: () => this.setState({ selected: [] }),
+      addToTeam: () => this.openDialog({ type: 'addToTeam', guids: [...selected], teamGUID: '', title: `Add ${selected.size} ${selected.size === 1 ? 'project' : 'projects'} to a team`, confirmLabel: 'Add to team' }),
+      allOn, allRef: (el) => { if (el) el.indeterminate = someOn; },
+      toggleAll: () => { const s = new Set(selected); shown.forEach((p) => (allOn ? s.delete(p.guid) : s.add(p.guid))); setSel(s); },
+      rows: shown.map((p, i) => ({
+        name: p.name, owner: p.owner ? nameOf(p.owner) : '-', team: p.team ? p.team.name : '-', memberCount: p.memberCount, membersTip: this.tipIn(tip(p.members)),
+        on: selected.has(p.guid), cls: `${i % 2 === 0 ? 'even-row' : 'odd-row'}${selected.has(p.guid) ? ' is-selected' : ''}`,
+        toggle: () => { const s = new Set(selected); if (s.has(p.guid)) s.delete(p.guid); else s.add(p.guid); setSel(s); },
+        menu: this.menuFor('Project actions', [
+          { label: 'Rename', fn: () => this.openDialog({ type: 'projectName', create: false, guid: p.guid, name: p.name, touched: false, title: 'Rename project', confirmLabel: 'Save' }) },
+          (F('moveProject') || !p.team) && { label: p.team ? 'Change team' : 'Assign team', fn: () => this.openDialog({ type: 'projectTeam', guid: p.guid, subject: p.name, teamGUID: p.team ? p.team.guid : '', title: 'Project team', confirmLabel: 'Save' }) },
+          { label: 'Delete project', fn: () => this.openDialog({ type: 'deleteProject', guid: p.guid, subject: p.name, title: 'Delete project', confirmLabel: 'Delete', destructive: true }) },
+        ].filter(Boolean)),
+      })),
+    };
+  }
+  dialogView(d) {
+    const st = ST();
+    const base = { title: d.title, cls: d.cls || 'credit-team-dialog', pending: d.pending, notPending: !d.pending, error: d.error || '',
+      close: () => this.closeDialog(), confirmLabel: d.confirmLabel, confirmCls: d.destructive ? 'contained-error' : 'contained-primary' };
+    const teamOptions = st.teamSummaries().map((t) => ({ value: t.guid, label: t.name }));
+    if (d.type === 'limit') {
+      const value = () => (d.selected === 'custom' ? Math.max(0, Math.floor(Number(d.custom) || 0)) : d.selected);
+      return { ...base, isLimit: true, poolTotal: fmt(st.poolFigures().total), isCustom: d.selected === 'custom', custom: d.custom,
+        setCustom: (ev) => this.dlg({ custom: ev.target.value }),
+        chips: LIMIT_OPTIONS.map((o) => ({ label: o.label, cls: d.selected === o.value ? 'chip active' : 'chip', pick: () => this.dlg({ selected: o.value }) })),
+        confirmDisabled: d.pending || d.selected === undefined,
+        confirm: () => this.mutate(() => st.setUsageLimit(d.guid, value()), () => this.snack(`Usage limit updated for ${d.who}.`)) };
+    }
+    if (d.type === 'confirm') {
+      return { ...base, isConfirm: true, subject: d.subject, message: d.message, confirmDisabled: d.pending,
+        confirm: () => this.mutate(() => (d.action === 'delete' ? st.deleteTeam(d.guid) : st.setTeamBudgetStatus(d.guid, 'released')), () => d.action === 'delete' && this.setState({ editor: null })) };
+    }
+    if (d.type === 'projectName') {
+      const invalid = d.touched && nameInvalid(d.name);
+      const submit = () => { if (nameInvalid(d.name)) return this.dlg({ touched: true }); this.mutate(() => (d.create ? st.createProject(d.name, d.teamGUID, d.ownerGUID) : st.renameProject(d.guid, d.name))); };
+      const fallback = d.ownerGUID && F('defaultTeam') ? st.defaultTeamFor(d.ownerGUID) : undefined;
+      const owner = d.ownerGUID && st.org().members.find((m) => m.guid === d.ownerGUID);
+      return { ...base, isProjectName: true, isCreate: d.create, showTeamField: d.create, name: d.name, nameErrCls: invalid ? 'has-error error-text' : '', nameError: invalid ? NAME_ERROR : '',
+        setName: (ev) => this.dlg({ name: ev.target.value }), enter: (ev) => { if (ev.key === 'Enter') submit(); },
+        ownerSel: this.select({ options: st.org().members.filter((m) => !m.disabled).map((m) => ({ value: m.guid, label: nameOf(m) })), value: d.ownerGUID, placeholder: 'Choose an organization member',
+          onChange: (v) => { const t = v && F('defaultTeam') ? st.defaultTeamFor(v) : undefined; this.dlg(d.teamPicked ? { ownerGUID: v } : { ownerGUID: v, teamGUID: t ? t.guid : '' }); }, variant: 'eris', id: 'dlg-owner' }),
+        teamSel: this.select({ options: teamOptions, value: d.teamGUID, placeholder: 'No team', onChange: (v) => this.dlg({ teamGUID: v, teamPicked: true }), variant: 'eris', id: 'dlg-team' }),
+        defaultHint: fallback && d.teamGUID === fallback.guid ? `${nameOf(owner)} is a member of ${fallback.name}, the default team for new projects.` : '',
+        confirmDisabled: d.pending, confirm: submit };
+    }
+    if (d.type === 'projectTeam') {
+      return { ...base, isProjectTeam: true, showTeamField: true, subject: d.subject,
+        teamSel: this.select({ options: teamOptions, value: d.teamGUID, placeholder: 'No team', onChange: (v) => this.dlg({ teamGUID: v }), variant: 'eris', id: 'dlg-team' }),
+        confirmDisabled: d.pending, confirm: () => this.mutate(() => st.setProjectTeam(d.guid, d.teamGUID)) };
+    }
+    if (d.type === 'addToTeam') {
+      const picked = st.projectSummaries().filter((p) => d.guids.includes(p.guid));
+      const projects = F('moveProject') ? picked : picked.filter((p) => !p.team);
+      const kept = picked.length - projects.length;
+      const moving = projects.filter((p) => p.team && p.team.guid !== d.teamGUID);
+      return { ...base, isAddToTeam: true,
+        list: projects.map((p) => ({ label: p.name, sub: p.team ? `Now in ${p.team.name}` : 'No team' })),
+        keptText: kept > 0 ? `${kept} of the selected ${kept === 1 ? 'project is' : 'projects are'} already in a team and ${kept === 1 ? 'stays' : 'stay'} there.` : '',
+        teamSel: this.select({ options: teamOptions, value: d.teamGUID, placeholder: 'Choose a team', onChange: (v) => this.dlg({ teamGUID: v }), variant: 'eris', id: 'dlg-team' }),
+        movingText: d.teamGUID && moving.length > 0 ? `${moving.length} of these ${moving.length === 1 ? 'project moves' : 'projects move'} from another team.` : '',
+        confirmDisabled: d.pending || !d.teamGUID || !projects.length,
+        confirm: () => this.mutate(() => projects.forEach((p) => st.setProjectTeam(p.guid, d.teamGUID)), () => { this.setState({ selected: [] }); this.snack(`${projects.length} ${projects.length === 1 ? 'project' : 'projects'} added to the team`); }) };
+    }
+    return { ...base, isDeleteProject: true, subject: d.subject, confirmDisabled: d.pending, confirm: () => this.mutate(() => st.deleteProject(d.guid)) };
+  }
+
+  renderVals() {
+    const st = ST();
+    if (!st || !st.org || !window.CreditModel) return { ready: false, v: {}, tour: { on: false } };
+    const route = this.state.route;
+    const org = st.org();
+    const admin = org.members.find((m) => m.role === 'admin') || org.members[0];
+    let e = this.state.editor;
+    if (e && (e.release !== PX().release || e.orgGUID !== org.guid || (e.teamGUID && !st.teamSummaries().some((t) => t.guid === e.teamGUID)))) e = null;
+    const go = (r) => (ev) => { prevent(ev); stop(ev); this.go(r); };
+    return {
+      ready: true,
+      tour: this.tourCard(),
+      v: {
+        top: TOP_ITEMS.map((t) => ({ title: t.title, cur: t.org ? ' current' : '', chevron: Boolean(t.chevron || t.org), isOrg: Boolean(t.org),
+          go: t.org ? prevent : this.notIn(`"${t.title}" opens another my.chaos section`) })),
+        orgItems: ORG_ITEMS.map((o) => ({ title: o.title, badge: o.badge || '', cur: o.route === route || (o.subroutes || []).includes(route) ? ' current' : '',
+          go: o.route ? go(o.route) : this.notIn(`"${o.title}" opens the existing users page`) })),
+        routeId: ROUTE_IDS[route], contentCls: `${ROUTE_IDS[route]}${route === 'credits' || route === 'usage' ? ' credits-route' : ''}`,
+        admin: { title: `${nameOf(admin)} (${admin.email})`, initials: `${(admin.firstName || '?')[0]}${(admin.lastName || '')[0] || ''}` },
+        goCredits: go('credits'), goUsage: go('usage'), goTeams: go('teams'), buyCredits: this.notIn('Buy credits opens chaos.com'),
+        f: { allocation: F('allocation') },
+        isCredits: route === 'credits', isUsage: route === 'usage', isTeams: route === 'teams', isProjects: route === 'projects',
+        cr: route === 'credits' ? this.creditsView() : {},
+        us: route === 'usage' ? this.usageView() : {},
+        tm: route === 'teams' ? { ...this.teamsView(), noEditor: !e } : {},
+        ed: route === 'teams' && e ? this.editorView(e) : null,
+        pr: route === 'projects' ? this.projectsView() : {},
+        dlg: this.state.dialog ? this.dialogView(this.state.dialog) : null,
+        menu: this.state.menu && { ...this.state.menu, items: this.state.menu.items.map((i) => ({ label: i.label, cls: i.cls || '', pick: (ev) => { stop(ev); this.setState({ menu: null }); i.fn(); } })) },
+        closeMenu: () => this.setState({ menu: null }),
+        tip: this.state.tip, tipOut: () => this.state.tip && this.setState({ tip: null }),
+        infoOut: () => this.state.info && this.setState({ info: null }),
+        snack: this.state.snack,
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
