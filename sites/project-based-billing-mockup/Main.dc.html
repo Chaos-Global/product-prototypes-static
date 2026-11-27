@@ -4,14 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Veras</title>
-<script src="./_runtime/react.js"></script>
-<script src="./_runtime/react-dom.js"></script>
-<script src="./_runtime/support.js"></script>
-<link rel="stylesheet" href="ds/eris/colors_and_type.css">
-<link rel="stylesheet" href="ds/eris/components/eris/fig-tokens.css">
-<script src="ds/eris/_ds_bundle.js"></script>
-<script src="shared/credit-model.js"></script>
-<script src="shared/tour.js"></script>
+<script src="react.js"></script>
+<script src="react-dom.js"></script>
+<script src="support.js"></script>
+<link rel="stylesheet" href="colors_and_type.css">
+<link rel="stylesheet" href="fig-tokens.css">
+<script src="_ds_bundle.js"></script>
+<script src="credit-model.js"></script>
+<script src="tour.js"></script>
 </head>
 <body>
 <x-dc>
@@ -26,7 +26,7 @@
 </helmet>
 <sc-for list="{{ variants }}" as="v" hint-placeholder-count="1">
 <div onClick="{{ v.closeAll }}" style="position:absolute;left:0;top:0;transform-origin:0 0;transform:scale({{ fitScale }});width:1920px;height:1055px;overflow:hidden;font-family:Roboto,sans-serif;color:#212121;user-select:none">
-        <img src="assets/veras-image-tab.png" style="display:block;width:1920px;height:1055px" draggable="false">
+        <img src="veras-image-tab.png" style="display:block;width:1920px;height:1055px" draggable="false">
 
         <div title="Account" onClick="{{ v.openAccount }}" style="position:absolute;left:1884px;top:5px;width:32px;height:34px;border-radius:4px;cursor:pointer" style-hover="background:rgba(0,0,0,0.07)"></div>
 
@@ -54,7 +54,7 @@
         <div onClick="{{ v.next }}" style="position:absolute;left:1530px;top:969px;width:32px;height:32px;border-radius:16px;cursor:pointer" style-hover="background:rgba(0,0,0,0.07)"></div>
 
         <div style="position:absolute;left:1590px;top:66px;width:282px;height:96px;background:#F6F6F6;display:flex;gap:15px;align-items:flex-start;padding:5px 0 0 6px;box-sizing:border-box">
-          <div style="width:84px;height:84px;flex:none;border-radius:42px;box-shadow:0 1px 4px rgba(0,0,0,0.25);background-image:url(assets/veras-image-tab.png);background-size:{{ v.preset.bigSize }};background-position:{{ v.preset.bigPos }}"></div>
+          <div style="width:84px;height:84px;flex:none;border-radius:42px;box-shadow:0 1px 4px rgba(0,0,0,0.25);background-image:url(veras-image-tab.png);background-size:{{ v.preset.bigSize }};background-position:{{ v.preset.bigPos }}"></div>
           <div style="display:flex;flex-direction:column;gap:3px;padding-top:9px;min-width:0">
             <div style="font:500 15px Roboto;color:#1a1a1a">{{ v.preset.name }}</div>
             <div style="font:400 11px/16.5px Roboto;color:#616161;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">{{ v.promptText }}</div>
@@ -73,7 +73,7 @@
             <div style="display:grid;grid-template-columns:repeat(3,84px);gap:17px 20px;padding:9px 0 12px 8px">
               <sc-for list="{{ v.presets }}" as="p" hint-placeholder-count="9">
                 <div onClick="{{ p.pick }}" title="{{ p.name }}" style="position:relative;width:84px;height:84px;border-radius:42px;box-sizing:border-box;border:3px solid {{ p.ring }};cursor:pointer;display:flex;align-items:center;justify-content:center">
-                  <div style="width:76px;height:76px;border-radius:38px;background-image:url(assets/veras-image-tab.png);background-size:1920px 1055px;background-position:{{ p.pos }}"></div>
+                  <div style="width:76px;height:76px;border-radius:38px;background-image:url(veras-image-tab.png);background-size:1920px 1055px;background-position:{{ p.pos }}"></div>
                   <div style="position:absolute;left:62px;top:-6px;height:18px;padding:0 5px;border-radius:9px;background:#0DB5FF;border:2px solid #F6F6F6;color:#fff;font:700 11px/18px Roboto">7F</div>
                 </div>
               </sc-for>
@@ -226,7 +226,7 @@
 <p style="margin: 0">isplay</p></x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1920,&quot;height&quot;:1055},&quot;placement&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Picker in the top bar&quot;,&quot;Picker above Render&quot;],&quot;default&quot;:&quot;Picker above Render&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;release&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Full&quot;,&quot;MVP&quot;],&quot;default&quot;:&quot;MVP&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 // Project and team names, budgets and the feature-to-release map come from
-// shared/credit-model.js, shared with the Collaboration and My Chaos artboards.
+// credit-model.js, shared with the Collaboration and My Chaos artboards.
 const PRESETS = [
   { id: 'brick', name: 'Brick Facade', c: [1638, 298], interior: false, prompt: 'mid-rise brick apartment building, warm evening light, balconies with plants, street level, professional architectural photography' },
   { id: 'aerial', name: 'Aerial Townhouses', c: [1742, 298], interior: false, aerial: true, prompt: 'aerial view of modern townhouses, dark brick and timber, landscaped courtyard, overcast sky, drone photography' },
@@ -246,7 +246,7 @@ const icon = r => r >= 1 ? { w: '20px', h: Math.round(20 / r) + 'px' } : { w: Ma
 const stop = e => e && e.stopPropagation && e.stopPropagation();
 const tagsFor = p => [...(p.interior ? ['Is Interior'] : []), ...(p.aerial ? ['Is Aerial View'] : [])];
 const M = () => window.CreditModel;
-// The guided walkthroughs (shared/tour.js) pick the project and open the picker for each step.
+// The guided walkthroughs (tour.js) pick the project and open the picker for each step.
 const BOARD = 'Main.dc.html';
 const T = () => window.ChaosTour;
 
